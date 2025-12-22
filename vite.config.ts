@@ -22,3 +22,15 @@ export default defineConfig(({ mode }) => {
       }
     };
 });
+
+---
+
+## Step 3: Add `.gitignore`
+
+Create a `.gitignore` file in the root with:
+```
+node_modules/
+dist/
+.env
+.env.local
+.DS_Store
