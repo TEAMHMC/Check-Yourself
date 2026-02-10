@@ -148,7 +148,18 @@ export const STRINGS = {
     downloadResults: 'Save Results',
     resumePrompt: 'You have a check-in progress saved. Want to pick up where you left off?',
     resumeYes: 'Continue',
-    resumeNo: 'Start Fresh'
+    resumeNo: 'Start Fresh',
+    gpTherapistLabel: 'Therapist or Support Group:',
+    gpTherapistPlaceholder: 'Name of therapist, counselor, or group...',
+    gpCrisisNote: 'Always accessible — no matter what:',
+    gpResultsTherapist: 'Professional Support',
+    gpResultsTools: 'Daily Tools',
+    gpResultsLookingForward: 'Looking Forward To',
+    gpResultsIntro: 'This is your go-to guide when things get heavy. Keep it close — screenshot it, print it, or save it.',
+    gpBeginReferral: 'Begin A Referral',
+    gpReferralSub: 'Connect with an HMC team member for personalized support',
+    gpResultsCreative: 'Creative Outlet',
+    gpResultsPlaylist: 'Playlist / Music'
   },
   es: {
     title: 'EL DESAHOGO',
@@ -274,7 +285,18 @@ export const STRINGS = {
     downloadResults: 'Guardar Resultados',
     resumePrompt: 'Tienes un chequeo guardado. ¿Quieres continuar donde lo dejaste?',
     resumeYes: 'Continuar',
-    resumeNo: 'Empezar de Nuevo'
+    resumeNo: 'Empezar de Nuevo',
+    gpTherapistLabel: 'Terapeuta o Grupo de Apoyo:',
+    gpTherapistPlaceholder: 'Nombre de terapeuta, consejero, o grupo...',
+    gpCrisisNote: 'Siempre accesible — pase lo que pase:',
+    gpResultsTherapist: 'Apoyo Profesional',
+    gpResultsTools: 'Herramientas Diarias',
+    gpResultsLookingForward: 'Lo Que Espero',
+    gpResultsIntro: 'Esta es tu guía para cuando las cosas se pongan pesadas. Tenla cerca — tómale foto, imprímela, o guárdala.',
+    gpBeginReferral: 'Iniciar Una Referencia',
+    gpReferralSub: 'Conecta con un miembro del equipo de HMC para apoyo personalizado',
+    gpResultsCreative: 'Desahogo Creativo',
+    gpResultsPlaylist: 'Playlist / Música'
   }
 };
 

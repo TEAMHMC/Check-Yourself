@@ -801,9 +801,23 @@ const App: React.FC = () => {
                  <label className="block text-sm font-bold text-stone-600">{t.gpContactsLabel}</label>
                  <input type="text" value={state.gamePlan.contact1.name} onChange={e => updateGamePlanNested('contact1', 'name', e.target.value)} placeholder={`${t.gpNamePlaceholder} 1`} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold" />
                  <input type="tel" value={state.gamePlan.contact1.phone} onChange={e => updateGamePlanNested('contact1', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl mb-4 font-bold" />
-                 
+
                  <input type="text" value={state.gamePlan.contact2.name} onChange={e => updateGamePlanNested('contact2', 'name', e.target.value)} placeholder={`${t.gpNamePlaceholder} 2`} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold" />
                  <input type="tel" value={state.gamePlan.contact2.phone} onChange={e => updateGamePlanNested('contact2', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl font-bold" />
+               </div>
+               <div className="space-y-4 pt-4 border-t border-stone-100">
+                 <label className="block text-sm font-bold text-stone-600">{t.gpTherapistLabel}</label>
+                 <input type="text" value={state.gamePlan.therapist.name} onChange={e => updateGamePlanNested('therapist', 'name', e.target.value)} placeholder={t.gpTherapistPlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold" />
+                 <input type="tel" value={state.gamePlan.therapist.phone} onChange={e => updateGamePlanNested('therapist', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl font-bold" />
+               </div>
+               <div className="p-5 rounded-2xl border-2 border-dashed" style={{ borderColor: `${BRAND.red}40`, background: `${BRAND.red}08` }}>
+                 <h4 className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: BRAND.red }}>{t.gpCrisisNote}</h4>
+                 <div className="space-y-2 text-sm font-bold text-stone-700">
+                   <p>988 Suicide & Crisis Lifeline</p>
+                   <p>741741 Crisis Text Line</p>
+                   <p>1-800-854-7771 LA County ACCESS</p>
+                   <p>1-888-624-4752 CHIRLA</p>
+                 </div>
                </div>
              </div>
            )}
@@ -877,12 +891,26 @@ const App: React.FC = () => {
               <p className="font-bold text-[10px] uppercase tracking-[0.3em]" style={{ color: BRAND.yellow }}>{t.gpResultsSub} &middot; {new Date().toLocaleDateString()}</p>
            </div>
            <div className="p-10 space-y-8 text-sm">
+              <p className="font-accent text-stone-500 text-center text-sm font-medium leading-relaxed italic">{t.gpResultsIntro}</p>
+
               <div className="p-6 bg-stone-50 rounded-2xl border border-stone-200 shadow-sm">
                 <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-2 tracking-widest">{t.gpResultsGrounding}</h4>
                 <p className="text-stone-800 font-bold italic">"{state.gamePlan.grounding || t.gpResultsGroundingText}"</p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              {state.gamePlan.tools.length > 0 && (
+                <div className="p-6 bg-stone-50 rounded-2xl border border-stone-200 shadow-sm">
+                  <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-3 tracking-widest">{t.gpResultsTools}</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {state.gamePlan.tools.map(id => {
+                      const tool = TOOL_OPTIONS.find(o => o.id === id);
+                      return tool ? <span key={id} className="px-3 py-1.5 bg-black text-white rounded-full text-xs font-bold">{tool.label[state.language]}</span> : null;
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-6 border border-stone-100 rounded-2xl shadow-sm bg-white">
                    <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-3 tracking-widest">{t.gpResultsEmergency}</h4>
                    <p className="font-bold text-stone-800 mb-0.5">{state.gamePlan.contact1.name || t.gpResultsPrimary}</p>
@@ -890,29 +918,67 @@ const App: React.FC = () => {
                    <p className="font-bold text-stone-800 mb-0.5">{state.gamePlan.contact2.name || t.gpResultsSecondary}</p>
                    <p className="text-stone-500 font-bold">{state.gamePlan.contact2.phone || '---'}</p>
                 </div>
-                <div className="p-6 border border-stone-100 rounded-2xl shadow-sm bg-white">
-                   <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-3 tracking-widest">{t.gpResultsStrategies}</h4>
-                   <p className="text-stone-800 font-bold leading-relaxed">{state.gamePlan.creative || state.gamePlan.playlist || t.gpResultsStrategiesText}</p>
-                </div>
+                {(state.gamePlan.therapist.name || state.gamePlan.therapist.phone) && (
+                  <div className="p-6 border border-stone-100 rounded-2xl shadow-sm bg-white">
+                     <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-3 tracking-widest">{t.gpResultsTherapist}</h4>
+                     <p className="font-bold text-stone-800 mb-0.5">{state.gamePlan.therapist.name}</p>
+                     <p className="text-stone-500 font-bold">{state.gamePlan.therapist.phone || '---'}</p>
+                  </div>
+                )}
               </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {state.gamePlan.playlist && (
+                  <div className="p-6 border border-stone-100 rounded-2xl shadow-sm bg-white">
+                    <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-2 tracking-widest">{t.gpResultsPlaylist}</h4>
+                    <p className="text-stone-800 font-bold">{state.gamePlan.playlist}</p>
+                  </div>
+                )}
+                {state.gamePlan.creative && (
+                  <div className="p-6 border border-stone-100 rounded-2xl shadow-sm bg-white">
+                    <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-2 tracking-widest">{t.gpResultsCreative}</h4>
+                    <p className="text-stone-800 font-bold">{state.gamePlan.creative}</p>
+                  </div>
+                )}
+              </div>
+
+              {state.gamePlan.forward && (
+                <div className="p-6 bg-stone-50 rounded-2xl border border-stone-200 shadow-sm">
+                  <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-2 tracking-widest">{t.gpResultsLookingForward}</h4>
+                  <p className="text-stone-800 font-bold">{state.gamePlan.forward}</p>
+                </div>
+              )}
 
               <div className="pt-8 border-t border-stone-100">
                  <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-2 tracking-widest">{t.gpResultsMessage}</h4>
                  <p className="text-xl font-extrabold text-stone-800 leading-tight">"{state.gamePlan.message || t.gpResultsMessageText}"</p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-8 print:hidden">
-                 <ActionButton 
-                  onClick={handleShare} 
-                  className="flex-1" 
-                  color={BRAND.blue} 
+              <div className="p-5 rounded-2xl border-2 border-dashed border-stone-200 text-center print:hidden">
+                 <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-1 tracking-widest" style={{ color: BRAND.red }}>{t.gpCrisisNote}</h4>
+                 <p className="text-sm font-bold text-stone-700">988 &middot; 741741 &middot; 1-800-854-7771</p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 pt-4 print:hidden">
+                 <ActionButton
+                  onClick={handleShare}
+                  className="flex-1"
+                  color={BRAND.blue}
                   icon={<ShareIcon />}
                  >
                     {t.sharePlan}
                  </ActionButton>
+                 <ActionButton
+                  href={`mailto:info@healthmatters.clinic?subject=${encodeURIComponent('Wellness Check Referral Request')}&body=${encodeURIComponent(`Hi HMC Team,\n\nI completed a wellness screening and would like to connect with support.\n\nSupport contacts: ${state.gamePlan.contact1.name || 'Not provided'} / ${state.gamePlan.contact2.name || 'Not provided'}\nTherapist: ${state.gamePlan.therapist.name || 'Not provided'}\nTools selected: ${state.gamePlan.tools.join(', ') || 'None'}\n\nPlease reach out to help me navigate next steps.\n\nThank you.`)}`}
+                  variant="outline"
+                  className="flex-1"
+                 >
+                    {t.gpBeginReferral}
+                 </ActionButton>
               </div>
+              <p className="text-center text-stone-400 text-[10px] font-bold uppercase tracking-widest print:hidden">{t.gpReferralSub}</p>
 
-              <div className="text-center pt-8 print:hidden">
+              <div className="text-center pt-4 print:hidden">
                  <button onClick={restart} className="text-stone-400 font-bold text-[10px] uppercase tracking-[0.3em] hover:text-stone-800 transition-colors flex items-center justify-center gap-2 mx-auto">
                     <RestartIcon /> {t.returnDashboard.toUpperCase()}
                  </button>
