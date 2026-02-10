@@ -76,6 +76,7 @@ export const LIFE_EVENT_OPTIONS = [
   { id: 'parent', label: { en: 'New parent / Postpartum / Pregnancy', es: 'Nuevo padre/madre / Posparto / Embarazo' } },
   { id: 'justice', label: { en: 'Recently released from prison or supporting a returning family member', es: 'Recientemente liberado de prisión o apoyando a un familiar que regresa' } },
   { id: 'immigration', label: { en: 'Immigration-related incident or stress', es: 'Incidente o estrés relacionado con migración' } },
+  { id: 'disaster', label: { en: 'LA Wildfires / Natural disaster displacement or loss', es: 'Incendios de LA / Desplazamiento o pérdida por desastre natural' } },
   { id: 'trauma', label: { en: 'Scary or traumatic event', es: 'Evento fuerte o traumático' } }
 ];
 
