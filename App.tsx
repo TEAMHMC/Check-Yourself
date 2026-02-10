@@ -49,13 +49,13 @@ const ActionButton: React.FC<{
 }> = ({ onClick, children, variant = 'primary', color = BRAND.blue, className, icon, noDot, href }) => {
   const isPrimary = variant === 'primary';
   const dotColorClass = isPrimary ? 'bg-white' : 'bg-black';
-  const baseClasses = `flex items-center justify-center gap-3 px-6 py-3.5 rounded-full font-bold transition-all duration-200 active:scale-[0.97] border-2 ${className} ${isPrimary ? 'shadow-lg hover:shadow-xl text-white border-transparent' : 'text-stone-800 bg-white hover:bg-stone-50 border-stone-200 hover:border-stone-400'}`;
+  const baseClasses = `inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-full font-semibold text-sm transition-all duration-200 active:scale-95 border border-black tracking-wide ${className} ${isPrimary ? 'text-white hover:shadow-[0_4px_16px_rgba(35,61,255,0.35)]' : 'text-[#1a1a1a] bg-white hover:bg-gray-50 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]'}`;
 
   const inner = (
     <>
-      {!noDot && !icon && <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dotColorClass}`}></div>}
+      {!noDot && !icon && <span className={`w-2 h-2 rounded-full flex-shrink-0 ${dotColorClass}`}></span>}
       {icon && <span className="flex items-center justify-center flex-shrink-0">{icon}</span>}
-      <span className="leading-none text-xs uppercase tracking-wide">{children}</span>
+      {children}
     </>
   );
 
@@ -117,8 +117,9 @@ const Layout: React.FC<{ children: React.ReactNode, state: AssessmentState, rest
         {children}
       </main>
       <footer className="py-8 text-center print:hidden">
-        <p className="text-stone-300 text-[10px] uppercase tracking-[0.3em] font-bold mb-1">Health Matters Clinic</p>
-        <p className="text-stone-300/60 text-[9px] tracking-wider"><a href="https://healthmatters.clinic" target="_blank" rel="noopener noreferrer" className="hover:text-stone-400 transition-colors">healthmatters.clinic</a> &middot; (323) 990-4325</p>
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-[0.2em]">
+          &copy; {new Date().getFullYear()} Health Matters Clinic. All Rights Reserved.
+        </p>
       </footer>
     </div>
   );
@@ -157,9 +158,6 @@ const App: React.FC = () => {
 
   const [state, setState] = useState<AssessmentState>(defaultState);
   const [savedState, setSavedState] = useState<AssessmentState | null>(null);
-  const [calmKitMode, setCalmKitMode] = useState<'menu' | 'breathing' | 'grounding'>('menu');
-  const [groundingStep, setGroundingStep] = useState(0);
-  const [breathSecond, setBreathSecond] = useState(0);
 
   // Restore session on mount
   useEffect(() => {
@@ -180,16 +178,6 @@ const App: React.FC = () => {
       sessionStorage.setItem('vibeCheckState', JSON.stringify(state));
     }
   }, [state]);
-
-  // Breathing timer
-  const breathActive = state.section === 'calm-kit' && calmKitMode === 'breathing';
-  useEffect(() => {
-    if (!breathActive) return;
-    const interval = setInterval(() => {
-      setBreathSecond(s => (s + 1) % 16);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [breathActive]);
 
   const t = STRINGS[state.language];
 
@@ -257,9 +245,6 @@ const App: React.FC = () => {
 
   const restart = () => {
     sessionStorage.removeItem('vibeCheckState');
-    setCalmKitMode('menu');
-    setGroundingStep(0);
-    setBreathSecond(0);
     setState(prev => ({
       ...prev,
       answers: {},
@@ -398,14 +383,6 @@ const App: React.FC = () => {
     // fetch(WEBHOOK_URL, { method: 'POST', body: JSON.stringify({ type, timestamp: new Date().toISOString() }) }).catch(() => {});
   };
 
-  const openCalmKit = () => {
-    setCalmKitMode('menu');
-    setGroundingStep(0);
-    setBreathSecond(0);
-    setState(prev => ({ ...prev, section: 'calm-kit' }));
-    window.scrollTo(0, 0);
-  };
-
   // --- VIEWS ---
 
   if (state.section === 'intro') {
@@ -435,36 +412,6 @@ const App: React.FC = () => {
           <p className="font-accent text-stone-600 mb-12 text-xl leading-relaxed font-medium max-w-sm">
             {t.intro}
           </p>
-
-          <div className="w-full flex flex-col sm:flex-row gap-4 mb-8">
-            <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-stone-50 rounded-2xl border border-stone-100">
-              <div className="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center flex-shrink-0">
-                <svg className="w-4 h-4 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-              </div>
-              <div className="text-left">
-                <div className="text-xs font-bold text-stone-800">16 Questions</div>
-                <div className="text-[10px] text-stone-400 font-medium">~3 min</div>
-              </div>
-            </div>
-            <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-stone-50 rounded-2xl border border-stone-100">
-              <div className="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center flex-shrink-0">
-                <svg className="w-4 h-4 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-              </div>
-              <div className="text-left">
-                <div className="text-xs font-bold text-stone-800">100% Private</div>
-                <div className="text-[10px] text-stone-400 font-medium">Nothing saved</div>
-              </div>
-            </div>
-            <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-stone-50 rounded-2xl border border-stone-100">
-              <div className="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center flex-shrink-0">
-                <svg className="w-4 h-4 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
-              </div>
-              <div className="text-left">
-                <div className="text-xs font-bold text-stone-800">EN / ES</div>
-                <div className="text-[10px] text-stone-400 font-medium">Bilingual</div>
-              </div>
-            </div>
-          </div>
 
           <div className="w-full space-y-5">
             <ActionButton onClick={handleStart} className="w-full py-5 text-xl" color={BRAND.blue}>
@@ -674,13 +621,13 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-7 md:p-8 rounded-[1.75rem] border-2 border-dashed border-stone-200 bg-stone-50/50 flex flex-col items-center text-center gap-5 print:hidden">
+            <div className="p-7 md:p-8 rounded-[1.75rem] border-2 border-stone-200 bg-stone-50/50 flex flex-col items-center text-center gap-5 print:hidden">
                 <div>
                    <h3 className="font-display text-3xl text-stone-800 mb-1 tracking-wide">{t.calmKitTitle}</h3>
-                   <p className="font-accent text-stone-600 font-bold text-sm">{t.calmKitSub}</p>
+                   <p className="font-accent text-stone-600 font-semibold text-sm">{t.calmKitSub}</p>
                 </div>
                 <ActionButton
-                  onClick={openCalmKit}
+                  href="https://teamhmc.github.io/CalmKit/"
                   className="w-full sm:w-auto px-12"
                   color={BRAND.blue}
                 >
@@ -975,7 +922,7 @@ const App: React.FC = () => {
                     {t.sharePlan}
                  </ActionButton>
                  <ActionButton
-                  href={`mailto:info@healthmatters.clinic?subject=${encodeURIComponent('Wellness Check Referral Request')}&body=${encodeURIComponent(`Hi HMC Team,\n\nI completed a wellness screening and would like to connect with support.\n\nSupport contacts: ${state.gamePlan.contact1.name || 'Not provided'} / ${state.gamePlan.contact2.name || 'Not provided'}\nTherapist: ${state.gamePlan.therapist.name || 'Not provided'}\nTools selected: ${state.gamePlan.tools.join(', ') || 'None'}\n\nPlease reach out to help me navigate next steps.\n\nThank you.`)}`}
+                  href={`mailto:referrals@healthmatters.clinic?subject=${encodeURIComponent('Wellness Check Referral Request')}&body=${encodeURIComponent(`Hi HMC Team,\n\nI completed a wellness screening and would like to connect with support.\n\nSupport contacts: ${state.gamePlan.contact1.name || 'Not provided'} / ${state.gamePlan.contact2.name || 'Not provided'}\nTherapist: ${state.gamePlan.therapist.name || 'Not provided'}\nTools selected: ${state.gamePlan.tools.join(', ') || 'None'}\n\nPlease reach out to help me navigate next steps.\n\nThank you.`)}`}
                   variant="outline"
                   className="flex-1"
                  >
@@ -990,129 +937,6 @@ const App: React.FC = () => {
                  </button>
               </div>
            </div>
-        </div>
-      </Layout>
-    );
-  }
-
-  if (state.section === 'calm-kit') {
-    const GROUNDING_STEPS = [
-      { count: 5, label: t.groundingSee },
-      { count: 4, label: t.groundingTouch },
-      { count: 3, label: t.groundingHear },
-      { count: 2, label: t.groundingSmell },
-      { count: 1, label: t.groundingTaste }
-    ];
-
-    const breathPhases = [t.calmKitBreathIn, t.calmKitHold, t.calmKitBreathOut, t.calmKitHold];
-    const currentPhaseIndex = Math.floor(breathSecond / 4) % 4;
-    const currentPhase = breathPhases[currentPhaseIndex];
-    const phaseProgress = (breathSecond % 4) / 4;
-    const breathScale = currentPhaseIndex === 0 ? 0.6 + phaseProgress * 0.4
-      : currentPhaseIndex === 1 ? 1
-      : currentPhaseIndex === 2 ? 1 - phaseProgress * 0.4
-      : 0.6;
-
-    return (
-      <Layout state={state} restart={restart} toggleLanguage={toggleLanguage} hideProgress>
-        <div className="w-full max-w-2xl" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
-          <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-
-          {calmKitMode === 'menu' && (
-            <div className="text-center space-y-8">
-              <div>
-                <h1 className="font-display text-5xl md:text-6xl text-stone-900 mb-3 tracking-wide uppercase">{t.calmKitPageTitle}</h1>
-                <p className="font-accent text-stone-500 text-lg font-bold">{t.calmKitPageSub}</p>
-              </div>
-              <div className="grid gap-4">
-                <button onClick={() => { setCalmKitMode('breathing'); setBreathSecond(0); }} className="p-8 bg-white rounded-[2rem] border-2 border-stone-100 hover:border-stone-300 hover:shadow-lg transition-all text-left group">
-                  <div className="flex items-center gap-4 mb-3">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl" style={{ backgroundColor: BRAND.blue }}>
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                    </div>
-                    <h3 className="font-display text-3xl text-stone-800 tracking-wide">{t.calmKitBreathingBtn}</h3>
-                  </div>
-                  <p className="font-accent text-stone-500 font-bold text-sm">{t.calmKitBreathingSub}</p>
-                </button>
-                <button onClick={() => { setCalmKitMode('grounding'); setGroundingStep(0); }} className="p-8 bg-white rounded-[2rem] border-2 border-stone-100 hover:border-stone-300 hover:shadow-lg transition-all text-left group">
-                  <div className="flex items-center gap-4 mb-3">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl" style={{ backgroundColor: BRAND.orange }}>
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                    </div>
-                    <h3 className="font-display text-3xl text-stone-800 tracking-wide">{t.calmKitGroundingBtn}</h3>
-                  </div>
-                  <p className="font-accent text-stone-500 font-bold text-sm">{t.calmKitGroundingSub}</p>
-                </button>
-              </div>
-              <button onClick={() => setState(prev => ({ ...prev, section: 'results' }))} className="text-stone-400 font-bold text-[10px] uppercase tracking-[0.3em] hover:text-stone-800 transition-colors py-4">
-                &larr; {t.calmKitBackToResults}
-              </button>
-            </div>
-          )}
-
-          {calmKitMode === 'breathing' && (
-            <div className="text-center space-y-10 py-8">
-              <h2 className="font-display text-4xl text-stone-800 tracking-wide uppercase">{t.calmKitBreathingBtn}</h2>
-              <div className="flex items-center justify-center py-8">
-                <div className="relative flex items-center justify-center" style={{ width: 200, height: 200 }}>
-                  <div className="absolute inset-0 rounded-full transition-transform duration-1000 ease-in-out" style={{
-                    background: `radial-gradient(circle, ${BRAND.blue}30, ${BRAND.blue}10)`,
-                    transform: `scale(${breathScale})`,
-                    border: `3px solid ${BRAND.blue}40`
-                  }}></div>
-                  <span className="relative font-display text-2xl tracking-wider z-10" style={{ color: BRAND.blue }}>{currentPhase}</span>
-                </div>
-              </div>
-              <div className="flex justify-center gap-1">
-                {[0,1,2,3].map(i => (
-                  <div key={i} className="w-2 h-2 rounded-full transition-colors duration-300" style={{ backgroundColor: currentPhaseIndex === i ? BRAND.blue : '#d6d3d1' }}></div>
-                ))}
-              </div>
-              <p className="text-stone-400 text-xs font-bold uppercase tracking-widest">
-                {Math.floor(breathSecond % 4) + 1}s
-              </p>
-              <div className="flex gap-4 justify-center pt-4">
-                <ActionButton variant="outline" onClick={() => setCalmKitMode('menu')} className="px-8">&larr; {t.back}</ActionButton>
-              </div>
-            </div>
-          )}
-
-          {calmKitMode === 'grounding' && (
-            <div className="text-center space-y-8 py-8">
-              {groundingStep < 5 ? (
-                <>
-                  <h2 className="font-display text-4xl text-stone-800 tracking-wide uppercase">{t.calmKitGroundingBtn}</h2>
-                  <div className="py-8">
-                    <div className="w-28 h-28 rounded-full mx-auto mb-6 flex items-center justify-center" style={{ backgroundColor: `${BRAND.orange}15`, border: `3px solid ${BRAND.orange}40` }}>
-                      <span className="font-display text-7xl" style={{ color: BRAND.orange }}>{GROUNDING_STEPS[groundingStep].count}</span>
-                    </div>
-                    <p className="font-accent text-stone-600 text-xl font-bold">{GROUNDING_STEPS[groundingStep].label}</p>
-                  </div>
-                  <div className="flex justify-center gap-2">
-                    {[0,1,2,3,4].map(i => (
-                      <div key={i} className="w-2.5 h-2.5 rounded-full transition-colors duration-300" style={{ backgroundColor: i <= groundingStep ? BRAND.orange : '#d6d3d1' }}></div>
-                    ))}
-                  </div>
-                  <div className="flex gap-4 justify-center pt-4">
-                    {groundingStep > 0 && <ActionButton variant="outline" onClick={() => setGroundingStep(s => s - 1)} className="px-8">&larr; {t.back}</ActionButton>}
-                    <ActionButton onClick={() => setGroundingStep(s => s + 1)} color={BRAND.orange} className="px-12">{t.next} &rarr;</ActionButton>
-                  </div>
-                </>
-              ) : (
-                <div className="py-12 space-y-6">
-                  <div className="w-20 h-20 rounded-full mx-auto flex items-center justify-center text-3xl text-white" style={{ backgroundColor: BRAND.orange }}>
-                    <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
-                  </div>
-                  <h2 className="font-display text-5xl text-stone-800 tracking-wide uppercase">{t.calmKitDone}</h2>
-                  <p className="font-accent text-stone-500 text-lg font-bold max-w-sm mx-auto">{t.calmKitDoneSub}</p>
-                  <div className="flex gap-4 justify-center pt-6">
-                    <ActionButton variant="outline" onClick={() => { setGroundingStep(0); setCalmKitMode('menu'); }} className="px-8">{t.restart}</ActionButton>
-                    <ActionButton onClick={() => setState(prev => ({ ...prev, section: 'results' }))} color={BRAND.blue} className="px-8">{t.calmKitBackToResults}</ActionButton>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </Layout>
     );
