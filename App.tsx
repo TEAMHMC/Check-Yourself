@@ -108,7 +108,7 @@ const Layout: React.FC<{ children: React.ReactNode, state: AssessmentState, rest
               </div>
             </div>
           )}
-          <button onClick={toggleLanguage} aria-label={`Switch to ${state.language === 'en' ? 'Spanish' : 'English'}`} className="text-[10px] font-bold text-stone-500 uppercase tracking-widest bg-white px-3.5 py-1.5 border border-stone-200 rounded-full hover:text-stone-800 hover:border-stone-300 transition-all">
+          <button onClick={toggleLanguage} aria-label={`Switch to ${state.language === 'en' ? 'Spanish' : 'English'}`} className="text-[10px] font-bold text-stone-500 uppercase tracking-wide bg-white px-3.5 py-1.5 border border-stone-200 rounded-full hover:text-stone-800 hover:border-stone-300 transition-all">
             {state.language === 'en' ? 'ES' : 'EN'}
           </button>
         </div>
@@ -117,7 +117,7 @@ const Layout: React.FC<{ children: React.ReactNode, state: AssessmentState, rest
         {children}
       </main>
       <footer className="py-8 text-center print:hidden">
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-[0.2em]">
+        <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">
           &copy; {new Date().getFullYear()} Health Matters Clinic. All Rights Reserved.
         </p>
       </footer>
@@ -407,8 +407,8 @@ const App: React.FC = () => {
           <div className="w-20 h-20 rounded-[1.75rem] flex items-center justify-center mb-8 shadow-xl" style={{ background: `linear-gradient(135deg, ${BRAND.blue}, ${BRAND.blueDark})` }}>
              <svg className="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
           </div>
-          <h1 className="font-display text-6xl md:text-7xl text-stone-900 mb-3 leading-[0.85] tracking-wide uppercase">{t.title}</h1>
-          <p className="font-bold mb-8 uppercase tracking-[0.4em] text-[10px]" style={{ color: BRAND.blue }}>{t.subtitle}</p>
+          <h1 className="font-display text-6xl md:text-7xl text-stone-900 mb-3 leading-[0.85] tracking-wide">{t.title}</h1>
+          <p className="font-medium mb-8 uppercase tracking-wide text-[10px]" style={{ color: BRAND.blue }}>{t.subtitle}</p>
           <p className="font-accent text-stone-600 mb-12 text-xl leading-relaxed font-medium max-w-sm">
             {t.intro}
           </p>
@@ -417,18 +417,18 @@ const App: React.FC = () => {
             <ActionButton onClick={handleStart} className="w-full py-5 text-xl" color={BRAND.blue}>
               {t.start}
             </ActionButton>
-            <p className="text-[10px] font-bold text-stone-400 leading-relaxed px-4 italic">
+            <p className="text-[10px] font-medium text-stone-400 leading-relaxed px-4 italic">
               {t.disclaimer}
             </p>
-            <button onClick={toggleLanguage} className="w-full text-xs font-bold text-stone-400 hover:text-stone-900 uppercase tracking-widest transition-colors py-2">
+            <button onClick={toggleLanguage} className="w-full text-xs font-bold text-stone-400 hover:text-stone-900 uppercase tracking-wide transition-colors py-2">
               {state.language === Language.EN ? 'Hacerlo en Español' : 'Check in in English'}
             </button>
           </div>
         </div>
 
         <div className="text-center space-y-3">
-           <h4 className="text-stone-400 font-bold text-[10px] uppercase tracking-[0.4em]">{t.checkYourself}</h4>
-           <a href="https://www.healthmatters.clinic" className="inline-flex items-center gap-2 text-stone-400 hover:text-stone-800 transition-colors text-[10px] font-bold group tracking-[0.3em] uppercase">
+           <h4 className="text-stone-400 font-medium text-[10px] uppercase tracking-wide">{t.checkYourself}</h4>
+           <a href="https://www.healthmatters.clinic" className="inline-flex items-center gap-2 text-stone-400 hover:text-stone-800 transition-colors text-[10px] font-medium group tracking-wide uppercase">
               <span className="group-hover:-translate-x-1 transition-transform">←</span> {t.backToClinic}
            </a>
         </div>
@@ -450,11 +450,11 @@ const App: React.FC = () => {
               <span className="font-display text-sm tracking-wider" style={{ color: catColor }}>
                 {qNum}/{qTotal}
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: catColor }}>
+              <span className="text-[10px] font-medium uppercase tracking-wide" style={{ color: catColor }}>
                 {currentQ?.category === 'mood' ? t.moodLabel : t.anxietyLabel}
               </span>
             </div>
-            <h2 className="font-accent text-2xl md:text-4xl font-bold text-stone-900 leading-snug">
+            <h2 className="font-accent text-2xl md:text-4xl font-medium text-stone-900 leading-snug">
               {currentQ?.text[state.language]}
             </h2>
           </div>
@@ -475,7 +475,7 @@ const App: React.FC = () => {
               </button>
             ))}
           </div>
-          <p className="mt-10 text-[10px] font-bold text-stone-300 uppercase tracking-widest text-center leading-relaxed">
+          <p className="mt-10 text-[10px] font-medium text-stone-300 uppercase tracking-wide text-center leading-relaxed">
             {t.overLast2Weeks}
           </p>
         </div>
@@ -488,7 +488,7 @@ const App: React.FC = () => {
       <Layout state={state} restart={restart} toggleLanguage={toggleLanguage}>
         <div className="w-full max-w-2xl" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
            <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-           <h4 className="font-bold text-[10px] uppercase tracking-[0.3em] mb-4" style={{ color: BRAND.yellow }}>{t.contextHeader}</h4>
+           <h4 className="font-medium text-[10px] uppercase tracking-wide mb-4" style={{ color: BRAND.yellow }}>{t.contextHeader}</h4>
            <h1 className="font-display text-5xl md:text-6xl text-stone-900 mb-4 leading-none tracking-wide">{t.lifeEventTitle}</h1>
            <p className="font-accent text-stone-600 mb-10 text-lg font-medium">{t.lifeEventSub}</p>
            <div className="grid gap-3">
@@ -514,7 +514,7 @@ const App: React.FC = () => {
       <Layout state={state} restart={restart} toggleLanguage={toggleLanguage}>
         <div className="w-full max-w-2xl" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
            <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-           <h4 className="font-bold text-[10px] uppercase tracking-[0.3em] mb-4" style={{ color: BRAND.orange }}>{t.environmentHeader}</h4>
+           <h4 className="font-medium text-[10px] uppercase tracking-wide mb-4" style={{ color: BRAND.orange }}>{t.environmentHeader}</h4>
            <h1 className="font-display text-5xl md:text-6xl text-stone-900 mb-4 leading-none tracking-wide">{t.rootCauseTitle}</h1>
            <p className="font-accent text-stone-600 mb-10 text-lg font-medium">{t.rootCauseSub}</p>
            <div className="grid gap-3">
@@ -561,7 +561,7 @@ const App: React.FC = () => {
           { (hasSuicidalIdeation || hasSevereSymptoms) && (
             <div className="p-8 md:p-10 text-white text-center print:hidden" style={{ background: hasSuicidalIdeation ? `linear-gradient(135deg, ${BRAND.red}, #b91c1c)` : `linear-gradient(135deg, ${BRAND.orange}, #e65100)` }}>
               <h3 className="font-display text-4xl mb-3 tracking-wide">{t.crisisTitle}</h3>
-              <p className="font-accent font-bold text-lg opacity-95 mb-8 max-w-sm mx-auto leading-tight">{t.crisisSub}</p>
+              <p className="font-accent font-medium text-lg opacity-95 mb-8 max-w-sm mx-auto leading-tight">{t.crisisSub}</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <ActionButton
                   onClick={() => window.location.href = 'tel:988'}
@@ -584,8 +584,8 @@ const App: React.FC = () => {
           )}
 
           <div className="p-8 md:p-10 text-center border-b border-stone-100" style={{ background: 'linear-gradient(180deg, #f5f5f0, white)' }}>
-            <h1 className="font-display text-5xl text-stone-800 mb-2 tracking-wide uppercase">{t.resultsHeader}</h1>
-            <p className="text-stone-500 font-bold uppercase tracking-[0.3em] text-[10px]">{t.subtitle}</p>
+            <h1 className="font-display text-5xl text-stone-800 mb-2 tracking-wide">{t.resultsHeader}</h1>
+            <p className="text-stone-500 font-medium uppercase tracking-wide text-[10px]">{t.subtitle}</p>
           </div>
 
           <div className="p-8 md:p-10 space-y-10">
@@ -593,13 +593,13 @@ const App: React.FC = () => {
               <div className="bg-stone-50 p-7 md:p-8 rounded-[1.75rem] border border-stone-100 shadow-sm">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: BRAND.pink }}></div>
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: BRAND.pink }}>{t.moodLabel}</h4>
+                  <h4 className="text-[10px] font-medium uppercase tracking-wide" style={{ color: BRAND.pink }}>{t.moodLabel}</h4>
                 </div>
                 <div className="font-display text-4xl text-stone-800 mb-2 tracking-wide">{phq.label}</div>
-                <p className="font-accent text-stone-600 leading-relaxed font-bold mb-4">{phq.recommendation}</p>
+                <p className="font-accent text-stone-600 leading-relaxed font-medium mb-4">{phq.recommendation}</p>
                 {phq.score > 0 && (
                   <div className="p-4 bg-white rounded-xl border border-stone-100">
-                    <span className="text-[10px] font-bold uppercase tracking-widest block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
+                    <span className="text-[10px] font-medium uppercase tracking-wide block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
                     <p className="text-xs text-stone-500 italic font-medium leading-relaxed">"{phq.clinicalTranslation}"</p>
                   </div>
                 )}
@@ -608,13 +608,13 @@ const App: React.FC = () => {
               <div className="bg-stone-50 p-7 md:p-8 rounded-[1.75rem] border border-stone-100 shadow-sm">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: BRAND.orange }}></div>
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: BRAND.orange }}>{t.anxietyLabel}</h4>
+                  <h4 className="text-[10px] font-medium uppercase tracking-wide" style={{ color: BRAND.orange }}>{t.anxietyLabel}</h4>
                 </div>
                 <div className="font-display text-4xl text-stone-800 mb-2 tracking-wide">{gad.label}</div>
-                <p className="font-accent text-stone-600 leading-relaxed font-bold mb-4">{gad.recommendation}</p>
+                <p className="font-accent text-stone-600 leading-relaxed font-medium mb-4">{gad.recommendation}</p>
                 {gad.score > 0 && (
                   <div className="p-4 bg-white rounded-xl border border-stone-100">
-                    <span className="text-[10px] font-bold uppercase tracking-widest block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
+                    <span className="text-[10px] font-medium uppercase tracking-wide block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
                     <p className="text-xs text-stone-500 italic font-medium leading-relaxed">"{gad.clinicalTranslation}"</p>
                   </div>
                 )}
@@ -624,7 +624,7 @@ const App: React.FC = () => {
             <div className="p-7 md:p-8 rounded-[1.75rem] border-2 border-stone-200 bg-stone-50/50 flex flex-col items-center text-center gap-5 print:hidden">
                 <div>
                    <h3 className="font-display text-3xl text-stone-800 mb-1 tracking-wide">{t.calmKitTitle}</h3>
-                   <p className="font-accent text-stone-600 font-semibold text-sm">{t.calmKitSub}</p>
+                   <p className="font-accent text-stone-600 font-medium text-sm">{t.calmKitSub}</p>
                 </div>
                 <ActionButton
                   href="https://teamhmc.github.io/CalmKit/"
@@ -639,7 +639,7 @@ const App: React.FC = () => {
               <h3 className="font-display text-2xl mb-4 tracking-wide">{t.doctorSpeakHeader}</h3>
               <p className="opacity-60 text-sm mb-6 leading-relaxed font-medium">{t.doctorSpeakIntro}</p>
               <div className="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur">
-                <p className="text-[10px] font-bold uppercase mb-2 tracking-widest" style={{ color: BRAND.yellow }}>{t.patientAdvocacyScript}</p>
+                <p className="text-[10px] font-medium uppercase mb-2 tracking-wide" style={{ color: BRAND.yellow }}>{t.patientAdvocacyScript}</p>
                 <p className="text-sm font-medium leading-relaxed italic opacity-90">{scriptText}</p>
               </div>
             </div>
@@ -647,20 +647,20 @@ const App: React.FC = () => {
             {/* HMC COMMUNITY CONNECTION Section on Results Page - Clean UI logic */}
             {!isAlreadyOptedIn ? (
               <div className="p-8 rounded-[2rem] bg-stone-50 border border-stone-100 shadow-sm space-y-6 print:hidden">
-                <h3 className="text-lg font-extrabold text-stone-800 tracking-tight uppercase">HMC COMMUNITY CONNECTION</h3>
+                <h3 className="text-lg font-medium text-stone-800 tracking-tight uppercase">HMC COMMUNITY CONNECTION</h3>
                 <div className="space-y-4">
                   <label className={`flex items-center gap-3 p-5 rounded-2xl cursor-pointer transition-all border ${state.gamePlan.smsOptIn ? 'bg-white border-stone-400 shadow-md' : 'bg-white border-stone-100 hover:border-stone-400'}`}>
                     <input type="checkbox" checked={state.gamePlan.smsOptIn} onChange={e => { updateGamePlan('smsOptIn', e.target.checked); if (e.target.checked) handleOptInSubmit('sms'); }} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
                     <div className="flex flex-col text-left">
                       <span className="text-sm font-bold text-stone-800">{t.smsCheckInLabel}</span>
-                      <span className="text-[10px] font-bold uppercase tracking-widest mt-0.5" style={{ color: BRAND.blue }}>{t.gpSmsConsent}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wide mt-0.5" style={{ color: BRAND.blue }}>{t.gpSmsConsent}</span>
                     </div>
                   </label>
                   <label className={`flex items-center gap-3 p-5 rounded-2xl cursor-pointer transition-all border ${state.gamePlan.appOptIn ? 'bg-white border-stone-400 shadow-md' : 'bg-white border-stone-100 hover:border-stone-400'}`}>
                     <input type="checkbox" checked={state.gamePlan.appOptIn} onChange={e => { updateGamePlan('appOptIn', e.target.checked); if (e.target.checked) handleOptInSubmit('app'); }} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
                     <div className="flex flex-col text-left">
                       <span className="text-sm font-bold text-stone-800">{t.appMemberLabel}</span>
-                      <span className="text-[10px] font-bold uppercase tracking-widest mt-0.5" style={{ color: BRAND.blue }}>{t.gpAppConsent}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wide mt-0.5" style={{ color: BRAND.blue }}>{t.gpAppConsent}</span>
                     </div>
                   </label>
                 </div>
@@ -668,37 +668,37 @@ const App: React.FC = () => {
             ) : (
               <div className="p-10 rounded-[2rem] bg-stone-50 border border-stone-200 shadow-inner text-center print:hidden flex flex-col items-center gap-2">
                 <div className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center mb-2"><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg></div>
-                <h3 className="text-xl font-extrabold text-stone-800 tracking-tight uppercase">{t.connectedMessage}</h3>
+                <h3 className="text-xl font-medium text-stone-800 tracking-tight uppercase">{t.connectedMessage}</h3>
                 <p className="text-stone-500 font-bold text-xs max-w-xs">{t.thanksSubscribing}</p>
               </div>
             )}
 
             <div className="space-y-6 pt-10 border-t border-stone-100 print:hidden">
-               <h2 className="font-display text-3xl text-stone-800 text-center mb-6 tracking-wide uppercase">{t.communityHeader}</h2>
+               <h2 className="font-display text-3xl text-stone-800 text-center mb-6 tracking-wide">{t.communityHeader}</h2>
 
                <div className="grid gap-4">
                   <a href="https://www.healthmatters.clinic/resources/eventfinder" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-3 p-8 md:p-10 rounded-2xl hover:shadow-lg transition-all group text-center border-2 border-transparent" style={{ background: `linear-gradient(135deg, ${BRAND.blue}08, ${BRAND.blue}15)`, borderColor: `${BRAND.blue}20` }}>
                     <h4 className="font-display text-3xl text-stone-800 leading-none tracking-wide">{t.eventLink}</h4>
-                    <p className="text-stone-500 text-[10px] font-bold uppercase tracking-[0.2em]">{t.communitySub}</p>
+                    <p className="text-stone-500 text-[10px] font-medium uppercase tracking-wide">{t.communitySub}</p>
                   </a>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button onClick={startGamePlan} className="p-5 bg-white border border-stone-100 rounded-2xl hover:border-stone-300 hover:shadow-md shadow-sm transition-all text-left group w-full h-full">
-                       <h4 className="font-bold text-stone-800 group-hover:text-stone-900 mb-1 uppercase tracking-tight text-sm">{t.gamePlanBtn}</h4>
-                       <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">{t.gamePlanSub}</p>
+                       <h4 className="font-medium text-stone-800 group-hover:text-stone-900 mb-1 uppercase tracking-tight text-sm">{t.gamePlanBtn}</h4>
+                       <p className="text-[10px] text-stone-400 font-medium uppercase tracking-wide">{t.gamePlanSub}</p>
                     </button>
 
                     <a href="https://www.healthmatters.clinic/resources/resource-directory" target="_blank" rel="noopener noreferrer" className="p-5 bg-white border border-stone-100 rounded-2xl hover:border-stone-300 hover:shadow-md shadow-sm transition-all">
-                       <h4 className="font-bold text-stone-800 mb-1 uppercase tracking-tight text-sm">{t.resourceBtn}</h4>
-                       <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">{t.resourceSub}</p>
+                       <h4 className="font-medium text-stone-800 mb-1 uppercase tracking-tight text-sm">{t.resourceBtn}</h4>
+                       <p className="text-[10px] text-stone-400 font-medium uppercase tracking-wide">{t.resourceSub}</p>
                     </a>
                     <a href="https://www.healthmatters.clinic/podcast" target="_blank" rel="noopener noreferrer" className="p-5 bg-white border border-stone-100 rounded-2xl hover:border-stone-300 hover:shadow-md shadow-sm transition-all">
-                       <h4 className="font-bold text-stone-800 mb-1 uppercase tracking-tight text-sm">{t.podcastBtn}</h4>
-                       <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">{t.podcastSub}</p>
+                       <h4 className="font-medium text-stone-800 mb-1 uppercase tracking-tight text-sm">{t.podcastBtn}</h4>
+                       <p className="text-[10px] text-stone-400 font-medium uppercase tracking-wide">{t.podcastSub}</p>
                     </a>
                     <a href="https://www.healthmatters.clinic/blog" target="_blank" rel="noopener noreferrer" className="p-5 bg-white border border-stone-100 rounded-2xl hover:border-stone-300 hover:shadow-md shadow-sm transition-all">
-                       <h4 className="font-bold text-stone-800 mb-1 uppercase tracking-tight text-sm">{t.blogBtn}</h4>
-                       <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">{t.blogSub}</p>
+                       <h4 className="font-medium text-stone-800 mb-1 uppercase tracking-tight text-sm">{t.blogBtn}</h4>
+                       <p className="text-[10px] text-stone-400 font-medium uppercase tracking-wide">{t.blogSub}</p>
                     </a>
                   </div>
                </div>
@@ -727,11 +727,11 @@ const App: React.FC = () => {
       <Layout state={state} restart={restart} toggleLanguage={toggleLanguage}>
         <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-xl border border-stone-100 p-8 md:p-12" style={{ animation: 'fadeSlideUp 0.4s ease-out' }}>
            <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-           <span className="text-[10px] font-bold uppercase tracking-[0.3em] mb-4 block" style={{ color: BRAND.blue }}>{t.gpPart} {step}: {t.gpStrategy}</span>
+           <span className="text-[10px] font-medium uppercase tracking-wide mb-4 block" style={{ color: BRAND.blue }}>{t.gpPart} {step}: {t.gpStrategy}</span>
 
            {step === 1 && (
              <div className="space-y-8">
-               <h2 className="font-display text-4xl text-stone-800 tracking-wide uppercase">{t.gpInventoryTitle}</h2>
+               <h2 className="font-display text-4xl text-stone-800 tracking-wide">{t.gpInventoryTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpGroundingLabel}</label>
                  <textarea value={state.gamePlan.grounding} onChange={e => updateGamePlan('grounding', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl focus:border-stone-800 h-24 outline-none transition-all font-['Inter'] font-bold" placeholder={t.gpGroundingPlaceholder} />
@@ -749,7 +749,7 @@ const App: React.FC = () => {
 
            {step === 2 && (
              <div className="space-y-8">
-               <h2 className="font-display text-4xl text-stone-800 tracking-wide uppercase">{t.gpStabilizeTitle}</h2>
+               <h2 className="font-display text-4xl text-stone-800 tracking-wide">{t.gpStabilizeTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpContactsLabel}</label>
                  <input type="text" value={state.gamePlan.contact1.name} onChange={e => updateGamePlanNested('contact1', 'name', e.target.value)} placeholder={`${t.gpNamePlaceholder} 1`} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold" />
@@ -764,7 +764,7 @@ const App: React.FC = () => {
                  <input type="tel" value={state.gamePlan.therapist.phone} onChange={e => updateGamePlanNested('therapist', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl font-bold" />
                </div>
                <div className="p-5 rounded-2xl border-2 border-dashed" style={{ borderColor: `${BRAND.red}40`, background: `${BRAND.red}08` }}>
-                 <h4 className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: BRAND.red }}>{t.gpCrisisNote}</h4>
+                 <h4 className="text-[10px] font-medium uppercase tracking-wide mb-3" style={{ color: BRAND.red }}>{t.gpCrisisNote}</h4>
                  <div className="space-y-2 text-sm font-bold text-stone-700">
                    <p>988 Suicide & Crisis Lifeline</p>
                    <p>741741 Crisis Text Line</p>
@@ -777,7 +777,7 @@ const App: React.FC = () => {
 
            {step === 3 && (
              <div className="space-y-8">
-               <h2 className="font-display text-4xl text-stone-800 tracking-wide uppercase">{t.gpResetTitle}</h2>
+               <h2 className="font-display text-4xl text-stone-800 tracking-wide">{t.gpResetTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpPlaylistLabel}</label>
                  <textarea value={state.gamePlan.playlist} onChange={e => updateGamePlan('playlist', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-20 mb-4 font-bold" placeholder={t.gpPlaylistPlaceholder} />
@@ -789,7 +789,7 @@ const App: React.FC = () => {
 
            {step === 4 && (
              <div className="space-y-8">
-               <h2 className="font-display text-4xl text-stone-800 tracking-wide uppercase">{t.gpReconnectTitle}</h2>
+               <h2 className="font-display text-4xl text-stone-800 tracking-wide">{t.gpReconnectTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpForwardLabel}</label>
                  <textarea value={state.gamePlan.forward} onChange={e => updateGamePlan('forward', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-24 mb-4 font-bold" placeholder={t.gpForwardPlaceholder} />
@@ -799,20 +799,20 @@ const App: React.FC = () => {
                </div>
                
                <div className="pt-6 border-t border-stone-100 space-y-4">
-                 <h3 className="text-sm font-bold text-stone-800 uppercase tracking-widest">HMC COMMUNITY CONNECTION</h3>
+                 <h3 className="text-sm font-medium text-stone-800 uppercase tracking-wide">HMC COMMUNITY CONNECTION</h3>
                  <div className="space-y-3">
                     <label className={`flex items-center gap-3 p-5 rounded-2xl cursor-pointer hover:bg-stone-50 transition-colors border ${state.gamePlan.smsOptIn ? 'bg-white border-stone-400 shadow-md' : 'bg-stone-50 border-stone-100'}`}>
                       <input type="checkbox" checked={state.gamePlan.smsOptIn} onChange={e => { updateGamePlan('smsOptIn', e.target.checked); if (e.target.checked) handleOptInSubmit('sms'); }} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
                       <div className="flex flex-col text-left">
                         <span className="text-sm font-bold text-stone-800">{t.smsCheckInLabel}</span>
-                        <span className="text-[10px] font-bold uppercase tracking-widest mt-0.5" style={{ color: BRAND.blue }}>{t.gpSmsConsent}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wide mt-0.5" style={{ color: BRAND.blue }}>{t.gpSmsConsent}</span>
                       </div>
                     </label>
                     <label className={`flex items-center gap-3 p-5 rounded-2xl cursor-pointer hover:bg-stone-50 transition-colors border ${state.gamePlan.appOptIn ? 'bg-white border-stone-400 shadow-md' : 'bg-stone-50 border-stone-100'}`}>
                       <input type="checkbox" checked={state.gamePlan.appOptIn} onChange={e => { updateGamePlan('appOptIn', e.target.checked); if (e.target.checked) handleOptInSubmit('app'); }} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
                       <div className="flex flex-col text-left">
                         <span className="text-sm font-bold text-stone-800">{t.appMemberLabel}</span>
-                        <span className="text-[10px] font-bold uppercase tracking-widest mt-0.5" style={{ color: BRAND.blue }}>{t.gpAppConsent}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wide mt-0.5" style={{ color: BRAND.blue }}>{t.gpAppConsent}</span>
                       </div>
                     </label>
                  </div>
@@ -840,20 +840,20 @@ const App: React.FC = () => {
         <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl border border-stone-100 overflow-hidden print:shadow-none print:border print:border-stone-200 print:rounded-[1rem]" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
            <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
            <div className="p-10 md:p-12 text-center text-white border-b border-stone-200" style={{ background: `linear-gradient(135deg, #1a1a1a, ${BRAND.blueDark})` }}>
-              <h1 className="font-display text-5xl tracking-wide mb-2 uppercase">{t.gpResultsHeader}</h1>
-              <p className="font-bold text-[10px] uppercase tracking-[0.3em]" style={{ color: BRAND.yellow }}>{t.gpResultsSub} &middot; {new Date().toLocaleDateString()}</p>
+              <h1 className="font-display text-5xl tracking-wide mb-2">{t.gpResultsHeader}</h1>
+              <p className="font-medium text-[10px] uppercase tracking-wide" style={{ color: BRAND.yellow }}>{t.gpResultsSub} &middot; {new Date().toLocaleDateString()}</p>
            </div>
            <div className="p-10 space-y-8 text-sm">
               <p className="font-accent text-stone-500 text-center text-sm font-medium leading-relaxed italic">{t.gpResultsIntro}</p>
 
               <div className="p-6 bg-stone-50 rounded-2xl border border-stone-200 shadow-sm">
-                <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-2 tracking-widest">{t.gpResultsGrounding}</h4>
+                <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-2 tracking-wide">{t.gpResultsGrounding}</h4>
                 <p className="text-stone-800 font-bold italic">"{state.gamePlan.grounding || t.gpResultsGroundingText}"</p>
               </div>
 
               {state.gamePlan.tools.length > 0 && (
                 <div className="p-6 bg-stone-50 rounded-2xl border border-stone-200 shadow-sm">
-                  <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-3 tracking-widest">{t.gpResultsTools}</h4>
+                  <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-3 tracking-wide">{t.gpResultsTools}</h4>
                   <div className="flex flex-wrap gap-2">
                     {state.gamePlan.tools.map(id => {
                       const tool = TOOL_OPTIONS.find(o => o.id === id);
@@ -865,7 +865,7 @@ const App: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-6 border border-stone-100 rounded-2xl shadow-sm bg-white">
-                   <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-3 tracking-widest">{t.gpResultsEmergency}</h4>
+                   <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-3 tracking-wide">{t.gpResultsEmergency}</h4>
                    <p className="font-bold text-stone-800 mb-0.5">{state.gamePlan.contact1.name || t.gpResultsPrimary}</p>
                    <p className="text-stone-500 mb-3 font-bold">{state.gamePlan.contact1.phone || '---'}</p>
                    <p className="font-bold text-stone-800 mb-0.5">{state.gamePlan.contact2.name || t.gpResultsSecondary}</p>
@@ -873,7 +873,7 @@ const App: React.FC = () => {
                 </div>
                 {(state.gamePlan.therapist.name || state.gamePlan.therapist.phone) && (
                   <div className="p-6 border border-stone-100 rounded-2xl shadow-sm bg-white">
-                     <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-3 tracking-widest">{t.gpResultsTherapist}</h4>
+                     <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-3 tracking-wide">{t.gpResultsTherapist}</h4>
                      <p className="font-bold text-stone-800 mb-0.5">{state.gamePlan.therapist.name}</p>
                      <p className="text-stone-500 font-bold">{state.gamePlan.therapist.phone || '---'}</p>
                   </div>
@@ -883,13 +883,13 @@ const App: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {state.gamePlan.playlist && (
                   <div className="p-6 border border-stone-100 rounded-2xl shadow-sm bg-white">
-                    <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-2 tracking-widest">{t.gpResultsPlaylist}</h4>
+                    <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-2 tracking-wide">{t.gpResultsPlaylist}</h4>
                     <p className="text-stone-800 font-bold">{state.gamePlan.playlist}</p>
                   </div>
                 )}
                 {state.gamePlan.creative && (
                   <div className="p-6 border border-stone-100 rounded-2xl shadow-sm bg-white">
-                    <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-2 tracking-widest">{t.gpResultsCreative}</h4>
+                    <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-2 tracking-wide">{t.gpResultsCreative}</h4>
                     <p className="text-stone-800 font-bold">{state.gamePlan.creative}</p>
                   </div>
                 )}
@@ -897,18 +897,18 @@ const App: React.FC = () => {
 
               {state.gamePlan.forward && (
                 <div className="p-6 bg-stone-50 rounded-2xl border border-stone-200 shadow-sm">
-                  <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-2 tracking-widest">{t.gpResultsLookingForward}</h4>
+                  <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-2 tracking-wide">{t.gpResultsLookingForward}</h4>
                   <p className="text-stone-800 font-bold">{state.gamePlan.forward}</p>
                 </div>
               )}
 
               <div className="pt-8 border-t border-stone-100">
-                 <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-2 tracking-widest">{t.gpResultsMessage}</h4>
-                 <p className="text-xl font-extrabold text-stone-800 leading-tight">"{state.gamePlan.message || t.gpResultsMessageText}"</p>
+                 <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-2 tracking-wide">{t.gpResultsMessage}</h4>
+                 <p className="text-xl font-medium text-stone-800 leading-tight">"{state.gamePlan.message || t.gpResultsMessageText}"</p>
               </div>
 
               <div className="p-5 rounded-2xl border-2 border-dashed border-stone-200 text-center print:hidden">
-                 <h4 className="font-bold text-stone-400 uppercase text-[10px] mb-1 tracking-widest" style={{ color: BRAND.red }}>{t.gpCrisisNote}</h4>
+                 <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-1 tracking-wide" style={{ color: BRAND.red }}>{t.gpCrisisNote}</h4>
                  <p className="text-sm font-bold text-stone-700">988 &middot; 741741 &middot; 1-800-854-7771</p>
               </div>
 
@@ -929,10 +929,10 @@ const App: React.FC = () => {
                     {t.gpBeginReferral}
                  </ActionButton>
               </div>
-              <p className="text-center text-stone-400 text-[10px] font-bold uppercase tracking-widest print:hidden">{t.gpReferralSub}</p>
+              <p className="text-center text-stone-400 text-[10px] font-medium uppercase tracking-wide print:hidden">{t.gpReferralSub}</p>
 
               <div className="text-center pt-4 print:hidden">
-                 <button onClick={restart} className="text-stone-400 font-bold text-[10px] uppercase tracking-[0.3em] hover:text-stone-800 transition-colors flex items-center justify-center gap-2 mx-auto">
+                 <button onClick={restart} className="text-stone-400 font-medium text-[10px] uppercase tracking-wide hover:text-stone-800 transition-colors flex items-center justify-center gap-2 mx-auto">
                     <RestartIcon /> {t.returnDashboard.toUpperCase()}
                  </button>
               </div>
