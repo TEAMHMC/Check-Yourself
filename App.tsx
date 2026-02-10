@@ -517,7 +517,7 @@ const App: React.FC = () => {
                    <p className="font-accent text-stone-600 font-bold text-sm">{t.calmKitSub}</p>
                 </div>
                 <ActionButton
-                  href="https://www.healthmatters.clinic/resources/calm-kit"
+                  href="https://www.healthmatters.clinic/resources/calmkit"
                   className="w-full sm:w-auto px-12"
                   color={BRAND.blue}
                 >
@@ -567,7 +567,7 @@ const App: React.FC = () => {
                <h2 className="font-display text-3xl text-stone-800 text-center mb-6 tracking-wide uppercase">{t.communityHeader}</h2>
 
                <div className="grid gap-4">
-                  <a href="https://www.healthmatters.clinic/resources/event-finder" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-3 p-8 md:p-10 rounded-2xl hover:shadow-lg transition-all group text-center border-2 border-transparent" style={{ background: `linear-gradient(135deg, ${BRAND.blue}08, ${BRAND.blue}15)`, borderColor: `${BRAND.blue}20` }}>
+                  <a href="https://www.healthmatters.clinic/resources/eventfinder" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-3 p-8 md:p-10 rounded-2xl hover:shadow-lg transition-all group text-center border-2 border-transparent" style={{ background: `linear-gradient(135deg, ${BRAND.blue}08, ${BRAND.blue}15)`, borderColor: `${BRAND.blue}20` }}>
                     <h4 className="font-display text-3xl text-stone-800 leading-none tracking-wide">{t.eventLink}</h4>
                     <p className="text-stone-500 text-[10px] font-bold uppercase tracking-[0.2em]">{t.communitySub}</p>
                   </a>
