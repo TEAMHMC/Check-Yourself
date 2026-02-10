@@ -6,6 +6,7 @@ import { calculatePHQ9, calculateGAD7 } from './services/scoring';
 
 const BRAND = {
   blue: '#233dff',
+  blueDark: '#1a2b99',
   pink: '#FF6F91',
   yellow: '#f9c74f',
   orange: '#ff6e40',
@@ -30,27 +31,39 @@ const ShareIcon = () => (
 
 // --- SUB-COMPONENTS ---
 
-const ActionButton: React.FC<{ 
-  onClick?: () => void, 
-  children: React.ReactNode, 
-  variant?: 'primary' | 'outline', 
+const ActionButton: React.FC<{
+  onClick?: () => void,
+  children: React.ReactNode,
+  variant?: 'primary' | 'outline',
   color?: string,
   className?: string,
   icon?: React.ReactNode,
-  noDot?: boolean
-}> = ({ onClick, children, variant = 'primary', color = BRAND.blue, className, icon, noDot }) => {
+  noDot?: boolean,
+  href?: string
+}> = ({ onClick, children, variant = 'primary', color = BRAND.blue, className, icon, noDot, href }) => {
   const isPrimary = variant === 'primary';
   const dotColorClass = isPrimary ? 'bg-white' : 'bg-black';
-  
-  return (
-    <button 
-      onClick={onClick} 
-      className={`flex items-center justify-center gap-3 px-6 py-3 rounded-full font-bold transition-all active:scale-95 border-2 border-black ${className} ${isPrimary ? 'shadow-lg text-white' : 'text-stone-800 bg-white hover:bg-stone-50'}`}
-      style={isPrimary ? { backgroundColor: color } : {}}
-    >
+  const baseClasses = `flex items-center justify-center gap-3 px-6 py-3.5 rounded-full font-bold transition-all duration-200 active:scale-[0.97] border-2 ${className} ${isPrimary ? 'shadow-lg hover:shadow-xl text-white border-transparent' : 'text-stone-800 bg-white hover:bg-stone-50 border-stone-200 hover:border-stone-400'}`;
+
+  const inner = (
+    <>
       {!noDot && !icon && <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dotColorClass}`}></div>}
       {icon && <span className="flex items-center justify-center flex-shrink-0">{icon}</span>}
-      <span className="leading-none text-xs uppercase tracking-tight">{children}</span>
+      <span className="leading-none text-xs uppercase tracking-wide">{children}</span>
+    </>
+  );
+
+  if (href) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={baseClasses} style={isPrimary ? { backgroundColor: color } : {}}>
+        {inner}
+      </a>
+    );
+  }
+
+  return (
+    <button onClick={onClick} className={baseClasses} style={isPrimary ? { backgroundColor: color } : {}}>
+      {inner}
     </button>
   );
 };
@@ -77,28 +90,29 @@ const Layout: React.FC<{ children: React.ReactNode, state: AssessmentState, rest
           }
         `}
       </style>
-      <div className="sticky top-0 z-10 bg-[#faf9f6]/80 backdrop-blur-md border-b border-stone-100 print:hidden">
-        <div className="max-w-2xl mx-auto px-6 py-6 flex items-center justify-between">
-          <button onClick={restart} className="w-10 h-10 flex items-center justify-center bg-white border border-stone-200 rounded-full shadow-sm hover:bg-stone-50 transition-colors">
-             <svg className="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+      <div className="sticky top-0 z-10 bg-[#faf9f6]/90 backdrop-blur-lg border-b border-stone-100/80 print:hidden">
+        <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
+          <button onClick={restart} aria-label="Close and restart" className="w-10 h-10 flex items-center justify-center bg-white border border-stone-200 rounded-full shadow-sm hover:bg-stone-50 hover:border-stone-300 transition-all">
+             <svg className="w-5 h-5 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
           {!hideProgress && (
-            <div className="flex-1 px-8">
-              <div className="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden">
-                  <div className="h-full transition-all duration-500 ease-out" style={{ width: `${state.section === 'assessment' ? progress : 100}%`, backgroundColor: BRAND.blue }}></div>
+            <div className="flex-1 px-6">
+              <div className="w-full bg-stone-200/60 h-1 rounded-full overflow-hidden" role="progressbar" aria-valuenow={Math.round(state.section === 'assessment' ? progress : 100)} aria-valuemin={0} aria-valuemax={100}>
+                  <div className="h-full rounded-full transition-all duration-500 ease-out" style={{ width: `${state.section === 'assessment' ? progress : 100}%`, background: `linear-gradient(90deg, ${BRAND.blue}, ${BRAND.orange})` }}></div>
               </div>
             </div>
           )}
-          <button onClick={toggleLanguage} className="text-[10px] font-bold text-stone-400 uppercase tracking-widest bg-white px-3 py-1.5 border border-stone-200 rounded-full hover:text-stone-800 transition-colors">
-            {state.language.toUpperCase()}
+          <button onClick={toggleLanguage} aria-label={`Switch to ${state.language === 'en' ? 'Spanish' : 'English'}`} className="text-[10px] font-bold text-stone-500 uppercase tracking-widest bg-white px-3.5 py-1.5 border border-stone-200 rounded-full hover:text-stone-800 hover:border-stone-300 transition-all">
+            {state.language === 'en' ? 'ES' : 'EN'}
           </button>
         </div>
       </div>
       <main className="flex-1 flex items-center justify-center p-6 pb-20">
         {children}
       </main>
-      <footer className="py-10 text-center text-stone-300 text-[10px] uppercase tracking-[0.4em] font-bold print:hidden">
-        Health Matters Clinic &copy; 2025
+      <footer className="py-8 text-center print:hidden">
+        <p className="text-stone-300 text-[10px] uppercase tracking-[0.3em] font-bold mb-1">Health Matters Clinic</p>
+        <p className="text-stone-300/60 text-[9px] tracking-wider"><a href="https://healthmatters.clinic" target="_blank" rel="noopener noreferrer" className="hover:text-stone-400 transition-colors">healthmatters.clinic</a> &middot; (323) 990-4325</p>
       </footer>
     </div>
   );
@@ -251,32 +265,60 @@ const App: React.FC = () => {
   if (state.section === 'intro') {
     return (
       <div className="min-h-screen bg-[#faf9f6] p-4 md:p-8 flex flex-col items-center justify-center font-['Inter']">
-        <div className="w-full max-w-xl bg-white rounded-[3rem] shadow-2xl p-10 md:p-16 text-center flex flex-col items-center border border-stone-100 animate-in fade-in zoom-in duration-500 mb-8">
-          <div className="w-24 h-24 rounded-[2.5rem] flex items-center justify-center mb-10 shadow-2xl transition-transform hover:rotate-6 duration-500" style={{ backgroundColor: BRAND.blue }}>
-             <span className="text-4xl text-white">✨</span>
+        <div className="w-full max-w-xl bg-white rounded-[3rem] shadow-2xl p-10 md:p-16 text-center flex flex-col items-center border border-stone-100 mb-8" style={{ animation: 'fadeSlideUp 0.6s ease-out' }}>
+          <style>{`
+            @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+            @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+          `}</style>
+          <div className="w-20 h-20 rounded-[1.75rem] flex items-center justify-center mb-8 shadow-xl" style={{ background: `linear-gradient(135deg, ${BRAND.blue}, ${BRAND.blueDark})` }}>
+             <span className="text-3xl text-white">✨</span>
           </div>
-          <h1 className="text-5xl font-extrabold text-stone-900 mb-4 leading-[0.9] tracking-tighter uppercase">{t.title}</h1>
-          <p className="font-bold mb-8 uppercase tracking-[0.3em] text-[10px]" style={{ color: BRAND.blue }}>{t.subtitle}</p>
-          <p className="text-stone-600 mb-12 text-xl leading-relaxed font-medium max-w-sm">
+          <h1 className="font-display text-6xl md:text-7xl text-stone-900 mb-3 leading-[0.85] tracking-wide uppercase">{t.title}</h1>
+          <p className="font-bold mb-8 uppercase tracking-[0.4em] text-[10px]" style={{ color: BRAND.blue }}>{t.subtitle}</p>
+          <p className="font-accent text-stone-600 mb-12 text-xl leading-relaxed font-medium max-w-sm">
             {t.intro}
           </p>
-          
-          <div className="w-full space-y-6">
+
+          <div className="w-full flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-stone-50 rounded-2xl border border-stone-100">
+              <span className="text-lg" aria-hidden="true">🧠</span>
+              <div className="text-left">
+                <div className="text-xs font-bold text-stone-800">16 Questions</div>
+                <div className="text-[10px] text-stone-400 font-medium">~3 min</div>
+              </div>
+            </div>
+            <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-stone-50 rounded-2xl border border-stone-100">
+              <span className="text-lg" aria-hidden="true">🔒</span>
+              <div className="text-left">
+                <div className="text-xs font-bold text-stone-800">100% Private</div>
+                <div className="text-[10px] text-stone-400 font-medium">Nothing saved</div>
+              </div>
+            </div>
+            <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-stone-50 rounded-2xl border border-stone-100">
+              <span className="text-lg" aria-hidden="true">🌐</span>
+              <div className="text-left">
+                <div className="text-xs font-bold text-stone-800">EN / ES</div>
+                <div className="text-[10px] text-stone-400 font-medium">Bilingual</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full space-y-5">
             <ActionButton onClick={handleStart} className="w-full py-5 text-xl" color={BRAND.blue}>
               {t.start}
             </ActionButton>
             <p className="text-[10px] font-bold text-stone-400 leading-relaxed px-4 italic">
               {t.disclaimer}
             </p>
-            <button onClick={toggleLanguage} className="w-full text-xs font-bold text-stone-400 hover:text-stone-900 uppercase tracking-widest transition-colors">
+            <button onClick={toggleLanguage} className="w-full text-xs font-bold text-stone-400 hover:text-stone-900 uppercase tracking-widest transition-colors py-2">
               {state.language === Language.EN ? 'Hacerlo en Español' : 'Check in in English'}
             </button>
           </div>
         </div>
 
-        <div className="text-center space-y-4">
-           <h4 className="text-stone-400 font-bold text-[11px] uppercase tracking-[0.4em]">{t.checkYourself}</h4>
-           <a href="https://www.healthmatters.clinic" className="inline-flex items-center gap-2 text-stone-400 hover:text-stone-800 transition-colors text-xs font-bold group tracking-widest uppercase">
+        <div className="text-center space-y-3">
+           <h4 className="text-stone-400 font-bold text-[10px] uppercase tracking-[0.4em]">{t.checkYourself}</h4>
+           <a href="https://www.healthmatters.clinic" className="inline-flex items-center gap-2 text-stone-400 hover:text-stone-800 transition-colors text-[10px] font-bold group tracking-[0.3em] uppercase">
               <span className="group-hover:-translate-x-1 transition-transform">←</span> {t.backToClinic}
            </a>
         </div>
@@ -287,28 +329,43 @@ const App: React.FC = () => {
   if (state.section === 'assessment') {
     const currentQ = QUESTIONS[state.currentStep];
     const catColor = currentQ?.category === 'mood' ? BRAND.pink : BRAND.orange;
+    const qNum = state.currentStep + 1;
+    const qTotal = QUESTIONS.length;
     return (
       <Layout state={state} restart={restart} toggleLanguage={toggleLanguage}>
-        <div className="w-full max-w-2xl animate-in slide-in-from-bottom-8 duration-700">
-          <div className="mb-12">
-            <h4 className="font-bold text-[10px] uppercase tracking-[0.3em] mb-4" style={{ color: catColor }}>
-              {currentQ?.category === 'mood' ? t.moodLabel : t.anxietyLabel}
-            </h4>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-stone-900 leading-[1.1] tracking-tight">
+        <div className="w-full max-w-2xl" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
+          <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+          <div className="mb-10">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="font-display text-sm tracking-wider" style={{ color: catColor }}>
+                {qNum}/{qTotal}
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: catColor }}>
+                {currentQ?.category === 'mood' ? t.moodLabel : t.anxietyLabel}
+              </span>
+            </div>
+            <h2 className="font-accent text-2xl md:text-4xl font-bold text-stone-900 leading-snug">
               {currentQ?.text[state.language]}
             </h2>
           </div>
-          <div className="grid gap-4">
+          <div className="grid gap-3" role="radiogroup" aria-label="Response options">
             {SCORING_OPTIONS.map((option) => (
-              <button key={option.value} onClick={() => handleAnswer(option.value)} className="w-full p-6 text-left rounded-[1.5rem] bg-white border border-stone-100 hover:border-stone-400 transition-all group flex items-center justify-between hover:shadow-xl hover:shadow-stone-100 active:scale-[0.98]">
-                <span className="text-xl font-bold text-stone-700 group-hover:text-stone-900">{option.label[state.language]}</span>
-                <div className="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center">
-                  <div className="w-4 h-4 rounded-full bg-stone-800 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+              <button
+                key={option.value}
+                onClick={() => handleAnswer(option.value)}
+                role="radio"
+                aria-checked={state.answers[currentQ?.id] === option.value}
+                className="w-full p-5 md:p-6 text-left rounded-2xl bg-white border-2 border-stone-100 hover:border-stone-400 transition-all group flex items-center justify-between hover:shadow-lg active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2"
+                style={{ outlineColor: BRAND.blue }}
+              >
+                <span className="text-lg md:text-xl font-bold text-stone-700 group-hover:text-stone-900">{option.label[state.language]}</span>
+                <div className="w-8 h-8 rounded-full border-2 border-stone-200 group-hover:border-stone-400 flex items-center justify-center transition-all flex-shrink-0 ml-4">
+                  <div className="w-3.5 h-3.5 rounded-full opacity-0 group-hover:opacity-30 transition-opacity" style={{ backgroundColor: catColor }}></div>
                 </div>
               </button>
             ))}
           </div>
-          <p className="mt-12 text-[10px] font-bold text-stone-300 uppercase tracking-widest text-center leading-relaxed">
+          <p className="mt-10 text-[10px] font-bold text-stone-300 uppercase tracking-widest text-center leading-relaxed">
             {t.overLast2Weeks}
           </p>
         </div>
@@ -319,10 +376,11 @@ const App: React.FC = () => {
   if (state.section === 'life-events') {
     return (
       <Layout state={state} restart={restart} toggleLanguage={toggleLanguage}>
-        <div className="w-full max-w-2xl animate-in slide-in-from-bottom-8 duration-700">
+        <div className="w-full max-w-2xl" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
+           <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
            <h4 className="font-bold text-[10px] uppercase tracking-[0.3em] mb-4" style={{ color: BRAND.yellow }}>{t.contextHeader}</h4>
-           <h1 className="text-4xl md:text-5xl font-extrabold text-stone-900 mb-4 leading-tight tracking-tight">{t.lifeEventTitle}</h1>
-           <p className="text-stone-600 mb-10 text-lg font-medium">{t.lifeEventSub}</p>
+           <h1 className="font-display text-5xl md:text-6xl text-stone-900 mb-4 leading-none tracking-wide">{t.lifeEventTitle}</h1>
+           <p className="font-accent text-stone-600 mb-10 text-lg font-medium">{t.lifeEventSub}</p>
            <div className="grid gap-3">
               {LIFE_EVENT_OPTIONS.map(opt => (
                 <button key={opt.id} onClick={() => toggleList('lifeEvents', opt.id)} className={`w-full p-5 text-left rounded-2xl border transition-all flex items-center justify-between ${state.lifeEvents.includes(opt.id) ? 'bg-stone-50 shadow-md border-stone-300' : 'border-stone-100 bg-white hover:border-stone-300'}`}>
@@ -344,10 +402,11 @@ const App: React.FC = () => {
   if (state.section === 'root-cause') {
     return (
       <Layout state={state} restart={restart} toggleLanguage={toggleLanguage}>
-        <div className="w-full max-w-2xl animate-in slide-in-from-bottom-8 duration-700">
+        <div className="w-full max-w-2xl" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
+           <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
            <h4 className="font-bold text-[10px] uppercase tracking-[0.3em] mb-4" style={{ color: BRAND.orange }}>{t.environmentHeader}</h4>
-           <h1 className="text-4xl md:text-5xl font-extrabold text-stone-900 mb-4 leading-tight tracking-tight">{t.rootCauseTitle}</h1>
-           <p className="text-stone-600 mb-10 text-lg font-medium">{t.rootCauseSub}</p>
+           <h1 className="font-display text-5xl md:text-6xl text-stone-900 mb-4 leading-none tracking-wide">{t.rootCauseTitle}</h1>
+           <p className="font-accent text-stone-600 mb-10 text-lg font-medium">{t.rootCauseSub}</p>
            <div className="grid gap-3">
               {SDOH_OPTIONS.map(opt => (
                 <button key={opt.id} onClick={() => toggleList('rootCauses', opt.id)} className={`w-full p-5 text-left rounded-2xl border transition-all flex items-center justify-between ${state.rootCauses.includes(opt.id) ? 'bg-stone-50 shadow-md border-stone-300' : 'border-stone-100 bg-white hover:border-stone-300'}`}>
@@ -387,61 +446,78 @@ const App: React.FC = () => {
 
     return (
       <Layout state={state} restart={restart} toggleLanguage={toggleLanguage}>
-        <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl border border-stone-100 overflow-hidden animate-in fade-in duration-500 pb-12 print:shadow-none print:border print:border-stone-200 print:rounded-[1rem]">
+        <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl border border-stone-100 overflow-hidden pb-12 print:shadow-none print:border print:border-stone-200 print:rounded-[1rem]" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
+          <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
           { (hasSuicidalIdeation || hasSevereSymptoms) && (
-            <div className="p-10 text-white text-center print:hidden" style={{ backgroundColor: hasSuicidalIdeation ? BRAND.red : BRAND.orange }}>
-              <h3 className="text-3xl font-extrabold mb-3 uppercase tracking-tighter">{t.crisisTitle}</h3>
-              <p className="font-bold text-lg opacity-95 mb-8 max-w-sm mx-auto leading-tight">{t.crisisSub}</p>
-              <ActionButton 
-                onClick={() => window.location.href = 'tel:988'} 
-                className="mx-auto shadow-2xl px-10 border-white" 
-                noDot 
-                color={BRAND.blue}
-              >
-                <span className="text-white text-xl">{t.call988}</span>
-              </ActionButton>
+            <div className="p-8 md:p-10 text-white text-center print:hidden" style={{ background: hasSuicidalIdeation ? `linear-gradient(135deg, ${BRAND.red}, #b91c1c)` : `linear-gradient(135deg, ${BRAND.orange}, #e65100)` }}>
+              <h3 className="font-display text-4xl mb-3 tracking-wide">{t.crisisTitle}</h3>
+              <p className="font-accent font-bold text-lg opacity-95 mb-8 max-w-sm mx-auto leading-tight">{t.crisisSub}</p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <ActionButton
+                  onClick={() => window.location.href = 'tel:988'}
+                  className="shadow-2xl px-10 border-transparent"
+                  noDot
+                  color={BRAND.blue}
+                >
+                  <span className="text-white text-lg">{t.call988}</span>
+                </ActionButton>
+                <ActionButton
+                  onClick={() => window.location.href = 'sms:741741&body=HELLO'}
+                  variant="outline"
+                  className="border-white/30 text-white hover:bg-white/10"
+                  noDot
+                >
+                  <span className="text-white text-sm">Text HOME to 741741</span>
+                </ActionButton>
+              </div>
             </div>
           )}
 
-          <div className="bg-stone-50 p-10 text-center border-b border-stone-100">
-            <h1 className="text-4xl font-extrabold text-stone-800 mb-2 uppercase tracking-tight">{t.resultsHeader}</h1>
-            <p className="text-stone-500 font-bold uppercase tracking-[0.2em] text-[10px]">{t.subtitle}</p>
+          <div className="p-8 md:p-10 text-center border-b border-stone-100" style={{ background: 'linear-gradient(180deg, #f5f5f0, white)' }}>
+            <h1 className="font-display text-5xl text-stone-800 mb-2 tracking-wide uppercase">{t.resultsHeader}</h1>
+            <p className="text-stone-500 font-bold uppercase tracking-[0.3em] text-[10px]">{t.subtitle}</p>
           </div>
 
-          <div className="p-10 space-y-10">
-            <div className="grid gap-6">
-              <div className="bg-stone-50 p-8 rounded-[2rem] border border-stone-100 shadow-sm">
-                <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: BRAND.pink }}>{t.moodLabel}</h4>
-                <div className="text-3xl font-extrabold text-stone-800 mb-2">{phq.label}</div>
-                <p className="text-stone-600 leading-relaxed font-bold mb-4">{phq.recommendation}</p>
+          <div className="p-8 md:p-10 space-y-10">
+            <div className="grid gap-5">
+              <div className="bg-stone-50 p-7 md:p-8 rounded-[1.75rem] border border-stone-100 shadow-sm">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: BRAND.pink }}></div>
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: BRAND.pink }}>{t.moodLabel}</h4>
+                </div>
+                <div className="font-display text-4xl text-stone-800 mb-2 tracking-wide">{phq.label}</div>
+                <p className="font-accent text-stone-600 leading-relaxed font-bold mb-4">{phq.recommendation}</p>
                 {phq.score > 0 && (
                   <div className="p-4 bg-white rounded-xl border border-stone-100">
                     <span className="text-[10px] font-bold uppercase tracking-widest block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
-                    <p className="text-xs text-stone-500 italic font-bold">"{phq.clinicalTranslation}"</p>
+                    <p className="text-xs text-stone-500 italic font-medium leading-relaxed">"{phq.clinicalTranslation}"</p>
                   </div>
                 )}
               </div>
 
-              <div className="bg-stone-50 p-8 rounded-[2rem] border border-stone-100 shadow-sm">
-                <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: BRAND.orange }}>{t.anxietyLabel}</h4>
-                <div className="text-3xl font-extrabold text-stone-800 mb-2">{gad.label}</div>
-                <p className="text-stone-600 leading-relaxed font-bold mb-4">{gad.recommendation}</p>
+              <div className="bg-stone-50 p-7 md:p-8 rounded-[1.75rem] border border-stone-100 shadow-sm">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: BRAND.orange }}></div>
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: BRAND.orange }}>{t.anxietyLabel}</h4>
+                </div>
+                <div className="font-display text-4xl text-stone-800 mb-2 tracking-wide">{gad.label}</div>
+                <p className="font-accent text-stone-600 leading-relaxed font-bold mb-4">{gad.recommendation}</p>
                 {gad.score > 0 && (
                   <div className="p-4 bg-white rounded-xl border border-stone-100">
                     <span className="text-[10px] font-bold uppercase tracking-widest block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
-                    <p className="text-xs text-stone-500 italic font-bold">"{gad.clinicalTranslation}"</p>
+                    <p className="text-xs text-stone-500 italic font-medium leading-relaxed">"{gad.clinicalTranslation}"</p>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="p-8 rounded-[2.5rem] border-2 border-dashed border-stone-200 bg-stone-50/50 flex flex-col items-center text-center gap-6 print:hidden">
+            <div className="p-7 md:p-8 rounded-[1.75rem] border-2 border-dashed border-stone-200 bg-stone-50/50 flex flex-col items-center text-center gap-5 print:hidden">
                 <div>
-                   <h3 className="text-2xl font-extrabold text-stone-800 mb-2">{t.calmKitTitle}</h3>
-                   <p className="text-stone-600 font-bold text-sm">{t.calmKitSub}</p>
+                   <h3 className="font-display text-3xl text-stone-800 mb-1 tracking-wide">{t.calmKitTitle}</h3>
+                   <p className="font-accent text-stone-600 font-bold text-sm">{t.calmKitSub}</p>
                 </div>
-                <ActionButton 
-                  onClick={() => window.open('https://www.healthmatters.clinic/resources/calm-kit', '_blank')} 
+                <ActionButton
+                  href="https://www.healthmatters.clinic/resources/calm-kit"
                   className="w-full sm:w-auto px-12"
                   color={BRAND.blue}
                 >
@@ -449,12 +525,12 @@ const App: React.FC = () => {
                 </ActionButton>
             </div>
 
-            <div className="p-8 rounded-[2rem] text-white shadow-xl bg-black">
-              <h3 className="text-xl font-extrabold mb-4 uppercase tracking-tight">{t.doctorSpeakHeader}</h3>
-              <p className="opacity-70 text-sm mb-6 leading-relaxed font-bold">{t.doctorSpeakIntro}</p>
-              <div className="bg-white/5 p-5 rounded-2xl border border-white/20">
+            <div className="p-7 md:p-8 rounded-[1.75rem] text-white shadow-xl overflow-hidden" style={{ background: `linear-gradient(135deg, #1a1a1a, ${BRAND.blueDark})` }}>
+              <h3 className="font-display text-2xl mb-4 tracking-wide">{t.doctorSpeakHeader}</h3>
+              <p className="opacity-60 text-sm mb-6 leading-relaxed font-medium">{t.doctorSpeakIntro}</p>
+              <div className="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur">
                 <p className="text-[10px] font-bold uppercase mb-2 tracking-widest" style={{ color: BRAND.yellow }}>{t.patientAdvocacyScript}</p>
-                <p className="text-sm font-bold leading-relaxed italic">{scriptText}</p>
+                <p className="text-sm font-medium leading-relaxed italic opacity-90">{scriptText}</p>
               </div>
             </div>
 
@@ -488,38 +564,36 @@ const App: React.FC = () => {
             )}
 
             <div className="space-y-6 pt-10 border-t border-stone-100 print:hidden">
-               <h2 className="text-2xl font-extrabold text-stone-800 text-center mb-8 uppercase tracking-tight">{t.communityHeader}</h2>
-               
+               <h2 className="font-display text-3xl text-stone-800 text-center mb-6 tracking-wide uppercase">{t.communityHeader}</h2>
+
                <div className="grid gap-4">
-                  <a href="https://www.healthmatters.clinic/resources/event-finder" target="_blank" className="flex flex-col items-center justify-center gap-4 p-10 bg-stone-100 rounded-3xl hover:bg-stone-200 transition-all group text-center border border-stone-100 shadow-sm">
-                    <h4 className="text-2xl font-extrabold text-stone-800 leading-none uppercase tracking-tight">{t.eventLink}</h4>
-                    <p className="text-stone-500 text-[11px] font-bold uppercase tracking-[0.2em] mt-3">{t.communitySub}</p>
+                  <a href="https://www.healthmatters.clinic/resources/event-finder" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-3 p-8 md:p-10 rounded-2xl hover:shadow-lg transition-all group text-center border-2 border-transparent" style={{ background: `linear-gradient(135deg, ${BRAND.blue}08, ${BRAND.blue}15)`, borderColor: `${BRAND.blue}20` }}>
+                    <h4 className="font-display text-3xl text-stone-800 leading-none tracking-wide">{t.eventLink}</h4>
+                    <p className="text-stone-500 text-[10px] font-bold uppercase tracking-[0.2em]">{t.communitySub}</p>
                   </a>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="relative">
-                      <button onClick={startGamePlan} className="p-6 bg-white border border-stone-100 rounded-3xl hover:border-stone-400 shadow-sm transition-all text-left group w-full h-full">
-                         <h4 className="font-extrabold text-stone-800 group-hover:text-stone-900 mb-1 uppercase tracking-tight">{t.gamePlanBtn}</h4>
-                         <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">{t.gamePlanSub}</p>
-                      </button>
-                    </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button onClick={startGamePlan} className="p-5 bg-white border border-stone-100 rounded-2xl hover:border-stone-300 hover:shadow-md shadow-sm transition-all text-left group w-full h-full">
+                       <h4 className="font-bold text-stone-800 group-hover:text-stone-900 mb-1 uppercase tracking-tight text-sm">{t.gamePlanBtn}</h4>
+                       <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">{t.gamePlanSub}</p>
+                    </button>
 
-                    <a href="https://www.healthmatters.clinic/resources/resource-directory" target="_blank" className="p-6 bg-white border border-stone-100 rounded-3xl hover:border-stone-400 shadow-sm transition-all">
-                       <h4 className="font-extrabold text-stone-800 mb-1 uppercase tracking-tight">{t.resourceBtn}</h4>
+                    <a href="https://www.healthmatters.clinic/resources/resource-directory" target="_blank" rel="noopener noreferrer" className="p-5 bg-white border border-stone-100 rounded-2xl hover:border-stone-300 hover:shadow-md shadow-sm transition-all">
+                       <h4 className="font-bold text-stone-800 mb-1 uppercase tracking-tight text-sm">{t.resourceBtn}</h4>
                        <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">{t.resourceSub}</p>
                     </a>
-                    <a href="https://www.healthmatters.clinic/podcast" target="_blank" className="p-6 bg-white border border-stone-100 rounded-3xl hover:border-stone-400 shadow-sm transition-all">
-                       <h4 className="font-extrabold text-stone-800 mb-1 uppercase tracking-tight">{t.podcastBtn}</h4>
+                    <a href="https://www.healthmatters.clinic/podcast" target="_blank" rel="noopener noreferrer" className="p-5 bg-white border border-stone-100 rounded-2xl hover:border-stone-300 hover:shadow-md shadow-sm transition-all">
+                       <h4 className="font-bold text-stone-800 mb-1 uppercase tracking-tight text-sm">{t.podcastBtn}</h4>
                        <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">{t.podcastSub}</p>
                     </a>
-                    <a href="https://www.healthmatters.clinic/blog" target="_blank" className="p-6 bg-white border border-stone-100 rounded-3xl hover:border-stone-400 shadow-sm transition-all">
-                       <h4 className="font-extrabold text-stone-800 mb-1 uppercase tracking-tight">{t.blogBtn}</h4>
+                    <a href="https://www.healthmatters.clinic/blog" target="_blank" rel="noopener noreferrer" className="p-5 bg-white border border-stone-100 rounded-2xl hover:border-stone-300 hover:shadow-md shadow-sm transition-all">
+                       <h4 className="font-bold text-stone-800 mb-1 uppercase tracking-tight text-sm">{t.blogBtn}</h4>
                        <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">{t.blogSub}</p>
                     </a>
                   </div>
                </div>
 
-               <div className="flex flex-col sm:flex-row gap-4 pt-10">
+               <div className="flex flex-col sm:flex-row gap-3 pt-8">
                   <ActionButton onClick={restart} variant="outline" className="flex-1" icon={<RestartIcon />}>
                     {t.restart}
                   </ActionButton>
@@ -538,12 +612,13 @@ const App: React.FC = () => {
     const step = state.gamePlanStep;
     return (
       <Layout state={state} restart={restart} toggleLanguage={toggleLanguage}>
-        <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-xl border border-stone-100 p-8 md:p-12 animate-in slide-in-from-right-8 duration-500">
+        <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-xl border border-stone-100 p-8 md:p-12" style={{ animation: 'fadeSlideUp 0.4s ease-out' }}>
+           <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
            <span className="text-[10px] font-bold uppercase tracking-[0.3em] mb-4 block" style={{ color: BRAND.blue }}>{t.gpPart} {step}: {t.gpStrategy}</span>
-           
+
            {step === 1 && (
              <div className="space-y-8">
-               <h2 className="text-3xl font-extrabold text-stone-800 tracking-tight uppercase">{t.gpInventoryTitle}</h2>
+               <h2 className="font-display text-4xl text-stone-800 tracking-wide uppercase">{t.gpInventoryTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpGroundingLabel}</label>
                  <textarea value={state.gamePlan.grounding} onChange={e => updateGamePlan('grounding', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl focus:border-stone-800 h-24 outline-none transition-all font-['Inter'] font-bold" placeholder={t.gpGroundingPlaceholder} />
@@ -561,7 +636,7 @@ const App: React.FC = () => {
 
            {step === 2 && (
              <div className="space-y-8">
-               <h2 className="text-3xl font-extrabold text-stone-800 tracking-tight uppercase">{t.gpStabilizeTitle}</h2>
+               <h2 className="font-display text-4xl text-stone-800 tracking-wide uppercase">{t.gpStabilizeTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpContactsLabel}</label>
                  <input type="text" value={state.gamePlan.contact1.name} onChange={e => updateGamePlanNested('contact1', 'name', e.target.value)} placeholder={`${t.gpNamePlaceholder} 1`} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold" />
@@ -575,7 +650,7 @@ const App: React.FC = () => {
 
            {step === 3 && (
              <div className="space-y-8">
-               <h2 className="text-3xl font-extrabold text-stone-800 tracking-tight uppercase">{t.gpResetTitle}</h2>
+               <h2 className="font-display text-4xl text-stone-800 tracking-wide uppercase">{t.gpResetTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpPlaylistLabel}</label>
                  <textarea value={state.gamePlan.playlist} onChange={e => updateGamePlan('playlist', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-20 mb-4 font-bold" placeholder={t.gpPlaylistPlaceholder} />
@@ -587,7 +662,7 @@ const App: React.FC = () => {
 
            {step === 4 && (
              <div className="space-y-8">
-               <h2 className="text-3xl font-extrabold text-stone-800 tracking-tight uppercase">{t.gpReconnectTitle}</h2>
+               <h2 className="font-display text-4xl text-stone-800 tracking-wide uppercase">{t.gpReconnectTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpForwardLabel}</label>
                  <textarea value={state.gamePlan.forward} onChange={e => updateGamePlan('forward', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-24 mb-4 font-bold" placeholder={t.gpForwardPlaceholder} />
@@ -635,10 +710,11 @@ const App: React.FC = () => {
   if (state.section === 'game-plan-results') {
     return (
       <Layout state={state} restart={restart} toggleLanguage={toggleLanguage} hideProgress>
-        <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl border border-stone-100 overflow-hidden animate-in zoom-in duration-500 print:shadow-none print:border print:border-stone-200 print:rounded-[1rem]">
-           <div className="p-12 text-center text-white border-b border-stone-200 bg-black">
-              <h1 className="text-4xl font-extrabold tracking-tighter mb-2 uppercase">{t.gpResultsHeader}</h1>
-              <p className="font-bold text-[10px] uppercase tracking-[0.3em]" style={{ color: BRAND.yellow }}>{t.gpResultsSub} • {new Date().toLocaleDateString()}</p>
+        <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl border border-stone-100 overflow-hidden print:shadow-none print:border print:border-stone-200 print:rounded-[1rem]" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
+           <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+           <div className="p-10 md:p-12 text-center text-white border-b border-stone-200" style={{ background: `linear-gradient(135deg, #1a1a1a, ${BRAND.blueDark})` }}>
+              <h1 className="font-display text-5xl tracking-wide mb-2 uppercase">{t.gpResultsHeader}</h1>
+              <p className="font-bold text-[10px] uppercase tracking-[0.3em]" style={{ color: BRAND.yellow }}>{t.gpResultsSub} &middot; {new Date().toLocaleDateString()}</p>
            </div>
            <div className="p-10 space-y-8 text-sm">
               <div className="p-6 bg-stone-50 rounded-2xl border border-stone-200 shadow-sm">
