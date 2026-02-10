@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Language, AssessmentState, SCORING_OPTIONS, SDOH_OPTIONS, LIFE_EVENT_OPTIONS, TOOL_OPTIONS } from './types';
 import { QUESTIONS, STRINGS, INTERPRETATIONS } from './constants';
 import { calculatePHQ9, calculateGAD7 } from './services/scoring';
@@ -26,6 +26,12 @@ const RestartIcon = () => (
 const ShareIcon = () => (
   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+  </svg>
+);
+
+const DownloadIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
   </svg>
 );
 
@@ -121,7 +127,7 @@ const Layout: React.FC<{ children: React.ReactNode, state: AssessmentState, rest
 // --- MAIN APP ---
 
 const App: React.FC = () => {
-  const [state, setState] = useState<AssessmentState>({
+  const defaultState: AssessmentState = {
     answers: {},
     rootCauses: [],
     lifeEvents: [],
@@ -147,7 +153,43 @@ const App: React.FC = () => {
       smsOptIn: false,
       appOptIn: false
     }
-  });
+  };
+
+  const [state, setState] = useState<AssessmentState>(defaultState);
+  const [savedState, setSavedState] = useState<AssessmentState | null>(null);
+  const [calmKitMode, setCalmKitMode] = useState<'menu' | 'breathing' | 'grounding'>('menu');
+  const [groundingStep, setGroundingStep] = useState(0);
+  const [breathSecond, setBreathSecond] = useState(0);
+
+  // Restore session on mount
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('vibeCheckState');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.section && parsed.section !== 'intro') {
+          setSavedState(parsed);
+        }
+      }
+    } catch {}
+  }, []);
+
+  // Save session on every state change (except intro)
+  useEffect(() => {
+    if (state.section !== 'intro') {
+      sessionStorage.setItem('vibeCheckState', JSON.stringify(state));
+    }
+  }, [state]);
+
+  // Breathing timer
+  const breathActive = state.section === 'calm-kit' && calmKitMode === 'breathing';
+  useEffect(() => {
+    if (!breathActive) return;
+    const interval = setInterval(() => {
+      setBreathSecond(s => (s + 1) % 16);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [breathActive]);
 
   const t = STRINGS[state.language];
 
@@ -214,6 +256,10 @@ const App: React.FC = () => {
   };
 
   const restart = () => {
+    sessionStorage.removeItem('vibeCheckState');
+    setCalmKitMode('menu');
+    setGroundingStep(0);
+    setBreathSecond(0);
     setState(prev => ({
       ...prev,
       answers: {},
@@ -260,11 +306,122 @@ const App: React.FC = () => {
     }
   };
 
+  const handleDownload = () => {
+    const phq = calculatePHQ9(state.answers, state.language);
+    const gad = calculateGAD7(state.answers, state.language);
+    const lang = state.language;
+    const isEn = lang === Language.EN;
+    const date = new Date().toLocaleDateString();
+    const optionLabels = SCORING_OPTIONS.map(o => o.label[lang]);
+
+    let text = '';
+    text += '═══════════════════════════════════════\n';
+    text += isEn ? '  YOUR ENERGY REPORT\n' : '  TU REPORTE DE ENERGÍA\n';
+    text += '  Health Matters Clinic\n';
+    text += `  ${date}\n`;
+    text += '═══════════════════════════════════════\n\n';
+
+    text += `${t.moodLabel.toUpperCase()} (PHQ-9)\n`;
+    text += `${isEn ? 'Score' : 'Puntuación'}: ${phq.score}/27 — ${phq.label}\n`;
+    text += `"${phq.clinicalTranslation}"\n\n`;
+
+    text += `${t.anxietyLabel.toUpperCase()} (GAD-7)\n`;
+    text += `${isEn ? 'Score' : 'Puntuación'}: ${gad.score}/21 — ${gad.label}\n`;
+    text += `"${gad.clinicalTranslation}"\n\n`;
+
+    text += '───────────────────────────────────────\n';
+    text += isEn ? 'YOUR RESPONSES\n' : 'TUS RESPUESTAS\n';
+    text += '───────────────────────────────────────\n\n';
+
+    QUESTIONS.forEach((q, i) => {
+      const answer = state.answers[q.id];
+      const answerLabel = answer !== undefined ? optionLabels[answer] : '—';
+      text += `${i + 1}. ${q.text[lang]}\n`;
+      text += `   → ${answerLabel} (${answer ?? 0}/3)\n\n`;
+    });
+
+    if (state.lifeEvents.length > 0) {
+      text += '───────────────────────────────────────\n';
+      text += isEn ? 'LIFE CONTEXT\n' : 'CONTEXTO DE VIDA\n';
+      text += '───────────────────────────────────────\n';
+      text += (isEn ? 'Life Events: ' : 'Eventos de Vida: ') +
+        state.lifeEvents.map(id => LIFE_EVENT_OPTIONS.find(o => o.id === id)?.label[lang]).filter(Boolean).join(', ') + '\n\n';
+    }
+
+    if (state.rootCauses.length > 0) {
+      text += (isEn ? 'Environmental Stressors: ' : 'Estresores Ambientales: ') +
+        state.rootCauses.map(id => SDOH_OPTIONS.find(o => o.id === id)?.label[lang]).filter(Boolean).join(', ') + '\n\n';
+    }
+
+    const isMinimal = phq.score < 5 && gad.score < 5;
+    const script = isMinimal
+      ? (isEn
+          ? `"I completed a wellness screening using validated PHQ-9 and GAD-7 tools. My results indicate minimal clinical symptoms (Score ${phq.score}/${gad.score}). I am currently doing alright and would like to proactively discuss maintaining my wellness and staying on top of my mental health."`
+          : `"Completé un chequeo de bienestar usando las herramientas validadas PHQ-9 y GAD-7. Mis resultados indican síntomas clínicos mínimos (Puntuación ${phq.score}/${gad.score}). Me siento bien por ahora y me gustaría hablar proactivamente sobre cómo mantener mi bienestar y mi salud mental."`)
+      : (isEn
+          ? `"I completed a wellness screening using validated PHQ-9 and GAD-7 tools. My results indicate a score of ${phq.score} for mood and ${gad.score} for anxiety. I would like to discuss how my current environmental stressors and life transitions are impacting my daily quality of life."`
+          : `"Completé un chequeo de bienestar usando las herramientas validadas PHQ-9 y GAD-7. Mis resultados indican una puntuación de ${phq.score} para el ánimo y ${gad.score} para la ansiedad. Me gustaría hablar sobre cómo mis factores de estrés ambientales y transiciones de vida actuales están afectando mi calidad de vida diaria."`);
+
+    text += '───────────────────────────────────────\n';
+    text += isEn ? 'PATIENT ADVOCACY SCRIPT\n' : 'GUION DE DEFENSA DEL PACIENTE\n';
+    text += '───────────────────────────────────────\n';
+    text += script + '\n\n';
+
+    text += '───────────────────────────────────────\n';
+    text += isEn ? 'CRISIS RESOURCES\n' : 'RECURSOS DE CRISIS\n';
+    text += '───────────────────────────────────────\n';
+    text += '988 Suicide & Crisis Lifeline\n';
+    text += '741741 Crisis Text Line (Text HOME)\n';
+    text += 'LA County ACCESS: 1-800-854-7771\n';
+    text += 'CHIRLA: 1-888-624-4752\n\n';
+    text += 'Health Matters Clinic: (323) 990-4325\n';
+    text += 'healthmatters.clinic\n';
+
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `wellness-check-${date.replace(/\//g, '-')}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleOptInSubmit = (type: 'sms' | 'app') => {
+    const key = type === 'sms' ? 'hmcSmsOptIn' : 'hmcAppOptIn';
+    localStorage.setItem(key, 'true');
+    localStorage.setItem(`${key}Date`, new Date().toISOString());
+    // TODO: Configure webhook URL for your org's opt-in collection endpoint
+    // Example: Google Apps Script web app, Zapier webhook, etc.
+    // const WEBHOOK_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+    // fetch(WEBHOOK_URL, { method: 'POST', body: JSON.stringify({ type, timestamp: new Date().toISOString() }) }).catch(() => {});
+  };
+
+  const openCalmKit = () => {
+    setCalmKitMode('menu');
+    setGroundingStep(0);
+    setBreathSecond(0);
+    setState(prev => ({ ...prev, section: 'calm-kit' }));
+    window.scrollTo(0, 0);
+  };
+
   // --- VIEWS ---
 
   if (state.section === 'intro') {
     return (
       <div className="min-h-screen bg-[#faf9f6] p-4 md:p-8 flex flex-col items-center justify-center font-['Inter']">
+        {savedState && (
+          <div className="w-full max-w-xl mb-6 bg-white rounded-2xl shadow-lg p-6 border border-stone-200 flex flex-col sm:flex-row items-center gap-4" style={{ animation: 'fadeSlideUp 0.4s ease-out' }}>
+            <div className="flex-1 text-center sm:text-left">
+              <p className="font-bold text-stone-800 text-sm">{t.resumePrompt}</p>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => { setState(savedState); setSavedState(null); }} className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white rounded-full shadow-md" style={{ backgroundColor: BRAND.blue }}>{t.resumeYes}</button>
+              <button onClick={() => { sessionStorage.removeItem('vibeCheckState'); setSavedState(null); }} className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-stone-500 bg-stone-100 rounded-full hover:bg-stone-200 transition-colors">{t.resumeNo}</button>
+            </div>
+          </div>
+        )}
         <div className="w-full max-w-xl bg-white rounded-[3rem] shadow-2xl p-10 md:p-16 text-center flex flex-col items-center border border-stone-100 mb-8" style={{ animation: 'fadeSlideUp 0.6s ease-out' }}>
           <style>{`
             @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -517,7 +674,7 @@ const App: React.FC = () => {
                    <p className="font-accent text-stone-600 font-bold text-sm">{t.calmKitSub}</p>
                 </div>
                 <ActionButton
-                  href="https://www.healthmatters.clinic/resources/calmkit"
+                  onClick={openCalmKit}
                   className="w-full sm:w-auto px-12"
                   color={BRAND.blue}
                 >
@@ -540,14 +697,14 @@ const App: React.FC = () => {
                 <h3 className="text-lg font-extrabold text-stone-800 tracking-tight uppercase">HMC COMMUNITY CONNECTION</h3>
                 <div className="space-y-4">
                   <label className={`flex items-center gap-3 p-5 rounded-2xl cursor-pointer transition-all border ${state.gamePlan.smsOptIn ? 'bg-white border-stone-400 shadow-md' : 'bg-white border-stone-100 hover:border-stone-400'}`}>
-                    <input type="checkbox" checked={state.gamePlan.smsOptIn} onChange={e => updateGamePlan('smsOptIn', e.target.checked)} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
+                    <input type="checkbox" checked={state.gamePlan.smsOptIn} onChange={e => { updateGamePlan('smsOptIn', e.target.checked); if (e.target.checked) handleOptInSubmit('sms'); }} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
                     <div className="flex flex-col text-left">
                       <span className="text-sm font-bold text-stone-800">{t.smsCheckInLabel}</span>
                       <span className="text-[10px] font-bold uppercase tracking-widest mt-0.5" style={{ color: BRAND.blue }}>{t.gpSmsConsent}</span>
                     </div>
                   </label>
                   <label className={`flex items-center gap-3 p-5 rounded-2xl cursor-pointer transition-all border ${state.gamePlan.appOptIn ? 'bg-white border-stone-400 shadow-md' : 'bg-white border-stone-100 hover:border-stone-400'}`}>
-                    <input type="checkbox" checked={state.gamePlan.appOptIn} onChange={e => updateGamePlan('appOptIn', e.target.checked)} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
+                    <input type="checkbox" checked={state.gamePlan.appOptIn} onChange={e => { updateGamePlan('appOptIn', e.target.checked); if (e.target.checked) handleOptInSubmit('app'); }} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
                     <div className="flex flex-col text-left">
                       <span className="text-sm font-bold text-stone-800">{t.appMemberLabel}</span>
                       <span className="text-[10px] font-bold uppercase tracking-widest mt-0.5" style={{ color: BRAND.blue }}>{t.gpAppConsent}</span>
@@ -596,6 +753,9 @@ const App: React.FC = () => {
                <div className="flex flex-col sm:flex-row gap-3 pt-8">
                   <ActionButton onClick={restart} variant="outline" className="flex-1" icon={<RestartIcon />}>
                     {t.restart}
+                  </ActionButton>
+                  <ActionButton onClick={handleDownload} variant="outline" className="flex-1" icon={<DownloadIcon />}>
+                    {t.downloadResults}
                   </ActionButton>
                   <ActionButton onClick={handleShare} className="flex-1" color={BRAND.blue} icon={<ShareIcon />}>
                     {t.share}
@@ -675,14 +835,14 @@ const App: React.FC = () => {
                  <h3 className="text-sm font-bold text-stone-800 uppercase tracking-widest">HMC COMMUNITY CONNECTION</h3>
                  <div className="space-y-3">
                     <label className={`flex items-center gap-3 p-5 rounded-2xl cursor-pointer hover:bg-stone-50 transition-colors border ${state.gamePlan.smsOptIn ? 'bg-white border-stone-400 shadow-md' : 'bg-stone-50 border-stone-100'}`}>
-                      <input type="checkbox" checked={state.gamePlan.smsOptIn} onChange={e => updateGamePlan('smsOptIn', e.target.checked)} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
+                      <input type="checkbox" checked={state.gamePlan.smsOptIn} onChange={e => { updateGamePlan('smsOptIn', e.target.checked); if (e.target.checked) handleOptInSubmit('sms'); }} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
                       <div className="flex flex-col text-left">
                         <span className="text-sm font-bold text-stone-800">{t.smsCheckInLabel}</span>
                         <span className="text-[10px] font-bold uppercase tracking-widest mt-0.5" style={{ color: BRAND.blue }}>{t.gpSmsConsent}</span>
                       </div>
                     </label>
                     <label className={`flex items-center gap-3 p-5 rounded-2xl cursor-pointer hover:bg-stone-50 transition-colors border ${state.gamePlan.appOptIn ? 'bg-white border-stone-400 shadow-md' : 'bg-stone-50 border-stone-100'}`}>
-                      <input type="checkbox" checked={state.gamePlan.appOptIn} onChange={e => updateGamePlan('appOptIn', e.target.checked)} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
+                      <input type="checkbox" checked={state.gamePlan.appOptIn} onChange={e => { updateGamePlan('appOptIn', e.target.checked); if (e.target.checked) handleOptInSubmit('app'); }} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
                       <div className="flex flex-col text-left">
                         <span className="text-sm font-bold text-stone-800">{t.appMemberLabel}</span>
                         <span className="text-[10px] font-bold uppercase tracking-widest mt-0.5" style={{ color: BRAND.blue }}>{t.gpAppConsent}</span>
@@ -758,6 +918,128 @@ const App: React.FC = () => {
                  </button>
               </div>
            </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (state.section === 'calm-kit') {
+    const GROUNDING_STEPS = [
+      { count: 5, label: t.groundingSee, emoji: '\uD83D\uDC40' },
+      { count: 4, label: t.groundingTouch, emoji: '\u270B' },
+      { count: 3, label: t.groundingHear, emoji: '\uD83D\uDC42' },
+      { count: 2, label: t.groundingSmell, emoji: '\uD83D\uDC43' },
+      { count: 1, label: t.groundingTaste, emoji: '\uD83D\uDC45' }
+    ];
+
+    const breathPhases = [t.calmKitBreathIn, t.calmKitHold, t.calmKitBreathOut, t.calmKitHold];
+    const currentPhaseIndex = Math.floor(breathSecond / 4) % 4;
+    const currentPhase = breathPhases[currentPhaseIndex];
+    const phaseProgress = (breathSecond % 4) / 4;
+    const breathScale = currentPhaseIndex === 0 ? 0.6 + phaseProgress * 0.4
+      : currentPhaseIndex === 1 ? 1
+      : currentPhaseIndex === 2 ? 1 - phaseProgress * 0.4
+      : 0.6;
+
+    return (
+      <Layout state={state} restart={restart} toggleLanguage={toggleLanguage} hideProgress>
+        <div className="w-full max-w-2xl" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
+          <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+
+          {calmKitMode === 'menu' && (
+            <div className="text-center space-y-8">
+              <div>
+                <h1 className="font-display text-5xl md:text-6xl text-stone-900 mb-3 tracking-wide uppercase">{t.calmKitPageTitle}</h1>
+                <p className="font-accent text-stone-500 text-lg font-bold">{t.calmKitPageSub}</p>
+              </div>
+              <div className="grid gap-4">
+                <button onClick={() => { setCalmKitMode('breathing'); setBreathSecond(0); }} className="p-8 bg-white rounded-[2rem] border-2 border-stone-100 hover:border-stone-300 hover:shadow-lg transition-all text-left group">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl" style={{ backgroundColor: BRAND.blue }}>
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    </div>
+                    <h3 className="font-display text-3xl text-stone-800 tracking-wide">{t.calmKitBreathingBtn}</h3>
+                  </div>
+                  <p className="font-accent text-stone-500 font-bold text-sm">{t.calmKitBreathingSub}</p>
+                </button>
+                <button onClick={() => { setCalmKitMode('grounding'); setGroundingStep(0); }} className="p-8 bg-white rounded-[2rem] border-2 border-stone-100 hover:border-stone-300 hover:shadow-lg transition-all text-left group">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl" style={{ backgroundColor: BRAND.orange }}>
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    </div>
+                    <h3 className="font-display text-3xl text-stone-800 tracking-wide">{t.calmKitGroundingBtn}</h3>
+                  </div>
+                  <p className="font-accent text-stone-500 font-bold text-sm">{t.calmKitGroundingSub}</p>
+                </button>
+              </div>
+              <button onClick={() => setState(prev => ({ ...prev, section: 'results' }))} className="text-stone-400 font-bold text-[10px] uppercase tracking-[0.3em] hover:text-stone-800 transition-colors py-4">
+                &larr; {t.calmKitBackToResults}
+              </button>
+            </div>
+          )}
+
+          {calmKitMode === 'breathing' && (
+            <div className="text-center space-y-10 py-8">
+              <h2 className="font-display text-4xl text-stone-800 tracking-wide uppercase">{t.calmKitBreathingBtn}</h2>
+              <div className="flex items-center justify-center py-8">
+                <div className="relative flex items-center justify-center" style={{ width: 200, height: 200 }}>
+                  <div className="absolute inset-0 rounded-full transition-transform duration-1000 ease-in-out" style={{
+                    background: `radial-gradient(circle, ${BRAND.blue}30, ${BRAND.blue}10)`,
+                    transform: `scale(${breathScale})`,
+                    border: `3px solid ${BRAND.blue}40`
+                  }}></div>
+                  <span className="relative font-display text-2xl tracking-wider z-10" style={{ color: BRAND.blue }}>{currentPhase}</span>
+                </div>
+              </div>
+              <div className="flex justify-center gap-1">
+                {[0,1,2,3].map(i => (
+                  <div key={i} className="w-2 h-2 rounded-full transition-colors duration-300" style={{ backgroundColor: currentPhaseIndex === i ? BRAND.blue : '#d6d3d1' }}></div>
+                ))}
+              </div>
+              <p className="text-stone-400 text-xs font-bold uppercase tracking-widest">
+                {Math.floor(breathSecond % 4) + 1}s
+              </p>
+              <div className="flex gap-4 justify-center pt-4">
+                <ActionButton variant="outline" onClick={() => setCalmKitMode('menu')} className="px-8">&larr; {t.back}</ActionButton>
+              </div>
+            </div>
+          )}
+
+          {calmKitMode === 'grounding' && (
+            <div className="text-center space-y-8 py-8">
+              {groundingStep < 5 ? (
+                <>
+                  <h2 className="font-display text-4xl text-stone-800 tracking-wide uppercase">{t.calmKitGroundingBtn}</h2>
+                  <div className="py-8">
+                    <div className="text-8xl mb-6">{GROUNDING_STEPS[groundingStep].emoji}</div>
+                    <div className="font-display text-7xl mb-4" style={{ color: BRAND.orange }}>{GROUNDING_STEPS[groundingStep].count}</div>
+                    <p className="font-accent text-stone-600 text-xl font-bold">{GROUNDING_STEPS[groundingStep].label}</p>
+                  </div>
+                  <div className="flex justify-center gap-2">
+                    {[0,1,2,3,4].map(i => (
+                      <div key={i} className="w-2.5 h-2.5 rounded-full transition-colors duration-300" style={{ backgroundColor: i <= groundingStep ? BRAND.orange : '#d6d3d1' }}></div>
+                    ))}
+                  </div>
+                  <div className="flex gap-4 justify-center pt-4">
+                    {groundingStep > 0 && <ActionButton variant="outline" onClick={() => setGroundingStep(s => s - 1)} className="px-8">&larr; {t.back}</ActionButton>}
+                    <ActionButton onClick={() => setGroundingStep(s => s + 1)} color={BRAND.orange} className="px-12">{t.next} &rarr;</ActionButton>
+                  </div>
+                </>
+              ) : (
+                <div className="py-12 space-y-6">
+                  <div className="w-20 h-20 rounded-full mx-auto flex items-center justify-center text-3xl text-white" style={{ backgroundColor: BRAND.orange }}>
+                    <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+                  </div>
+                  <h2 className="font-display text-5xl text-stone-800 tracking-wide uppercase">{t.calmKitDone}</h2>
+                  <p className="font-accent text-stone-500 text-lg font-bold max-w-sm mx-auto">{t.calmKitDoneSub}</p>
+                  <div className="flex gap-4 justify-center pt-6">
+                    <ActionButton variant="outline" onClick={() => { setGroundingStep(0); setCalmKitMode('menu'); }} className="px-8">{t.restart}</ActionButton>
+                    <ActionButton onClick={() => setState(prev => ({ ...prev, section: 'results' }))} color={BRAND.blue} className="px-8">{t.calmKitBackToResults}</ActionButton>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </Layout>
     );

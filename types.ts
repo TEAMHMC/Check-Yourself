@@ -20,7 +20,7 @@ export interface Question {
   category: 'mood' | 'anxiety' | 'root-cause';
 }
 
-export type AppSection = 'intro' | 'assessment' | 'life-events' | 'root-cause' | 'results' | 'game-plan' | 'game-plan-results';
+export type AppSection = 'intro' | 'assessment' | 'life-events' | 'root-cause' | 'results' | 'game-plan' | 'game-plan-results' | 'calm-kit';
 
 export interface GamePlanData {
   grounding: string;
