@@ -428,7 +428,7 @@ const App: React.FC = () => {
             @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
           `}</style>
           <div className="w-20 h-20 rounded-[1.75rem] flex items-center justify-center mb-8 shadow-xl" style={{ background: `linear-gradient(135deg, ${BRAND.blue}, ${BRAND.blueDark})` }}>
-             <span className="text-3xl text-white">✨</span>
+             <svg className="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
           </div>
           <h1 className="font-display text-6xl md:text-7xl text-stone-900 mb-3 leading-[0.85] tracking-wide uppercase">{t.title}</h1>
           <p className="font-bold mb-8 uppercase tracking-[0.4em] text-[10px]" style={{ color: BRAND.blue }}>{t.subtitle}</p>
@@ -438,21 +438,27 @@ const App: React.FC = () => {
 
           <div className="w-full flex flex-col sm:flex-row gap-4 mb-8">
             <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-stone-50 rounded-2xl border border-stone-100">
-              <span className="text-lg" aria-hidden="true">🧠</span>
+              <div className="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center flex-shrink-0">
+                <svg className="w-4 h-4 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+              </div>
               <div className="text-left">
                 <div className="text-xs font-bold text-stone-800">16 Questions</div>
                 <div className="text-[10px] text-stone-400 font-medium">~3 min</div>
               </div>
             </div>
             <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-stone-50 rounded-2xl border border-stone-100">
-              <span className="text-lg" aria-hidden="true">🔒</span>
+              <div className="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center flex-shrink-0">
+                <svg className="w-4 h-4 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+              </div>
               <div className="text-left">
                 <div className="text-xs font-bold text-stone-800">100% Private</div>
                 <div className="text-[10px] text-stone-400 font-medium">Nothing saved</div>
               </div>
             </div>
             <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-stone-50 rounded-2xl border border-stone-100">
-              <span className="text-lg" aria-hidden="true">🌐</span>
+              <div className="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center flex-shrink-0">
+                <svg className="w-4 h-4 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+              </div>
               <div className="text-left">
                 <div className="text-xs font-bold text-stone-800">EN / ES</div>
                 <div className="text-[10px] text-stone-400 font-medium">Bilingual</div>
@@ -714,7 +720,7 @@ const App: React.FC = () => {
               </div>
             ) : (
               <div className="p-10 rounded-[2rem] bg-stone-50 border border-stone-200 shadow-inner text-center print:hidden flex flex-col items-center gap-2">
-                <div className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center text-2xl mb-2">✓</div>
+                <div className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center mb-2"><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg></div>
                 <h3 className="text-xl font-extrabold text-stone-800 tracking-tight uppercase">{t.connectedMessage}</h3>
                 <p className="text-stone-500 font-bold text-xs max-w-xs">{t.thanksSubscribing}</p>
               </div>
@@ -991,11 +997,11 @@ const App: React.FC = () => {
 
   if (state.section === 'calm-kit') {
     const GROUNDING_STEPS = [
-      { count: 5, label: t.groundingSee, emoji: '\uD83D\uDC40' },
-      { count: 4, label: t.groundingTouch, emoji: '\u270B' },
-      { count: 3, label: t.groundingHear, emoji: '\uD83D\uDC42' },
-      { count: 2, label: t.groundingSmell, emoji: '\uD83D\uDC43' },
-      { count: 1, label: t.groundingTaste, emoji: '\uD83D\uDC45' }
+      { count: 5, label: t.groundingSee },
+      { count: 4, label: t.groundingTouch },
+      { count: 3, label: t.groundingHear },
+      { count: 2, label: t.groundingSmell },
+      { count: 1, label: t.groundingTaste }
     ];
 
     const breathPhases = [t.calmKitBreathIn, t.calmKitHold, t.calmKitBreathOut, t.calmKitHold];
@@ -1077,8 +1083,9 @@ const App: React.FC = () => {
                 <>
                   <h2 className="font-display text-4xl text-stone-800 tracking-wide uppercase">{t.calmKitGroundingBtn}</h2>
                   <div className="py-8">
-                    <div className="text-8xl mb-6">{GROUNDING_STEPS[groundingStep].emoji}</div>
-                    <div className="font-display text-7xl mb-4" style={{ color: BRAND.orange }}>{GROUNDING_STEPS[groundingStep].count}</div>
+                    <div className="w-28 h-28 rounded-full mx-auto mb-6 flex items-center justify-center" style={{ backgroundColor: `${BRAND.orange}15`, border: `3px solid ${BRAND.orange}40` }}>
+                      <span className="font-display text-7xl" style={{ color: BRAND.orange }}>{GROUNDING_STEPS[groundingStep].count}</span>
+                    </div>
                     <p className="font-accent text-stone-600 text-xl font-bold">{GROUNDING_STEPS[groundingStep].label}</p>
                   </div>
                   <div className="flex justify-center gap-2">
