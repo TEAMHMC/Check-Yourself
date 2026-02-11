@@ -49,7 +49,7 @@ const ActionButton: React.FC<{
 }> = ({ onClick, children, variant = 'primary', color = BRAND.blue, className, icon, noDot, href }) => {
   const isPrimary = variant === 'primary';
   const dotColorClass = isPrimary ? 'bg-white' : 'bg-black';
-  const baseClasses = `inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-full font-semibold text-sm transition-all duration-200 active:scale-95 border border-black tracking-wide ${className} ${isPrimary ? 'text-white hover:shadow-[0_4px_16px_rgba(35,61,255,0.35)]' : 'text-[#1a1a1a] bg-white hover:bg-gray-50 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]'}`;
+  const baseClasses = `inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-full font-semibold text-sm transition-all duration-200 active:scale-95 tracking-wide ${className} ${isPrimary ? 'text-white border border-transparent hover:shadow-[0_4px_16px_rgba(35,61,255,0.35)]' : 'text-[#1a1a1a] bg-white border border-[#e8e6e3] hover:bg-gray-50 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]'}`;
 
   const inner = (
     <>
@@ -573,8 +573,7 @@ const App: React.FC = () => {
                 </ActionButton>
                 <ActionButton
                   onClick={() => window.location.href = 'sms:741741&body=HELLO'}
-                  variant="outline"
-                  className="border-white/30 text-white hover:bg-white/10"
+                  className="!bg-white/20 !border-white/30 !text-white hover:!bg-white/30"
                   noDot
                 >
                   <span className="text-white text-sm">Text HOME to 741741</span>
