@@ -63,7 +63,7 @@ export const SDOH_OPTIONS = [
   { id: 'housing', label: { en: 'Stable Housing', es: 'Vivienda estable' } },
   { id: 'food', label: { en: 'Food / Groceries', es: 'Comida / Supermercado' } },
   { id: 'transportation', label: { en: 'Getting Around / Bus / Car', es: 'Transporte / Bus / Carro' } },
-  { id: 'bills', label: { en: 'Bills / Money stress', es: 'Biles / Estrés de dinero' } },
+  { id: 'bills', label: { en: 'Bills / Money stress', es: 'Cuentas / Estrés de dinero' } },
   { id: 'job', label: { en: 'Work / Job security', es: 'Trabajo / Estabilidad laboral' } },
   { id: 'safety', label: { en: 'Safety at home', es: 'Seguridad en casa' } },
   { id: 'childcare', label: { en: 'Childcare support', es: 'Apoyo con los niños' } }

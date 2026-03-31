@@ -30,13 +30,11 @@ export function calculateGAD7(answers: Record<string, number>, lang: Language): 
   else if (score >= 10) severity = 'moderate';
   else if (score >= 5) severity = 'mild';
 
-  const finalSeverity: Severity = severity === 'moderate' ? 'moderate' : severity;
-
   return {
     score,
-    severity: finalSeverity,
-    label: STRINGS[lang].severityMap[finalSeverity],
-    recommendation: (INTERPRETATIONS.anxiety as any)[severity][lang],
-    clinicalTranslation: (INTERPRETATIONS.anxiety as any)[severity].clinical[lang]
+    severity,
+    label: STRINGS[lang].severityMap[severity],
+    recommendation: INTERPRETATIONS.anxiety[severity][lang],
+    clinicalTranslation: INTERPRETATIONS.anxiety[severity].clinical[lang]
   };
 }

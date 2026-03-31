@@ -5,7 +5,7 @@ export const QUESTIONS: Question[] = [
   // MOOD (Framed from PHQ-9)
   { id: 'p1', category: 'mood', text: { en: 'Feeling like you just don’t have the heart for the things you usually love?', es: '¿Sientes que ya no tienes las mismas ganas de hacer las cosas que antes te gustaban?' } },
   { id: 'p2', category: 'mood', text: { en: 'Feeling heavy, down, or like you’re just going through the motions?', es: '¿Te sientes desanimado/a, triste o como si estuvieras en piloto automático?' } },
-  { id: 'p3', category: 'mood', text: { en: 'Sleep is all over the place—either staying up too late or wanting to sleep the whole day?', es: '¿Tu sueño está fatal—o te desvelas mucho o quieres pasar todo el día dumiendo?' } },
+  { id: 'p3', category: 'mood', text: { en: 'Sleep is all over the place—either staying up too late or wanting to sleep the whole day?', es: '¿Tu sueño está fatal—o te desvelas mucho o quieres pasar todo el día durmiendo?' } },
   { id: 'p4', category: 'mood', text: { en: 'Feeling drained, like your battery is at 1% even after a rest?', es: '¿Te sientes sin pilas, como si tu energía estuviera al mínimo aunque descanses?' } },
   { id: 'p5', category: 'mood', text: { en: 'Eating way more than usual or just not having an appetite at all?', es: '¿Estás comiendo por ansiedad o se te ha ido el hambre por completo?' } },
   { id: 'p6', category: 'mood', text: { en: 'Feeling like you’re letting people down, or not living up to who you want to be?', es: '¿Sientes que les estás fallando a los tuyos o que no estás dando la talla?' } },
@@ -209,7 +209,7 @@ export const STRINGS = {
     connectedMessage: "¡YA ESTÁS CONECTADO/A!",
     smsCheckInLabel: 'Mensajes de Bienestar de HMC',
     appMemberLabel: 'App de Miembros de HMC',
-    optInWellness: 'INSRÍBETE PARA BIENESTAR',
+    optInWellness: 'SUSCRÍBETE PARA BIENESTAR',
     referralServices: 'SERVICIOS DE REFERENCIA',
     identifiedLifeContext: 'Contexto de Vida Identificado',
     lifeContextSub: 'El bienestar está ligado a tu entorno. Mencionaste estar lidiando con:',

@@ -387,7 +387,7 @@ const App: React.FC = () => {
 
   if (state.section === 'intro') {
     return (
-      <div className="min-h-screen bg-[#faf9f6] p-4 md:p-8 flex flex-col items-center justify-center font-['Inter']">
+      <div className="bg-[#faf9f6] p-4 md:p-8 flex flex-col items-center justify-start pt-12 md:pt-20 font-['Inter']" style={{ minHeight: '100dvh' }}>
         {savedState && (
           <div className="w-full max-w-xl mb-6 bg-white rounded-2xl shadow-lg p-6 border border-stone-200 flex flex-col sm:flex-row items-center gap-4" style={{ animation: 'fadeSlideUp 0.4s ease-out' }}>
             <div className="flex-1 text-center sm:text-left">
@@ -643,10 +643,10 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* HMC COMMUNITY CONNECTION Section on Results Page - Clean UI logic */}
+            {/* {t.gpCommunityTitle} Section on Results Page - Clean UI logic */}
             {!isAlreadyOptedIn ? (
               <div className="p-8 rounded-[2rem] bg-stone-50 border border-stone-100 shadow-sm space-y-6 print:hidden">
-                <h3 className="text-lg font-medium text-stone-800 tracking-tight uppercase">HMC COMMUNITY CONNECTION</h3>
+                <h3 className="text-lg font-medium text-stone-800 tracking-tight uppercase">{t.gpCommunityTitle}</h3>
                 <div className="space-y-4">
                   <label className={`flex items-center gap-3 p-5 rounded-2xl cursor-pointer transition-all border ${state.gamePlan.smsOptIn ? 'bg-white border-stone-400 shadow-md' : 'bg-white border-stone-100 hover:border-stone-400'}`}>
                     <input type="checkbox" checked={state.gamePlan.smsOptIn} onChange={e => { updateGamePlan('smsOptIn', e.target.checked); if (e.target.checked) handleOptInSubmit('sms'); }} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
@@ -798,7 +798,7 @@ const App: React.FC = () => {
                </div>
                
                <div className="pt-6 border-t border-stone-100 space-y-4">
-                 <h3 className="text-sm font-medium text-stone-800 uppercase tracking-wide">HMC COMMUNITY CONNECTION</h3>
+                 <h3 className="text-sm font-medium text-stone-800 uppercase tracking-wide">{t.gpCommunityTitle}</h3>
                  <div className="space-y-3">
                     <label className={`flex items-center gap-3 p-5 rounded-2xl cursor-pointer hover:bg-stone-50 transition-colors border ${state.gamePlan.smsOptIn ? 'bg-white border-stone-400 shadow-md' : 'bg-stone-50 border-stone-100'}`}>
                       <input type="checkbox" checked={state.gamePlan.smsOptIn} onChange={e => { updateGamePlan('smsOptIn', e.target.checked); if (e.target.checked) handleOptInSubmit('sms'); }} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
