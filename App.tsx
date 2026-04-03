@@ -387,7 +387,7 @@ const App: React.FC = () => {
 
   if (state.section === 'intro') {
     return (
-      <div className="bg-[#faf9f6] p-4 md:p-8 flex flex-col items-center justify-start pt-12 md:pt-20 font-['Inter']" style={{ minHeight: '100dvh' }}>
+      <div className="bg-[#faf9f6] p-4 md:p-8 flex flex-col items-center justify-center py-8 font-['Inter']" style={{ minHeight: '100dvh' }}>
         {savedState && (
           <div className="w-full max-w-xl mb-6 bg-white rounded-2xl shadow-lg p-6 border border-stone-200 flex flex-col sm:flex-row items-center gap-4" style={{ animation: 'fadeSlideUp 0.4s ease-out' }}>
             <div className="flex-1 text-center sm:text-left">
