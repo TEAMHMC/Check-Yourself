@@ -158,6 +158,9 @@ const App: React.FC = () => {
 
   const [state, setState] = useState<AssessmentState>(defaultState);
   const [savedState, setSavedState] = useState<AssessmentState | null>(null);
+  const [isCaregiver, setIsCaregiver] = useState(false);
+  const [showProviderLetter, setShowProviderLetter] = useState(false);
+  const [letterCopied, setLetterCopied] = useState(false);
 
   // Restore session on mount
   useEffect(() => {
@@ -183,7 +186,12 @@ const App: React.FC = () => {
 
   // --- HANDLERS ---
   const handleStart = () => {
-    setState(prev => ({ ...prev, section: 'assessment', currentStep: 0, answers: {}, rootCauses: [], lifeEvents: [] }));
+    setState(prev => ({ ...prev, section: 'caregiver-intro', currentStep: 0, answers: {}, rootCauses: [], lifeEvents: [] }));
+  };
+
+  const startAssessment = (caregiver: boolean) => {
+    setIsCaregiver(caregiver);
+    setState(prev => ({ ...prev, section: 'assessment' }));
   };
 
   const handleAnswer = (value: number) => {
@@ -450,6 +458,61 @@ const App: React.FC = () => {
     );
   }
 
+  if (state.section === 'caregiver-intro') {
+    return (
+      <div className="bg-[#faf9f6] p-4 md:p-8 flex flex-col items-center justify-center font-['Inter']" style={{ minHeight: '100dvh' }}>
+        <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+        <div className="w-full max-w-xl bg-white rounded-[3rem] shadow-2xl p-10 md:p-14 text-center flex flex-col items-center border border-stone-100" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
+          <div className="w-16 h-16 rounded-[1.25rem] flex items-center justify-center mb-8 shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND.blue}, ${BRAND.blueDark})` }}>
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+          </div>
+          <h1 className="font-display text-4xl md:text-5xl text-stone-900 mb-4 leading-tight tracking-wide">
+            {(t as any).caregiverIntroTitle || 'Who is this check-in for?'}
+          </h1>
+          <p className="text-stone-500 font-medium text-sm mb-10 max-w-sm leading-relaxed">
+            {state.language === 'en'
+              ? 'This helps us give you the most relevant support and resources.'
+              : 'Esto nos ayuda a darte el apoyo y los recursos más relevantes.'}
+          </p>
+          <div className="w-full space-y-4">
+            <button
+              onClick={() => startAssessment(false)}
+              className="w-full p-6 text-left rounded-2xl border-2 border-stone-100 bg-white hover:border-stone-400 hover:shadow-lg transition-all flex items-center justify-between group active:scale-[0.98]"
+            >
+              <div className="text-left">
+                <p className="font-bold text-stone-800 text-lg group-hover:text-stone-900">
+                  {(t as any).caregiverIntroSelf || 'For me — checking my own wellbeing'}
+                </p>
+              </div>
+              <div className="w-8 h-8 rounded-full border-2 border-stone-200 group-hover:border-stone-400 flex items-center justify-center flex-shrink-0 ml-4 transition-all">
+                <svg className="w-4 h-4 text-stone-300 group-hover:text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"></path></svg>
+              </div>
+            </button>
+            <button
+              onClick={() => startAssessment(true)}
+              className="w-full p-6 text-left rounded-2xl border-2 border-stone-100 bg-white hover:border-stone-400 hover:shadow-lg transition-all flex items-center justify-between group active:scale-[0.98]"
+            >
+              <div className="text-left">
+                <p className="font-bold text-stone-800 text-lg group-hover:text-stone-900">
+                  {(t as any).caregiverIntroOther || 'For someone I love — checking in on them'}
+                </p>
+                <p className="text-[11px] font-medium text-stone-400 mt-1 uppercase tracking-wide">
+                  {state.language === 'en' ? 'Includes caregiver support for you' : 'Incluye apoyo para ti como cuidador/a'}
+                </p>
+              </div>
+              <div className="w-8 h-8 rounded-full border-2 border-stone-200 group-hover:border-stone-400 flex items-center justify-center flex-shrink-0 ml-4 transition-all">
+                <svg className="w-4 h-4 text-stone-300 group-hover:text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"></path></svg>
+              </div>
+            </button>
+          </div>
+          <button onClick={restart} className="mt-8 text-xs font-bold text-stone-400 hover:text-stone-700 uppercase tracking-wide transition-colors">
+            {t.back}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (state.section === 'assessment') {
     const currentQ = QUESTIONS[state.currentStep];
     const catColor = currentQ?.category === 'mood' ? BRAND.pink : BRAND.orange;
@@ -554,6 +617,25 @@ const App: React.FC = () => {
     const gad = calculateGAD7(state.answers, state.language);
     const hasSuicidalIdeation = state.answers['p9'] > 0;
     const hasSevereSymptoms = phq.severity === 'severe' || gad.severity === 'severe' || phq.severity === 'moderately-severe';
+    const lang = state.language;
+    const isEn = lang === Language.EN;
+    const date = new Date().toLocaleDateString();
+
+    const lifeEventLabels = state.lifeEvents.map(id => LIFE_EVENT_OPTIONS.find(o => o.id === id)?.label[lang]).filter(Boolean).join(', ');
+    const rootCauseLabels = state.rootCauses.map(id => SDOH_OPTIONS.find(o => o.id === id)?.label[lang]).filter(Boolean).join(', ');
+
+    const providerLetterText = isEn
+      ? `Date: ${date}\n\nTo My Healthcare Provider,\n\nI am sharing the results of a mental health screening I completed using validated tools (PHQ-9 and GAD-7).\n\nMOOD SCREENING (PHQ-9)\nScore: ${phq.score}/27\nSeverity: ${phq.severity}\nClinical note: "${phq.clinicalTranslation}"\n\nANXIETY SCREENING (GAD-7)\nScore: ${gad.score}/21\nSeverity: ${gad.severity}\nClinical note: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `RECENT LIFE EVENTS:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `CURRENT STRESSORS:\n${rootCauseLabels}\n\n` : ''}I would like to discuss these results and what they mean for my care. I want to understand my options and next steps.\n\n— Patient\n\n---\nCompleted via healthmatters.clinic\nPHQ-9 and GAD-7 are validated clinical screening tools (Kroenke et al.; Spitzer et al.).\nThis is a screening summary, not a clinical diagnosis. Please evaluate in full context.`
+      : `Fecha: ${date}\n\nPara mi Proveedor de Salud,\n\nComparto los resultados de una evaluación de salud mental que completé usando herramientas validadas (PHQ-9 y GAD-7).\n\nEVALUACIÓN DE ÁNIMO (PHQ-9)\nPuntuación: ${phq.score}/27\nGravedad: ${phq.severity}\nNota clínica: "${phq.clinicalTranslation}"\n\nEVALUACIÓN DE ANSIEDAD (GAD-7)\nPuntuación: ${gad.score}/21\nGravedad: ${gad.severity}\nNota clínica: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `EVENTOS DE VIDA RECIENTES:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `ESTRESORES ACTUALES:\n${rootCauseLabels}\n\n` : ''}Me gustaría hablar sobre estos resultados y lo que significan para mi atención médica.\n\n— Paciente\n\n---\nCompletado en healthmatters.clinic\nPHQ-9 y GAD-7 son herramientas de detección clínica validadas.\nEste es un resumen de detección, no un diagnóstico clínico.`;
+
+    const copyProviderLetter = () => {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(providerLetterText).then(() => {
+          setLetterCopied(true);
+          setTimeout(() => setLetterCopied(false), 3000);
+        }).catch(() => {});
+      }
+    };
 
     const isMinimal = phq.score < 5 && gad.score < 5;
     
@@ -593,6 +675,17 @@ const App: React.FC = () => {
                   <span className="text-white text-sm">Text HOME to 741741</span>
                 </ActionButton>
               </div>
+            </div>
+          )}
+
+          {isCaregiver && (
+            <div className="p-6 md:p-8 text-center print:hidden border-b border-stone-100" style={{ background: `linear-gradient(135deg, ${BRAND.blue}10, ${BRAND.blue}05)` }}>
+              <p className="text-[10px] font-bold uppercase tracking-wide mb-1" style={{ color: BRAND.blue }}>
+                {(t as any).caregiverBannerTitle || 'You\u2019re taking care of someone you love.'}
+              </p>
+              <p className="text-xs text-stone-500 font-medium">
+                {(t as any).caregiverBannerSub || 'That takes strength. Your wellbeing matters too \u2014 we\u2019ve included support for you below.'}
+              </p>
             </div>
           )}
 
@@ -651,11 +744,88 @@ const App: React.FC = () => {
             <div className="p-7 md:p-8 rounded-[1.75rem] text-white shadow-xl overflow-hidden" style={{ background: `linear-gradient(135deg, #1a1a1a, ${BRAND.blueDark})` }}>
               <h3 className="font-display text-2xl mb-4 tracking-wide">{t.doctorSpeakHeader}</h3>
               <p className="opacity-60 text-sm mb-6 leading-relaxed font-medium">{t.doctorSpeakIntro}</p>
-              <div className="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur">
+              <div className="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur mb-5">
                 <p className="text-[10px] font-medium uppercase mb-2 tracking-wide" style={{ color: BRAND.yellow }}>{t.patientAdvocacyScript}</p>
                 <p className="text-sm font-medium leading-relaxed italic opacity-90">{scriptText}</p>
               </div>
+              {/* Provider Letter */}
+              {!showProviderLetter ? (
+                <button
+                  onClick={() => setShowProviderLetter(true)}
+                  className="w-full py-3.5 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wide transition-all flex items-center justify-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  {(t as any).providerLetterBtn || 'Share with My Doctor'}
+                </button>
+              ) : (
+                <div className="bg-white/10 rounded-xl border border-white/20 overflow-hidden">
+                  <div className="p-4 border-b border-white/10 flex items-center justify-between">
+                    <h4 className="text-xs font-bold uppercase tracking-wide text-white/80">
+                      {(t as any).providerLetterTitle || 'For Your Healthcare Provider'}
+                    </h4>
+                    <button onClick={() => setShowProviderLetter(false)} className="text-white/50 hover:text-white/80 transition-colors text-xs uppercase font-bold">
+                      {(t as any).providerLetterClose || 'Close'}
+                    </button>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-[11px] text-white/60 mb-3 leading-relaxed">
+                      {(t as any).providerLetterIntro || 'Hand this to your doctor, therapist, or case manager.'}
+                    </p>
+                    <pre className="text-[11px] text-white/90 leading-relaxed whitespace-pre-wrap font-mono bg-black/20 rounded-lg p-4 mb-4 overflow-auto max-h-64">
+                      {providerLetterText}
+                    </pre>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={copyProviderLetter}
+                        className="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-wide transition-all"
+                        style={{ background: letterCopied ? '#16a34a' : BRAND.blue }}
+                      >
+                        {letterCopied
+                          ? ((t as any).providerLetterCopied || 'Copied')
+                          : ((t as any).providerLetterCopy || 'Copy Letter')}
+                      </button>
+                    </div>
+                    <p className="text-[9px] text-white/40 mt-3 leading-relaxed">
+                      {(t as any).providerLetterDisclaimer || 'Screening summary only — not a clinical diagnosis.'}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
+
+            {/* Bias-aware context note */}
+            <div className="px-2">
+              <p className="text-[10px] text-stone-400 italic leading-relaxed text-center">
+                {(t as any).biasNote || 'Note: These scores reflect patterns, not a diagnosis. High scores can also reflect real-life stressors. This tool is a starting point for conversation, not a verdict.'}
+              </p>
+            </div>
+
+            {/* Caregiver resources */}
+            {isCaregiver && (
+              <div className="p-7 md:p-8 rounded-[1.75rem] border-2 border-stone-200 bg-stone-50/50" style={{ borderColor: `${BRAND.blue}30` }}>
+                <h3 className="font-display text-2xl text-stone-800 mb-2 tracking-wide">
+                  {(t as any).caregiverResultsTitle || 'For You, the Caregiver'}
+                </h3>
+                <p className="text-sm text-stone-500 font-medium mb-5">
+                  {(t as any).caregiverResultsSub || 'You are doing everything right by checking in.'}
+                </p>
+                <div className="space-y-3">
+                  {[
+                    { label: (t as any).caregiverNami || 'NAMI Family Support Group — free, peer-led', sub: 'namioc.org' },
+                    { label: (t as any).caregiverHelpline || 'NAMI Helpline: 1-800-950-NAMI (6264)', sub: '' },
+                    { label: (t as any).caregiverAccess || 'LA County DMH Family Resource Centers: 1-800-854-7771', sub: isEn ? '24/7' : '24/7' },
+                  ].map((r, i) => (
+                    <div key={i} className="p-4 bg-white rounded-xl border border-stone-100 text-sm font-medium text-stone-700">
+                      {r.label}
+                      {r.sub && <span className="text-[10px] text-stone-400 ml-2 uppercase tracking-wide">{r.sub}</span>}
+                    </div>
+                  ))}
+                  <p className="text-xs text-stone-400 italic pt-1">
+                    {(t as any).caregiverRespite || 'Caregiver burnout is real. You deserve rest too.'}
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* {t.gpCommunityTitle} Section on Results Page - Clean UI logic */}
             {!isAlreadyOptedIn ? (

@@ -3,24 +3,24 @@ import { Question, Severity, Language } from './types';
 
 export const QUESTIONS: Question[] = [
   // MOOD (Framed from PHQ-9)
-  { id: 'p1', category: 'mood', text: { en: 'Feeling like you just don’t have the heart for the things you usually love?', es: '¿Sientes que ya no tienes las mismas ganas de hacer las cosas que antes te gustaban?' } },
-  { id: 'p2', category: 'mood', text: { en: 'Feeling heavy, down, or like you’re just going through the motions?', es: '¿Te sientes desanimado/a, triste o como si estuvieras en piloto automático?' } },
-  { id: 'p3', category: 'mood', text: { en: 'Sleep is all over the place—either staying up too late or wanting to sleep the whole day?', es: '¿Tu sueño está fatal—o te desvelas mucho o quieres pasar todo el día durmiendo?' } },
-  { id: 'p4', category: 'mood', text: { en: 'Feeling drained, like your battery is at 1% even after a rest?', es: '¿Te sientes sin pilas, como si tu energía estuviera al mínimo aunque descanses?' } },
-  { id: 'p5', category: 'mood', text: { en: 'Eating way more than usual or just not having an appetite at all?', es: '¿Estás comiendo por ansiedad o se te ha ido el hambre por completo?' } },
-  { id: 'p6', category: 'mood', text: { en: 'Feeling like you’re letting people down, or not living up to who you want to be?', es: '¿Sientes que les estás fallando a los tuyos o que no estás dando la talla?' } },
-  { id: 'p7', category: 'mood', text: { en: 'Mind is wandering, having a hard time focusing on one thing at a time?', es: '¿Sientes que tu mente vuela y te cuesta mucho concentrarte en una sola cosa?' } },
-  { id: 'p8', category: 'mood', text: { en: 'Feeling super restless or the opposite—moving way slower than your normal pace?', es: '¿Te sientes demasiado inquieto/a o, al revés, sientes que te mueves en cámara lenta?' } },
-  { id: 'p9', category: 'mood', text: { en: 'Having scary thoughts about hurting yourself or like it would be easier if you weren’t here?', es: '¿Has tenido pensamientos de hacerte daño o sientes que sería más fácil si ya no estuvieras?' } },
-  
+  { id: 'p1', category: 'mood', text: { en: "Feeling like you just don't have the heart for the things you usually love?", es: "¿Sientes que ya no tienes las mismas ganas de hacer las cosas que antes te gustaban?" } },
+  { id: 'p2', category: 'mood', text: { en: "Feeling heavy, down, or like you're just going through the motions?", es: "¿Te sientes desanimado/a, triste o como si estuvieras en piloto automático?" } },
+  { id: 'p3', category: 'mood', text: { en: "Sleep is all over the place — either staying up too late or wanting to sleep the whole day?", es: "¿Tu sueño está fatal — o te desvelas mucho o quieres pasar todo el día durmiendo?" } },
+  { id: 'p4', category: 'mood', text: { en: "Feeling drained, like your battery is at 1% even after a rest?", es: "¿Te sientes sin pilas, como si tu energía estuviera al mínimo aunque descanses?" } },
+  { id: 'p5', category: 'mood', text: { en: "Eating way more than usual or just not having an appetite at all?", es: "¿Estás comiendo por ansiedad o se te ha ido el hambre por completo?" } },
+  { id: 'p6', category: 'mood', text: { en: "Feeling like you're letting people down, or not living up to who you want to be?", es: "¿Sientes que les estás fallando a los tuyos o que no estás dando la talla?" } },
+  { id: 'p7', category: 'mood', text: { en: "Mind is wandering, having a hard time focusing on one thing at a time?", es: "¿Sientes que tu mente vuela y te cuesta mucho concentrarte en una sola cosa?" } },
+  { id: 'p8', category: 'mood', text: { en: "Feeling super restless or the opposite — moving way slower than your normal pace?", es: "¿Te sientes demasiado inquieto/a o, al revés, sientes que te mueves en cámara lenta?" } },
+  { id: 'p9', category: 'mood', text: { en: "Having scary thoughts about hurting yourself, or feeling like it would be easier if you weren't here?", es: "¿Has tenido pensamientos de hacerte daño o sientes que sería más fácil si ya no estuvieras?" } },
+
   // ANXIETY (Framed from GAD-7)
-  { id: 'g1', category: 'anxiety', text: { en: 'Feeling restless, on edge, or like your nerves are shot?', es: '¿Sientes los nervios de punta, inquietud o una sensación de intranquilidad?' } },
-  { id: 'g2', category: 'anxiety', text: { en: 'Can’t seem to turn off the "what-ifs" or control the worrying?', es: '¿Sientes que no puedes apagar la cabeza o dejar de darle vueltas a las cosas?' } },
-  { id: 'g3', category: 'anxiety', text: { en: 'Worrying about so many different things all at once?', es: '¿Te preocupas por demasiadas cosas al mismo tiempo?' } },
-  { id: 'g4', category: 'anxiety', text: { en: 'Finding it impossible to just sit still and relax your mind?', es: '¿Sientes que es imposible desconectarte y relajar la mente un rato?' } },
-  { id: 'g5', category: 'anxiety', text: { en: 'Being so restless that you’re constantly moving around or fidgeting?', es: '¿Estás tan inquieto/a que no puedes ni quedarte sentado/a?' } },
-  { id: 'g6', category: 'anxiety', text: { en: 'Getting annoyed or losing your cool way faster than usual?', es: '¿Sientes que te irritas o pierdes la paciencia mucho más rápido que antes?' } },
-  { id: 'g7', category: 'anxiety', text: { en: 'Feeling a sense of dread, like something bad is about to go down?', es: '¿Sientes un miedo feo, como si algo terrible estuviera a punto de suceder?' } }
+  { id: 'g1', category: 'anxiety', text: { en: "Feeling restless, on edge, or like your nerves are shot?", es: "¿Sientes los nervios de punta, inquietud o una sensación de intranquilidad?" } },
+  { id: 'g2', category: 'anxiety', text: { en: "Can't seem to turn off the what-ifs or control the worrying?", es: "¿Sientes que no puedes apagar la cabeza o dejar de darle vueltas a las cosas?" } },
+  { id: 'g3', category: 'anxiety', text: { en: "Worrying about so many different things all at once?", es: "¿Te preocupas por demasiadas cosas al mismo tiempo?" } },
+  { id: 'g4', category: 'anxiety', text: { en: "Finding it impossible to just sit still and relax your mind?", es: "¿Sientes que es imposible desconectarte y relajar la mente un rato?" } },
+  { id: 'g5', category: 'anxiety', text: { en: "Being so restless that you're constantly moving around or fidgeting?", es: "¿Estás tan inquieto/a que no puedes ni quedarte sentado/a?" } },
+  { id: 'g6', category: 'anxiety', text: { en: "Getting annoyed or losing your cool way faster than usual?", es: "¿Sientes que te irritas o pierdes la paciencia mucho más rápido que antes?" } },
+  { id: 'g7', category: 'anxiety', text: { en: "Feeling a sense of dread, like something bad is about to go down?", es: "¿Sientes un miedo feo, como si algo terrible estuviera a punto de suceder?" } }
 ];
 
 export const STRINGS = {
@@ -73,7 +73,7 @@ export const STRINGS = {
     smsCheckInLabel: 'HMC SMS Check-ins',
     appMemberLabel: 'HMC Member App',
     optInWellness: 'OPT-IN FOR WELLNESS',
-    referralServices: 'REFERRAL SERVICES',
+    referralServices: "REFERRAL SERVICES",
     identifiedLifeContext: 'Identified Life Context',
     lifeContextSub: 'Wellbeing is tied to your environment. You mentioned dealing with:',
     calmKitTitle: 'Need a Reset Right Now?',
@@ -109,7 +109,7 @@ export const STRINGS = {
     gpForwardLabel: 'One thing looking forward to:',
     gpForwardPlaceholder: 'Next week or next month...',
     gpMessageLabel: 'Note to future self:',
-    gpMessagePlaceholder: 'What do you need to hear when it\'s dark?',
+    gpMessagePlaceholder: "What do you need to hear when it\'s dark?",
     gpCommunityTitle: 'HMC Community Connection',
     gpSmsConsent: 'HMC cares about your wellbeing—can we check in on you?',
     gpAppConsent: 'Join for priority referral support and community insights',
@@ -119,7 +119,7 @@ export const STRINGS = {
     gpResultsSub: 'Built with Health Matters Clinic',
     gpResultsGrounding: 'Grounding Point',
     gpResultsEmergency: 'Emergency Support',
-    gpResultsStrategies: 'Daily Strategies',
+    gpResultsStrategies: "Daily Strategies",
     gpResultsMessage: 'Message to self',
     gpResultsPrimary: 'Primary Support',
     gpResultsSecondary: 'Secondary Support',
@@ -147,7 +147,7 @@ export const STRINGS = {
     groundingTaste: 'thing you can TASTE',
     downloadResults: 'Save Results',
     resumePrompt: 'You have a check-in progress saved. Want to pick up where you left off?',
-    resumeYes: 'Continue',
+    resumeYes: "Continue",
     resumeNo: 'Start Fresh',
     gpTherapistLabel: 'Therapist or Support Group:',
     gpTherapistPlaceholder: 'Name of therapist, counselor, or group...',
@@ -159,7 +159,37 @@ export const STRINGS = {
     gpBeginReferral: 'Begin A Referral',
     gpReferralSub: 'Connect with an HMC team member for personalized support',
     gpResultsCreative: 'Creative Outlet',
-    gpResultsPlaylist: 'Playlist / Music'
+    gpResultsPlaylist: 'Playlist / Music',
+    // Caregiver pathway
+    caregiverIntroTitle: 'Who is this check-in for?',
+    caregiverIntroSelf: 'For me — checking my own wellbeing',
+    caregiverIntroOther: 'For someone I love — checking in on them',
+    caregiverBannerTitle: "You're taking care of someone you love.",
+    caregiverBannerSub: "That takes strength. Your wellbeing matters too \u2014 this check-in includes support for you.",
+    caregiverBurdenTitle: 'Caregiver Check-in',
+    caregiverBurdenSub: 'Caregiving is one of the hardest things a person can do. How are YOU holding up?',
+    caregiverQ1: "I'm losing sleep because of their situation",
+    caregiverQ2: 'I worry constantly about their safety',
+    caregiverQ3: "I've pulled away from friends to take care of them",
+    caregiverQ4: 'I feel guilty about my own emotions around their illness',
+    caregiverQ5: "I'm afraid I'm not doing enough",
+    caregiverQ6: 'I feel lonely in this caregiving role',
+    caregiverResultsTitle: 'For You, the Caregiver',
+    caregiverResultsSub: 'You are doing everything right by checking in. Here is support built for you.',
+    caregiverNami: 'NAMI Family Support Group — free, peer-led (namioc.org)',
+    caregiverHelpline: 'NAMI Helpline: 1-800-950-NAMI (6264)',
+    caregiverAccess: 'LA County DMH Family Resource Centers: 1-800-854-7771',
+    caregiverRespite: 'Caregiver burnout is real. You deserve rest too.',
+    // Provider letter
+    providerLetterBtn: 'Share with My Doctor',
+    providerLetterTitle: 'For Your Healthcare Provider',
+    providerLetterIntro: "You can hand this to your doctor, therapist, or case manager. It explains what you've been experiencing in clinical terms.",
+    providerLetterCopy: 'Copy Letter',
+    providerLetterCopied: 'Copied',
+    providerLetterClose: 'Close',
+    providerLetterDisclaimer: 'This is a screening tool summary, not a clinical diagnosis. Please evaluate in full context.',
+    // Bias-aware context note
+    biasNote: 'Note: These scores reflect patterns, not a diagnosis. High scores can also reflect stress from real-life challenges — housing, safety, grief, discrimination. This tool is a starting point for conversation, not a verdict.'
   },
   es: {
     title: 'EL DESAHOGO',
@@ -210,7 +240,7 @@ export const STRINGS = {
     smsCheckInLabel: 'Mensajes de Bienestar de HMC',
     appMemberLabel: 'App de Miembros de HMC',
     optInWellness: 'SUSCRÍBETE PARA BIENESTAR',
-    referralServices: 'SERVICIOS DE REFERENCIA',
+    referralServices: "SERVICIOS DE REFERENCIA",
     identifiedLifeContext: 'Contexto de Vida Identificado',
     lifeContextSub: 'El bienestar está ligado a tu entorno. Mencionaste estar lidiando con:',
     calmKitTitle: '¿Necesitas Reiniciarte Ahora Mismo?',
@@ -256,7 +286,7 @@ export const STRINGS = {
     gpResultsSub: 'Creado con Health Matters Clinic',
     gpResultsGrounding: 'Punto de Apoyo',
     gpResultsEmergency: 'Apoyo de Emergencia',
-    gpResultsStrategies: 'Estrategias Diarias',
+    gpResultsStrategies: "Estrategias Diarias",
     gpResultsMessage: 'Mensaje para mí',
     gpResultsPrimary: 'Apoyo Primario',
     gpResultsSecondary: 'Apoyo Secundario',
@@ -284,7 +314,7 @@ export const STRINGS = {
     groundingTaste: 'cosa que puedes SABOREAR',
     downloadResults: 'Guardar Resultados',
     resumePrompt: 'Tienes un chequeo guardado. ¿Quieres continuar donde lo dejaste?',
-    resumeYes: 'Continuar',
+    resumeYes: "Continuar",
     resumeNo: 'Empezar de Nuevo',
     gpTherapistLabel: 'Terapeuta o Grupo de Apoyo:',
     gpTherapistPlaceholder: 'Nombre de terapeuta, consejero, o grupo...',
@@ -296,58 +326,88 @@ export const STRINGS = {
     gpBeginReferral: 'Iniciar Una Referencia',
     gpReferralSub: 'Conecta con un miembro del equipo de HMC para apoyo personalizado',
     gpResultsCreative: 'Desahogo Creativo',
-    gpResultsPlaylist: 'Playlist / Música'
+    gpResultsPlaylist: 'Playlist / Música',
+    // Caregiver pathway
+    caregiverIntroTitle: '¿Para quién es este chequeo?',
+    caregiverIntroSelf: 'Para mí — revisando mi propio bienestar',
+    caregiverIntroOther: 'Para alguien que quiero — revisando cómo está',
+    caregiverBannerTitle: 'Estás cuidando a alguien que amas.',
+    caregiverBannerSub: 'Eso requiere fortaleza. Tu bienestar también importa — este chequeo incluye apoyo para ti.',
+    caregiverBurdenTitle: 'Chequeo para el Cuidador/a',
+    caregiverBurdenSub: 'Cuidar a alguien es una de las cosas más difíciles que existe. ¿Cómo estás TÚ?',
+    caregiverQ1: 'Estoy perdiendo el sueño por su situación',
+    caregiverQ2: 'Me preocupo constantemente por su seguridad',
+    caregiverQ3: 'Me he alejado de amigos para cuidarlos',
+    caregiverQ4: 'Me siento culpable por mis propias emociones acerca de su enfermedad',
+    caregiverQ5: 'Tengo miedo de no estar haciendo lo suficiente',
+    caregiverQ6: 'Me siento solo/a en este rol de cuidador/a',
+    caregiverResultsTitle: 'Para Ti, el Cuidador/a',
+    caregiverResultsSub: 'Estás haciendo lo correcto al chequearte. Aquí hay apoyo creado para ti.',
+    caregiverNami: 'Grupo de Apoyo Familiar NAMI — gratis, entre pares (namioc.org)',
+    caregiverHelpline: 'Línea de Ayuda NAMI: 1-800-950-NAMI (6264)',
+    caregiverAccess: 'Centros de Recursos Familiares del Condado de LA: 1-800-854-7771',
+    caregiverRespite: 'El agotamiento del cuidador es real. Tú también mereces descanso.',
+    // Provider letter
+    providerLetterBtn: 'Compartir con Mi Doctor/a',
+    providerLetterTitle: 'Para Tu Proveedor de Salud',
+    providerLetterIntro: 'Puedes darle esto a tu médico, terapeuta o gestor de casos. Explica lo que has estado experimentando en términos clínicos.',
+    providerLetterCopy: 'Copiar Carta',
+    providerLetterCopied: 'Copiado',
+    providerLetterClose: 'Cerrar',
+    providerLetterDisclaimer: 'Este es un resumen de una herramienta de detección, no un diagnóstico clínico. Por favor evalúe en contexto completo.',
+    // Bias-aware context note
+    biasNote: 'Nota: Estas puntuaciones reflejan patrones, no un diagnóstico. Las puntuaciones altas también pueden reflejar el estrés de desafíos de la vida real — vivienda, seguridad, duelo, discriminación. Esta herramienta es un punto de partida para la conversación, no un veredicto.'
   }
 };
 
 export const INTERPRETATIONS = {
   mood: {
     minimal: { 
-        en: 'You’re holding it down. Keep prioritizing your self-care routines.', 
-        es: 'La llevas bien. Sigue dándole prioridad a tus momentos de descanso.',
-        clinical: { en: 'Minimal depressive symptoms.', es: 'Síntomas depresivos mínimos.' }
+        en: "You're holding it down. Keep prioritizing your self-care routines.",
+        es: "La llevas bien. Sigue dándole prioridad a tus momentos de descanso.",
+        clinical: { en: "Minimal depressive symptoms.", es: "Síntomas depresivos mínimos." }
     },
     mild: { 
-        en: 'You might be carrying a little extra stress. Maybe it’s time to say "no" to something and "yes" to yourself.', 
-        es: 'Parece que traes un poco de carga extra. Quizás es hora de soltar algo y darte un respiro.',
-        clinical: { en: 'Mild symptoms of low mood/depression.', es: 'Síntomas leves de depresión o bajo ánimo.' }
+        en: "You might be carrying a little extra stress. Maybe it's time to say no to something and yes to yourself.",
+        es: "Parece que traes un poco de carga extra. Quizás es hora de soltar algo y darte un respiro.",
+        clinical: { en: "Mild symptoms of low mood/depression.", es: "Síntomas leves de depresión o bajo ánimo." }
     },
     moderate: { 
-        en: 'The weight is getting real. Talking to a therapist who "gets it" could really help.', 
-        es: 'La cosa se está poniendo pesada. Hablar con alguien que te entienda de verdad te puede ayudar.',
-        clinical: { en: 'Moderate depressive symptoms. Clinical evaluation suggested.', es: 'Síntomas depresivos moderados. Se sugiere evaluación clínica.' }
+        en: "The weight is getting real. Talking to a therapist who gets it could really help.",
+        es: "La cosa se está poniendo pesada. Hablar con alguien que te entienda de verdad te puede ayudar.",
+        clinical: { en: "Moderate depressive symptoms. Clinical evaluation suggested.", es: "Síntomas depresivos moderados. Se sugiere evaluación clínica." }
     },
     'moderately-severe': { 
-        en: 'This is a heavy load. It’s okay to not be okay. Reaching out is strength.', 
-        es: 'Esta temporada está muy difícil. No tienes que poder con todo solo/a. Buscar apoyo es de valientes.',
-        clinical: { en: 'Moderately severe depressive symptoms. Professional intervention recommended.', es: 'Síntomas depresivos moderadamente graves. Se recomienda intervención profesional.' }
+        en: "This is a heavy load. It's okay to not be okay. Reaching out is strength.",
+        es: "Esta temporada está muy difícil. No tienes que poder con todo solo/a. Buscar apoyo es de valientes.",
+        clinical: { en: "Moderately severe depressive symptoms. Professional intervention recommended.", es: "Síntomas depresivos moderadamente graves. Se recomienda intervención profesional." }
     },
-    severe: { 
-        en: 'You’re in the red zone. Please prioritize yourself today and reach out.', 
-        es: 'Estás en una zona difícil. Por favor, haz de tu bienestar la prioridad hoy y busca ayuda.',
-        clinical: { en: 'Severe depressive symptoms. Immediate clinical follow-up advised.', es: 'Síntomas depresivos graves. Se aconseja seguimiento clínico inmediato.' }
+    severe: {
+        en: "You're carrying something heavy right now. That is real, and it makes sense. You deserve support \u2014 not because something is wrong with you, but because you are worth caring for. High scores can also reflect what life is putting you through. Please reach out today.",
+        es: "Estas cargando algo muy pesado ahora mismo. Eso es real y tiene sentido. Mereces apoyo \u2014 no porque algo este mal en ti, sino porque vales la pena. Busca ayuda hoy.",
+        clinical: { en: "Severe depressive symptoms (PHQ-9 score consistent with severe range). Immediate clinical follow-up advised. Note: scores may reflect responses to systemic stressors — evaluate in full context.", es: "Síntomas depresivos graves. Se aconseja seguimiento clínico inmediato." }
     }
   },
   anxiety: {
     minimal: { 
-        en: 'Your peace seems solid. Keep setting those boundaries.', 
-        es: 'Tu calma se ve bien. Sigue poniendo esos límites necesarios.',
-        clinical: { en: 'Minimal anxiety symptoms.', es: 'Síntomas de ansiedad mínimos.' }
+        en: "Your peace seems solid. Keep setting those boundaries.", 
+        es: "Tu calma se ve bien. Sigue poniendo esos límites necesarios.",
+        clinical: { en: "Minimal anxiety symptoms.", es: "Síntomas de ansiedad mínimos." }
     },
     mild: { 
-        en: 'A little restless? Try some deep breathing to clear the noise.', 
-        es: '¿Un poco inquieto/a? Intenta desconectarte un rato y respira profundo.',
-        clinical: { en: 'Mild anxiety symptoms.', es: 'Síntomas de ansiedad leves.' }
+        en: "A little restless? Try some deep breathing to clear the noise.", 
+        es: "¿Un poco inquieto/a? Intenta desconectarte un rato y respira profundo.",
+        clinical: { en: "Mild anxiety symptoms.", es: "Síntomas de ansiedad leves." }
     },
     moderate: { 
-        en: 'The "what-ifs" are taking over. Let’s talk about finding tools.', 
-        es: 'La mente no para de dar vueltas. Sería bueno buscar herramientas.',
-        clinical: { en: 'Moderate anxiety symptoms. Counseling may be beneficial.', es: 'Síntomas de ansiedad moderados. La consejería puede ser beneficiosa.' }
+        en: "The what-ifs are taking over. Let's talk about finding tools.",
+        es: "La mente no para de dar vueltas. Sería bueno buscar herramientas.",
+        clinical: { en: "Moderate anxiety symptoms. Counseling may be beneficial.", es: "Síntomas de ansiedad moderados. La consejería puede ser beneficiosa." }
     },
     severe: { 
-        en: 'The anxiety is loud right now. Support is a tool for survival.', 
-        es: 'La ansiedad está gritando fuerte. Buscar ayuda es una herramienta para recuperar tu paz.',
-        clinical: { en: 'Severe anxiety symptoms. Diagnostic interview recommended.', es: 'Síntomas de ansiedad graves. Se recomienda entrevista diagnóstica.' }
+        en: "The anxiety is loud right now. Support is a tool for survival.", 
+        es: "La ansiedad está gritando fuerte. Buscar ayuda es una herramienta para recuperar tu paz.",
+        clinical: { en: "Severe anxiety symptoms. Diagnostic interview recommended.", es: "Síntomas de ansiedad graves. Se recomienda entrevista diagnóstica." }
     }
   }
 };
