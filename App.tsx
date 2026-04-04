@@ -108,7 +108,7 @@ const Layout: React.FC<{ children: React.ReactNode, state: AssessmentState, rest
               </div>
             </div>
           )}
-          <button onClick={toggleLanguage} aria-label={`Switch to ${state.language === 'en' ? 'Spanish' : 'English'}`} className="text-[10px] font-bold text-stone-500 uppercase tracking-wide bg-white px-3.5 py-1.5 border border-stone-200 rounded-full hover:text-stone-800 hover:border-stone-300 transition-all">
+          <button onClick={toggleLanguage} aria-label={`Switch to ${state.language === 'en' ? 'Spanish' : 'English'}`} className="text-[10px] font-bold text-stone-500 uppercase tracking-wide bg-white px-4 py-2.5 min-h-[44px] border border-stone-200 rounded-full hover:text-stone-800 hover:border-stone-300 transition-all">
             {state.language === 'en' ? 'ES' : 'EN'}
           </button>
         </div>
@@ -941,7 +941,7 @@ const App: React.FC = () => {
                <h2 className="font-display text-4xl text-stone-800 tracking-wide">{t.gpInventoryTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpGroundingLabel}</label>
-                 <textarea value={state.gamePlan.grounding} onChange={e => updateGamePlan('grounding', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl focus:border-stone-800 h-24 outline-none transition-all font-['Inter'] font-bold" placeholder={t.gpGroundingPlaceholder} />
+                 <textarea value={state.gamePlan.grounding} onChange={e => updateGamePlan('grounding', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl focus:border-[#233dff] focus:ring-2 focus:ring-[#233dff]/30 h-24 outline-none transition-all font-['Inter'] font-bold text-base" placeholder={t.gpGroundingPlaceholder} />
                </div>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpToolsLabel}</label>
@@ -959,16 +959,16 @@ const App: React.FC = () => {
                <h2 className="font-display text-4xl text-stone-800 tracking-wide">{t.gpStabilizeTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpContactsLabel}</label>
-                 <input type="text" value={state.gamePlan.contact1.name} onChange={e => updateGamePlanNested('contact1', 'name', e.target.value)} placeholder={`${t.gpNamePlaceholder} 1`} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold" />
-                 <input type="tel" value={state.gamePlan.contact1.phone} onChange={e => updateGamePlanNested('contact1', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl mb-4 font-bold" />
+                 <input type="text" value={state.gamePlan.contact1.name} onChange={e => updateGamePlanNested('contact1', 'name', e.target.value)} placeholder={`${t.gpNamePlaceholder} 1`} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
+                 <input type="tel" value={state.gamePlan.contact1.phone} onChange={e => updateGamePlanNested('contact1', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl mb-4 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
 
-                 <input type="text" value={state.gamePlan.contact2.name} onChange={e => updateGamePlanNested('contact2', 'name', e.target.value)} placeholder={`${t.gpNamePlaceholder} 2`} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold" />
-                 <input type="tel" value={state.gamePlan.contact2.phone} onChange={e => updateGamePlanNested('contact2', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl font-bold" />
+                 <input type="text" value={state.gamePlan.contact2.name} onChange={e => updateGamePlanNested('contact2', 'name', e.target.value)} placeholder={`${t.gpNamePlaceholder} 2`} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
+                 <input type="tel" value={state.gamePlan.contact2.phone} onChange={e => updateGamePlanNested('contact2', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
                </div>
                <div className="space-y-4 pt-4 border-t border-stone-100">
                  <label className="block text-sm font-bold text-stone-600">{t.gpTherapistLabel}</label>
-                 <input type="text" value={state.gamePlan.therapist.name} onChange={e => updateGamePlanNested('therapist', 'name', e.target.value)} placeholder={t.gpTherapistPlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold" />
-                 <input type="tel" value={state.gamePlan.therapist.phone} onChange={e => updateGamePlanNested('therapist', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl font-bold" />
+                 <input type="text" value={state.gamePlan.therapist.name} onChange={e => updateGamePlanNested('therapist', 'name', e.target.value)} placeholder={t.gpTherapistPlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
+                 <input type="tel" value={state.gamePlan.therapist.phone} onChange={e => updateGamePlanNested('therapist', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
                </div>
                <div className="p-5 rounded-2xl border-2 border-dashed" style={{ borderColor: `${BRAND.red}40`, background: `${BRAND.red}08` }}>
                  <h4 className="text-[10px] font-medium uppercase tracking-wide mb-3" style={{ color: BRAND.red }}>{t.gpCrisisNote}</h4>
@@ -987,9 +987,9 @@ const App: React.FC = () => {
                <h2 className="font-display text-4xl text-stone-800 tracking-wide">{t.gpResetTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpPlaylistLabel}</label>
-                 <textarea value={state.gamePlan.playlist} onChange={e => updateGamePlan('playlist', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-20 mb-4 font-bold" placeholder={t.gpPlaylistPlaceholder} />
+                 <textarea value={state.gamePlan.playlist} onChange={e => updateGamePlan('playlist', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-20 mb-4 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" placeholder={t.gpPlaylistPlaceholder} />
                  <label className="block text-sm font-bold text-stone-600">{t.gpCreativePlaceholder}</label>
-                 <textarea value={state.gamePlan.creative} onChange={e => updateGamePlan('creative', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-20 font-bold" placeholder={t.gpCreativePlaceholder} />
+                 <textarea value={state.gamePlan.creative} onChange={e => updateGamePlan('creative', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-20 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" placeholder={t.gpCreativePlaceholder} />
                </div>
              </div>
            )}
@@ -999,10 +999,10 @@ const App: React.FC = () => {
                <h2 className="font-display text-4xl text-stone-800 tracking-wide">{t.gpReconnectTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpForwardLabel}</label>
-                 <textarea value={state.gamePlan.forward} onChange={e => updateGamePlan('forward', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-24 mb-4 font-bold" placeholder={t.gpForwardPlaceholder} />
-                 
+                 <textarea value={state.gamePlan.forward} onChange={e => updateGamePlan('forward', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-24 mb-4 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" placeholder={t.gpForwardPlaceholder} />
+
                  <label className="block text-sm font-bold text-stone-600">{t.gpMessageLabel}</label>
-                 <textarea value={state.gamePlan.message} onChange={e => updateGamePlan('message', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-24 font-bold" placeholder={t.gpMessagePlaceholder} />
+                 <textarea value={state.gamePlan.message} onChange={e => updateGamePlan('message', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-24 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" placeholder={t.gpMessagePlaceholder} />
                </div>
                
                <div className="pt-6 border-t border-stone-100 space-y-4">
