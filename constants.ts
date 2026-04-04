@@ -399,15 +399,20 @@ export const INTERPRETATIONS = {
         es: "¿Un poco inquieto/a? Intenta desconectarte un rato y respira profundo.",
         clinical: { en: "Mild anxiety symptoms.", es: "Síntomas de ansiedad leves." }
     },
-    moderate: { 
+    moderate: {
         en: "The what-ifs are taking over. Let's talk about finding tools.",
         es: "La mente no para de dar vueltas. Sería bueno buscar herramientas.",
         clinical: { en: "Moderate anxiety symptoms. Counseling may be beneficial.", es: "Síntomas de ansiedad moderados. La consejería puede ser beneficiosa." }
     },
-    severe: { 
-        en: "The anxiety is loud right now. Support is a tool for survival.", 
-        es: "La ansiedad está gritando fuerte. Buscar ayuda es una herramienta para recuperar tu paz.",
-        clinical: { en: "Severe anxiety symptoms. Diagnostic interview recommended.", es: "Síntomas de ansiedad graves. Se recomienda entrevista diagnóstica." }
+    'moderately-severe': {
+        en: "The anxiety is running your days right now. That's exhausting. Real support — a counselor, a peer, a group — can help you get it back under control.",
+        es: "La ansiedad está dirigiendo tus días en este momento. Eso es agotador. Apoyo real — un consejero, un par, un grupo — puede ayudarte a recuperar el control.",
+        clinical: { en: "Moderately severe anxiety symptoms. Professional evaluation and therapeutic intervention recommended.", es: "Síntomas de ansiedad moderadamente graves. Se recomienda evaluación profesional e intervención terapéutica." }
+    },
+    severe: {
+        en: "The anxiety is loud right now. Support is a tool for survival. You deserve to feel safe in your own mind — and help exists that can get you there.",
+        es: "La ansiedad está gritando fuerte. Buscar ayuda es una herramienta para recuperar tu paz. Mereces sentirte seguro/a en tu propia mente.",
+        clinical: { en: "Severe anxiety symptoms. Diagnostic interview and immediate support strongly recommended.", es: "Síntomas de ansiedad graves. Se recomienda entrevista diagnóstica y apoyo inmediato." }
     }
   }
 };
