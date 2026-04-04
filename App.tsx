@@ -253,6 +253,9 @@ const App: React.FC = () => {
 
   const restart = () => {
     sessionStorage.removeItem('vibeCheckState');
+    setIsCaregiver(false);
+    setShowProviderLetter(false);
+    setLetterCopied(false);
     setState(prev => ({
       ...prev,
       answers: {},
@@ -629,12 +632,33 @@ const App: React.FC = () => {
       : `Fecha: ${date}\n\nPara mi Proveedor de Salud,\n\nComparto los resultados de una evaluación de salud mental que completé usando herramientas validadas (PHQ-9 y GAD-7).\n\nEVALUACIÓN DE ÁNIMO (PHQ-9)\nPuntuación: ${phq.score}/27\nGravedad: ${phq.severity}\nNota clínica: "${phq.clinicalTranslation}"\n\nEVALUACIÓN DE ANSIEDAD (GAD-7)\nPuntuación: ${gad.score}/21\nGravedad: ${gad.severity}\nNota clínica: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `EVENTOS DE VIDA RECIENTES:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `ESTRESORES ACTUALES:\n${rootCauseLabels}\n\n` : ''}Me gustaría hablar sobre estos resultados y lo que significan para mi atención médica.\n\n— Paciente\n\n---\nCompletado en healthmatters.clinic\nPHQ-9 y GAD-7 son herramientas de detección clínica validadas.\nEste es un resumen de detección, no un diagnóstico clínico.`;
 
     const copyProviderLetter = () => {
-      if (navigator.clipboard) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(providerLetterText).then(() => {
           setLetterCopied(true);
           setTimeout(() => setLetterCopied(false), 3000);
-        }).catch(() => {});
+        }).catch(() => {
+          // Fallback for iOS Safari — create a textarea, select, execCommand
+          fallbackCopy(providerLetterText);
+        });
+      } else {
+        fallbackCopy(providerLetterText);
       }
+    };
+
+    const fallbackCopy = (text: string) => {
+      const el = document.createElement('textarea');
+      el.value = text;
+      el.style.position = 'fixed';
+      el.style.opacity = '0';
+      document.body.appendChild(el);
+      el.focus();
+      el.select();
+      try {
+        document.execCommand('copy');
+        setLetterCopied(true);
+        setTimeout(() => setLetterCopied(false), 3000);
+      } catch {}
+      document.body.removeChild(el);
     };
 
     const isMinimal = phq.score < 5 && gad.score < 5;
