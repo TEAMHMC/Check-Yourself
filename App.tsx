@@ -377,10 +377,24 @@ const App: React.FC = () => {
     const key = type === 'sms' ? 'hmcSmsOptIn' : 'hmcAppOptIn';
     localStorage.setItem(key, 'true');
     localStorage.setItem(`${key}Date`, new Date().toISOString());
-    // TODO: Configure webhook URL for your org's opt-in collection endpoint
-    // Example: Google Apps Script web app, Zapier webhook, etc.
-    // const WEBHOOK_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
-    // fetch(WEBHOOK_URL, { method: 'POST', body: JSON.stringify({ type, timestamp: new Date().toISOString() }) }).catch(() => {});
+
+    // Submit opt-in signal to portal — contact info captured via RSVP separately
+    const label = type === 'sms' ? 'SMS Check-In Opt-In' : 'App Community Opt-In';
+    fetch('https://hmc-volunteer-portal-172668994130.us-central1.run.app/api/public/rsvp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eventId: 'checkyourself-optin',
+        eventTitle: 'Check Yourself — ' + label,
+        eventDate: new Date().toLocaleDateString(),
+        name: 'Opt-In (Check Yourself)',
+        email: '',
+        phone: '',
+        needs: label,
+        source: 'Check Yourself Tool',
+        lang: state.language,
+      }),
+    }).catch(() => {}); // silent fail — localStorage is the source of truth
   };
 
   // --- VIEWS ---
