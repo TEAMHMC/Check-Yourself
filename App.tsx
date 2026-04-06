@@ -719,31 +719,51 @@ const App: React.FC = () => {
           </div>
 
           <div className="p-8 md:p-10 space-y-10">
-            <div className="grid gap-5">
-              <div className="bg-stone-50 p-7 md:p-8 rounded-[1.75rem] border border-stone-100 shadow-sm">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: BRAND.pink }}></div>
-                  <h4 className="text-[10px] font-medium uppercase tracking-wide" style={{ color: BRAND.pink }}>{t.moodLabel}</h4>
+            <div className="bg-stone-50 p-7 md:p-8 rounded-[1.75rem] border border-stone-100 shadow-sm">
+              <p className="text-xs text-stone-400 font-medium leading-relaxed mb-6 pb-5 border-b border-stone-200">
+                {isEn
+                  ? 'Your responses were measured across two areas — how you\'ve been feeling emotionally, and how much stress or worry you\'ve been carrying. These are two different things that often affect each other.'
+                  : 'Tus respuestas fueron medidas en dos áreas: cómo te has sentido emocionalmente, y cuánto estrés o preocupación has cargado. Son dos cosas distintas que a menudo se afectan mutuamente.'}
+              </p>
+
+              <div className="mb-6 pb-6 border-b border-stone-200">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: BRAND.pink }}></div>
+                  <div>
+                    <h4 className="text-[10px] font-bold uppercase tracking-wide" style={{ color: BRAND.pink }}>
+                      {isEn ? 'Mood & Depression' : 'Estado de Ánimo y Depresión'}
+                    </h4>
+                    <p className="text-[9px] text-stone-400 font-medium uppercase tracking-wide mt-0.5">
+                      {isEn ? 'PHQ-9 · How you\'ve been feeling day to day' : 'PHQ-9 · Cómo te has sentido día a día'}
+                    </p>
+                  </div>
                 </div>
-                <div className="font-display text-4xl text-stone-800 mb-2 tracking-wide">{phq.label}</div>
-                <p className="font-accent text-stone-600 leading-relaxed font-medium mb-4">{phq.recommendation}</p>
+                <div className="font-display text-3xl text-stone-800 mb-2 tracking-wide">{phq.label}</div>
+                <p className="font-accent text-stone-600 leading-relaxed font-medium text-sm mb-3">{phq.recommendation}</p>
                 {phq.score > 0 && (
-                  <div className="p-4 bg-white rounded-xl border border-stone-100">
+                  <div className="p-3 bg-white rounded-xl border border-stone-100">
                     <span className="text-[10px] font-medium uppercase tracking-wide block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
                     <p className="text-xs text-stone-500 italic font-medium leading-relaxed">"{phq.clinicalTranslation}"</p>
                   </div>
                 )}
               </div>
 
-              <div className="bg-stone-50 p-7 md:p-8 rounded-[1.75rem] border border-stone-100 shadow-sm">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: BRAND.orange }}></div>
-                  <h4 className="text-[10px] font-medium uppercase tracking-wide" style={{ color: BRAND.orange }}>{t.anxietyLabel}</h4>
+              <div>
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: BRAND.orange }}></div>
+                  <div>
+                    <h4 className="text-[10px] font-bold uppercase tracking-wide" style={{ color: BRAND.orange }}>
+                      {isEn ? 'Anxiety & Stress' : 'Ansiedad y Estrés'}
+                    </h4>
+                    <p className="text-[9px] text-stone-400 font-medium uppercase tracking-wide mt-0.5">
+                      {isEn ? 'GAD-7 · How much worry & tension you\'ve been carrying' : 'GAD-7 · Cuánta preocupación y tensión has cargado'}
+                    </p>
+                  </div>
                 </div>
-                <div className="font-display text-4xl text-stone-800 mb-2 tracking-wide">{gad.label}</div>
-                <p className="font-accent text-stone-600 leading-relaxed font-medium mb-4">{gad.recommendation}</p>
+                <div className="font-display text-3xl text-stone-800 mb-2 tracking-wide">{gad.label}</div>
+                <p className="font-accent text-stone-600 leading-relaxed font-medium text-sm mb-3">{gad.recommendation}</p>
                 {gad.score > 0 && (
-                  <div className="p-4 bg-white rounded-xl border border-stone-100">
+                  <div className="p-3 bg-white rounded-xl border border-stone-100">
                     <span className="text-[10px] font-medium uppercase tracking-wide block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
                     <p className="text-xs text-stone-500 italic font-medium leading-relaxed">"{gad.clinicalTranslation}"</p>
                   </div>
