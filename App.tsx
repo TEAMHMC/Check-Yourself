@@ -1005,6 +1005,7 @@ const App: React.FC = () => {
                  <textarea value={state.gamePlan.message} onChange={e => updateGamePlan('message', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-24 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" placeholder={t.gpMessagePlaceholder} />
                </div>
                
+               {!(state.gamePlan.smsOptIn || state.gamePlan.appOptIn) && (
                <div className="pt-6 border-t border-stone-100 space-y-4">
                  <h3 className="text-sm font-medium text-stone-800 uppercase tracking-wide">{t.gpCommunityTitle}</h3>
                  <div className="space-y-3">
@@ -1024,6 +1025,7 @@ const App: React.FC = () => {
                     </label>
                  </div>
                </div>
+               )}
              </div>
            )}
 

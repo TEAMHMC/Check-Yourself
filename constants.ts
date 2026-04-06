@@ -25,13 +25,13 @@ export const QUESTIONS: Question[] = [
 
 export const STRINGS = {
   en: {
-    title: 'THE VIBE CHECK',
+    title: 'CHECK YOURSELF',
     subtitle: 'Protecting your peace starts here.',
     intro: 'No doctor talk, just real questions. Takes 3 minutes to see where your head is at.',
-    start: 'Check My Vibe',
+    start: 'Check Yourself',
     checkYourself: 'Check Yourself Tool',
     backToClinic: 'Back to healthmatters.clinic',
-    disclaimer: 'This tool is for screening purposes only and is NOT a clinical diagnosis. It does not replace professional medical or mental health care. If you are in immediate danger, call 911 or 988.',
+    disclaimer: 'This tool is for screening purposes only and is NOT a clinical diagnosis. It does not replace professional medical or mental health care. If you are in immediate danger, call 911 or 988. Clinically reviewed by a board-certified psychiatrist and psychiatric nurse practitioner.',
     lifeEventTitle: 'Big Transitions',
     lifeEventSub: 'Sometimes the vibe shifts because of what life is throwing at you. Have any of these happened recently?',
     rootCauseTitle: 'The Heavy Load',
@@ -198,7 +198,7 @@ export const STRINGS = {
     start: 'Empezar el Chequeo',
     checkYourself: 'Herramienta Check Yourself',
     backToClinic: 'Volver a healthmatters.clinic',
-    disclaimer: 'Esta herramienta es solo para detección y NO es un diagnóstico clínico. No reemplaza la atención médica o mental profesional. Si está en peligro inmediato, llame al 911 o al 988.',
+    disclaimer: 'Esta herramienta es solo para detección y NO es un diagnóstico clínico. No reemplaza la atención médica o mental profesional. Si está en peligro inmediato, llame al 911 o al 988. Revisado clínicamente por un psiquiatra certificado y una enfermera practicante psiquiátrica.',
     lifeEventTitle: 'Cambios Fuertes',
     lifeEventSub: 'A veces el ánimo cambia por lo que la vida nos lanza. ¿Te ha pasado algo de esto recientemente?',
     rootCauseTitle: 'La Carga Pesada',
