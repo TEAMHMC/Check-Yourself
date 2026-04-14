@@ -161,6 +161,7 @@ const App: React.FC = () => {
   const [isCaregiver, setIsCaregiver] = useState(false);
   const [showProviderLetter, setShowProviderLetter] = useState(false);
   const [letterCopied, setLetterCopied] = useState(false);
+  const [showSafetyGuardrail, setShowSafetyGuardrail] = useState(false);
 
   // Restore session on mount
   useEffect(() => {
@@ -198,10 +199,26 @@ const App: React.FC = () => {
     const currentQ = QUESTIONS[state.currentStep];
     if (!currentQ) return;
     const newAnswers = { ...state.answers, [currentQ.id]: value };
+    // Safety guardrail: pause on p9 if any non-zero (non-"Nah") answer selected
+    if (currentQ.id === 'p9' && value > 0) {
+      setState(prev => ({ ...prev, answers: newAnswers }));
+      setShowSafetyGuardrail(true);
+      return;
+    }
     if (state.currentStep === QUESTIONS.length - 1) {
       setState(prev => ({ ...prev, answers: newAnswers, section: 'life-events' }));
     } else {
       setState(prev => ({ ...prev, answers: newAnswers, currentStep: prev.currentStep + 1 }));
+    }
+  };
+
+  const dismissSafetyGuardrail = () => {
+    setShowSafetyGuardrail(false);
+    // Advance past p9
+    if (state.currentStep === QUESTIONS.length - 1) {
+      setState(prev => ({ ...prev, section: 'life-events' }));
+    } else {
+      setState(prev => ({ ...prev, currentStep: prev.currentStep + 1 }));
     }
   };
 
@@ -513,6 +530,73 @@ const App: React.FC = () => {
           </button>
         </div>
       </div>
+    );
+  }
+
+  // Safety guardrail overlay — shown when p9 answered with anything other than "Nah"
+  if (state.section === 'assessment' && showSafetyGuardrail) {
+    return (
+      <Layout state={state} restart={restart} toggleLanguage={toggleLanguage}>
+        <div className="w-full max-w-2xl" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
+          <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+          <div className="rounded-3xl border-2 p-8 md:p-10" style={{ borderColor: BRAND.red, backgroundColor: '#fff5f5' }}>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: BRAND.red }}>
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                </svg>
+              </div>
+              <h2 className="font-accent text-2xl md:text-3xl font-semibold text-stone-900 leading-snug">
+                {t.safetyGuardrailHeading}
+              </h2>
+            </div>
+            <p className="text-stone-700 text-lg leading-relaxed mb-8">
+              {t.safetyGuardrailBody}
+            </p>
+            <div className="grid gap-3 mb-8">
+              <a
+                href="tel:988"
+                className="flex items-center gap-4 p-5 rounded-2xl text-white font-bold text-lg transition-all hover:opacity-90 active:scale-[0.98]"
+                style={{ backgroundColor: BRAND.red }}
+              >
+                <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                </svg>
+                {t.safetyGuardrail988}
+              </a>
+              <a
+                href="sms:741741&body=HOME"
+                className="flex items-center gap-4 p-5 rounded-2xl font-bold text-lg transition-all hover:opacity-90 active:scale-[0.98] border-2"
+                style={{ borderColor: BRAND.red, color: BRAND.red, backgroundColor: 'white' }}
+              >
+                <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                </svg>
+                {t.safetyGuardrailCrisisText}
+              </a>
+              <a
+                href="tel:911"
+                className="flex items-center gap-4 p-4 rounded-2xl font-semibold text-base transition-all hover:opacity-90 active:scale-[0.98]"
+                style={{ backgroundColor: '#f1f5f9', color: '#374151' }}
+              >
+                <svg className="w-5 h-5 flex-shrink-0 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                {t.safetyGuardrailEmergency}
+              </a>
+            </div>
+            <p className="text-[10px] text-stone-400 leading-relaxed mb-8">
+              {t.safetyGuardrailLegal}
+            </p>
+            <button
+              onClick={dismissSafetyGuardrail}
+              className="w-full p-4 rounded-2xl font-semibold text-stone-600 text-base transition-all hover:bg-stone-100 border-2 border-stone-200"
+            >
+              {state.language === 'en' ? 'Continue screening' : 'Continuar evaluación'}
+            </button>
+          </div>
+        </div>
+      </Layout>
     );
   }
 

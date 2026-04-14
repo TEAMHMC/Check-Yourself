@@ -158,6 +158,13 @@ export const STRINGS = {
     gpResultsIntro: 'This is your go-to guide when things get heavy. Keep it close — screenshot it, print it, or save it.',
     gpBeginReferral: 'Begin A Referral',
     gpReferralSub: 'Connect with an HMC team member for personalized support',
+    // Safety guardrail — shown inline when p9 (self-harm/suicidal ideation) is answered with anything other than "Nah, not me"
+    safetyGuardrailHeading: 'You don\'t have to carry this alone.',
+    safetyGuardrailBody: 'If you\'re having thoughts of hurting yourself or not wanting to be here — please reach out right now. It\'s free, confidential, and someone is ready to listen 24/7.',
+    safetyGuardrail988: 'Text or Call 988 — Suicide & Crisis Lifeline',
+    safetyGuardrailCrisisText: 'Crisis Text Line: Text HOME to 741741',
+    safetyGuardrailEmergency: 'If you are in immediate danger, call 911.',
+    safetyGuardrailLegal: 'This screening tool is not a substitute for professional mental health care. If you indicated thoughts of self-harm or suicide, please contact a licensed provider or crisis line immediately.',
     gpResultsCreative: 'Creative Outlet',
     gpResultsPlaylist: 'Playlist / Music',
     // Caregiver pathway
@@ -355,6 +362,13 @@ export const STRINGS = {
     providerLetterCopied: 'Copiado',
     providerLetterClose: 'Cerrar',
     providerLetterDisclaimer: 'Este es un resumen de una herramienta de detección, no un diagnóstico clínico. Por favor evalúe en contexto completo.',
+    // Safety guardrail — shown inline when p9 is answered with anything other than "Nah, not me"
+    safetyGuardrailHeading: 'No tienes que cargar esto solo/a.',
+    safetyGuardrailBody: 'Si estás teniendo pensamientos de hacerte daño o de ya no querer estar aquí — por favor comunícate ahora mismo. Es gratis, confidencial, y hay alguien listo/a para escucharte las 24 horas.',
+    safetyGuardrail988: 'Llama o escribe al 988 — Línea de Crisis de Suicidio',
+    safetyGuardrailCrisisText: 'Línea de Texto de Crisis: Escribe HOLA al 741741',
+    safetyGuardrailEmergency: 'Si estás en peligro inmediato, llama al 911.',
+    safetyGuardrailLegal: 'Esta herramienta de evaluación no reemplaza la atención profesional de salud mental. Si indicaste pensamientos de autolesión o suicidio, por favor contacta a un proveedor certificado o a una línea de crisis de inmediato.',
     // Bias-aware context note
     biasNote: 'Nota: Estas puntuaciones reflejan patrones, no un diagnóstico. Las puntuaciones altas también pueden reflejar el estrés de desafíos de la vida real — vivienda, seguridad, duelo, discriminación. Esta herramienta es un punto de partida para la conversación, no un veredicto.'
   }
