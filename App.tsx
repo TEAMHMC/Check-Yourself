@@ -861,7 +861,7 @@ const App: React.FC = () => {
                    <p className="font-accent text-stone-600 font-medium text-sm">{t.calmKitSub}</p>
                 </div>
                 <ActionButton
-                  href="https://teamhmc.github.io/CalmKit/"
+                  href="https://calmkit.healthmatters.clinic"
                   className="w-full sm:w-auto px-12"
                   color={BRAND.blue}
                 >
