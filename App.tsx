@@ -162,6 +162,7 @@ const App: React.FC = () => {
   const [showProviderLetter, setShowProviderLetter] = useState(false);
   const [letterCopied, setLetterCopied] = useState(false);
   const [showSafetyGuardrail, setShowSafetyGuardrail] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
 
   // Restore session on mount
   useEffect(() => {
@@ -303,6 +304,8 @@ const App: React.FC = () => {
   };
 
   const handleShare = async () => {
+    if (isSharing) return;
+    setIsSharing(true);
     const shareText = `I just built my recovery plan on The Vibe Check! Check it out at healthmatters.clinic. Message to self: "${state.gamePlan.message || 'You are unstoppable.'}"`;
     if (navigator.share) {
       try {
@@ -317,6 +320,7 @@ const App: React.FC = () => {
     } else {
       window.print();
     }
+    setIsSharing(false);
   };
 
   const handleDownload = () => {
@@ -804,54 +808,56 @@ const App: React.FC = () => {
 
           <div className="p-8 md:p-10 space-y-10">
             <div className="bg-stone-50 p-7 md:p-8 rounded-[1.75rem] border border-stone-100 shadow-sm">
-              <p className="text-xs text-stone-400 font-medium leading-relaxed mb-6 pb-5 border-b border-stone-200">
+              <p className="text-sm text-stone-500 font-medium leading-relaxed mb-6 pb-5 border-b border-stone-200">
                 {isEn
                   ? 'Your responses were measured across two areas — how you\'ve been feeling emotionally, and how much stress or worry you\'ve been carrying. These are two different things that often affect each other.'
                   : 'Tus respuestas fueron medidas en dos áreas: cómo te has sentido emocionalmente, y cuánto estrés o preocupación has cargado. Son dos cosas distintas que a menudo se afectan mutuamente.'}
               </p>
 
-              <div className="mb-6 pb-6 border-b border-stone-200">
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: BRAND.pink }}></div>
-                  <div>
-                    <h4 className="text-[10px] font-bold uppercase tracking-wide" style={{ color: BRAND.pink }}>
-                      {isEn ? 'Mood & Depression' : 'Estado de Ánimo y Depresión'}
-                    </h4>
-                    <p className="text-[9px] text-stone-400 font-medium uppercase tracking-wide mt-0.5">
-                      {isEn ? 'PHQ-9 · How you\'ve been feeling day to day' : 'PHQ-9 · Cómo te has sentido día a día'}
-                    </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="pb-6 sm:pb-0 border-b sm:border-b-0 sm:border-r border-stone-200 sm:pr-6">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-2.5 h-2.5 rounded-full mt-1 flex-shrink-0" style={{ backgroundColor: BRAND.pink }}></div>
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wide" style={{ color: BRAND.pink }}>
+                        {isEn ? 'Mood & Depression' : 'Estado de Ánimo y Depresión'}
+                      </h4>
+                      <p className="text-[11px] text-stone-400 font-medium uppercase tracking-wide mt-0.5">
+                        {isEn ? 'PHQ-9 · Day-to-day mood' : 'PHQ-9 · Estado de ánimo diario'}
+                      </p>
+                    </div>
                   </div>
+                  <div className="font-display text-3xl text-stone-800 mb-2 tracking-wide">{phq.label}</div>
+                  <p className="font-accent text-stone-600 leading-relaxed font-medium text-sm mb-3">{phq.recommendation}</p>
+                  {phq.score > 0 && (
+                    <div className="p-3 bg-white rounded-xl border border-stone-100">
+                      <span className="text-[11px] font-medium uppercase tracking-wide block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
+                      <p className="text-xs text-stone-500 italic font-medium leading-relaxed">"{phq.clinicalTranslation}"</p>
+                    </div>
+                  )}
                 </div>
-                <div className="font-display text-3xl text-stone-800 mb-2 tracking-wide">{phq.label}</div>
-                <p className="font-accent text-stone-600 leading-relaxed font-medium text-sm mb-3">{phq.recommendation}</p>
-                {phq.score > 0 && (
-                  <div className="p-3 bg-white rounded-xl border border-stone-100">
-                    <span className="text-[10px] font-medium uppercase tracking-wide block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
-                    <p className="text-xs text-stone-500 italic font-medium leading-relaxed">"{phq.clinicalTranslation}"</p>
-                  </div>
-                )}
-              </div>
 
-              <div>
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: BRAND.orange }}></div>
-                  <div>
-                    <h4 className="text-[10px] font-bold uppercase tracking-wide" style={{ color: BRAND.orange }}>
-                      {isEn ? 'Anxiety & Stress' : 'Ansiedad y Estrés'}
-                    </h4>
-                    <p className="text-[9px] text-stone-400 font-medium uppercase tracking-wide mt-0.5">
-                      {isEn ? 'GAD-7 · How much worry & tension you\'ve been carrying' : 'GAD-7 · Cuánta preocupación y tensión has cargado'}
-                    </p>
+                <div>
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-2.5 h-2.5 rounded-full mt-1 flex-shrink-0" style={{ backgroundColor: BRAND.orange }}></div>
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wide" style={{ color: BRAND.orange }}>
+                        {isEn ? 'Anxiety & Stress' : 'Ansiedad y Estrés'}
+                      </h4>
+                      <p className="text-[11px] text-stone-400 font-medium uppercase tracking-wide mt-0.5">
+                        {isEn ? 'GAD-7 · Worry & tension' : 'GAD-7 · Preocupación y tensión'}
+                      </p>
+                    </div>
                   </div>
+                  <div className="font-display text-3xl text-stone-800 mb-2 tracking-wide">{gad.label}</div>
+                  <p className="font-accent text-stone-600 leading-relaxed font-medium text-sm mb-3">{gad.recommendation}</p>
+                  {gad.score > 0 && (
+                    <div className="p-3 bg-white rounded-xl border border-stone-100">
+                      <span className="text-[11px] font-medium uppercase tracking-wide block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
+                      <p className="text-xs text-stone-500 italic font-medium leading-relaxed">"{gad.clinicalTranslation}"</p>
+                    </div>
+                  )}
                 </div>
-                <div className="font-display text-3xl text-stone-800 mb-2 tracking-wide">{gad.label}</div>
-                <p className="font-accent text-stone-600 leading-relaxed font-medium text-sm mb-3">{gad.recommendation}</p>
-                {gad.score > 0 && (
-                  <div className="p-3 bg-white rounded-xl border border-stone-100">
-                    <span className="text-[10px] font-medium uppercase tracking-wide block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
-                    <p className="text-xs text-stone-500 italic font-medium leading-relaxed">"{gad.clinicalTranslation}"</p>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -922,8 +928,8 @@ const App: React.FC = () => {
             </div>
 
             {/* Bias-aware context note */}
-            <div className="px-2">
-              <p className="text-[10px] text-stone-400 italic leading-relaxed text-center">
+            <div className="p-4 rounded-2xl bg-stone-100/80 border border-stone-200">
+              <p className="text-xs text-stone-600 italic leading-relaxed text-center">
                 {(t as any).biasNote || 'Note: These scores reflect patterns, not a diagnosis. High scores can also reflect real-life stressors. This tool is a starting point for conversation, not a verdict.'}
               </p>
             </div>
@@ -955,26 +961,27 @@ const App: React.FC = () => {
               </div>
             )}
 
-            {/* {t.gpCommunityTitle} Section on Results Page - Clean UI logic */}
+            {/* HMC Community Connection — single unified opt-in */}
             {!isAlreadyOptedIn ? (
-              <div className="p-8 rounded-[2rem] bg-stone-50 border border-stone-100 shadow-sm space-y-6 print:hidden">
+              <div className="p-8 rounded-[2rem] bg-stone-50 border border-stone-100 shadow-sm space-y-5 print:hidden">
                 <h3 className="text-lg font-medium text-stone-800 tracking-tight uppercase">{t.gpCommunityTitle}</h3>
-                <div className="space-y-4">
-                  <label className={`flex items-center gap-3 p-5 rounded-2xl cursor-pointer transition-all border ${state.gamePlan.smsOptIn ? 'bg-white border-stone-400 shadow-md' : 'bg-white border-stone-100 hover:border-stone-400'}`}>
-                    <input type="checkbox" checked={state.gamePlan.smsOptIn} onChange={e => { updateGamePlan('smsOptIn', e.target.checked); if (e.target.checked) handleOptInSubmit('sms'); }} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
-                    <div className="flex flex-col text-left">
-                      <span className="text-sm font-bold text-stone-800">{t.smsCheckInLabel}</span>
-                      <span className="text-[10px] font-bold uppercase tracking-wide mt-0.5" style={{ color: BRAND.blue }}>{t.gpSmsConsent}</span>
-                    </div>
-                  </label>
-                  <label className={`flex items-center gap-3 p-5 rounded-2xl cursor-pointer transition-all border ${state.gamePlan.appOptIn ? 'bg-white border-stone-400 shadow-md' : 'bg-white border-stone-100 hover:border-stone-400'}`}>
-                    <input type="checkbox" checked={state.gamePlan.appOptIn} onChange={e => { updateGamePlan('appOptIn', e.target.checked); if (e.target.checked) handleOptInSubmit('app'); }} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
-                    <div className="flex flex-col text-left">
-                      <span className="text-sm font-bold text-stone-800">{t.appMemberLabel}</span>
-                      <span className="text-[10px] font-bold uppercase tracking-wide mt-0.5" style={{ color: BRAND.blue }}>{t.gpAppConsent}</span>
-                    </div>
-                  </label>
-                </div>
+                <label className={`flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all border ${isAlreadyOptedIn ? 'bg-white border-stone-400 shadow-md' : 'bg-white border-stone-100 hover:border-stone-400'}`}>
+                  <input
+                    type="checkbox"
+                    checked={state.gamePlan.smsOptIn || state.gamePlan.appOptIn}
+                    onChange={e => {
+                      updateGamePlan('smsOptIn', e.target.checked);
+                      updateGamePlan('appOptIn', e.target.checked);
+                      if (e.target.checked) { handleOptInSubmit('sms'); handleOptInSubmit('app'); }
+                    }}
+                    className="w-5 h-5 flex-shrink-0"
+                    style={{ accentColor: BRAND.blue }}
+                  />
+                  <div className="flex flex-col text-left">
+                    <span className="text-sm font-bold text-stone-800">{(t as any).hmcConnectLabel || 'Stay Connected with HMC'}</span>
+                    <span className="text-xs text-stone-500 font-medium mt-0.5">{(t as any).hmcConnectConsent || 'Get wellness check-ins, priority support & community updates'}</span>
+                  </div>
+                </label>
               </div>
             ) : (
               <div className="p-10 rounded-[2rem] bg-stone-50 border border-stone-200 shadow-inner text-center print:hidden flex flex-col items-center gap-2">
@@ -1021,8 +1028,8 @@ const App: React.FC = () => {
                   <ActionButton onClick={handleDownload} variant="outline" className="flex-1" icon={<DownloadIcon />}>
                     {t.downloadResults}
                   </ActionButton>
-                  <ActionButton onClick={handleShare} className="flex-1" color={BRAND.blue} icon={<ShareIcon />}>
-                    {t.share}
+                  <ActionButton onClick={isSharing ? undefined : handleShare} className="flex-1" color={isSharing ? BRAND.blueDark : BRAND.blue} icon={isSharing ? undefined : <ShareIcon />}>
+                    {isSharing ? (isEn ? 'Opening…' : 'Abriendo…') : t.share}
                   </ActionButton>
                </div>
             </div>
@@ -1112,22 +1119,23 @@ const App: React.FC = () => {
                {!(state.gamePlan.smsOptIn || state.gamePlan.appOptIn) && (
                <div className="pt-6 border-t border-stone-100 space-y-4">
                  <h3 className="text-sm font-medium text-stone-800 uppercase tracking-wide">{t.gpCommunityTitle}</h3>
-                 <div className="space-y-3">
-                    <label className={`flex items-center gap-3 p-5 rounded-2xl cursor-pointer hover:bg-stone-50 transition-colors border ${state.gamePlan.smsOptIn ? 'bg-white border-stone-400 shadow-md' : 'bg-stone-50 border-stone-100'}`}>
-                      <input type="checkbox" checked={state.gamePlan.smsOptIn} onChange={e => { updateGamePlan('smsOptIn', e.target.checked); if (e.target.checked) handleOptInSubmit('sms'); }} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
-                      <div className="flex flex-col text-left">
-                        <span className="text-sm font-bold text-stone-800">{t.smsCheckInLabel}</span>
-                        <span className="text-[10px] font-bold uppercase tracking-wide mt-0.5" style={{ color: BRAND.blue }}>{t.gpSmsConsent}</span>
-                      </div>
-                    </label>
-                    <label className={`flex items-center gap-3 p-5 rounded-2xl cursor-pointer hover:bg-stone-50 transition-colors border ${state.gamePlan.appOptIn ? 'bg-white border-stone-400 shadow-md' : 'bg-stone-50 border-stone-100'}`}>
-                      <input type="checkbox" checked={state.gamePlan.appOptIn} onChange={e => { updateGamePlan('appOptIn', e.target.checked); if (e.target.checked) handleOptInSubmit('app'); }} className="w-5 h-5" style={{ accentColor: BRAND.blue }} />
-                      <div className="flex flex-col text-left">
-                        <span className="text-sm font-bold text-stone-800">{t.appMemberLabel}</span>
-                        <span className="text-[10px] font-bold uppercase tracking-wide mt-0.5" style={{ color: BRAND.blue }}>{t.gpAppConsent}</span>
-                      </div>
-                    </label>
-                 </div>
+                 <label className={`flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all border ${(state.gamePlan.smsOptIn || state.gamePlan.appOptIn) ? 'bg-white border-stone-400 shadow-md' : 'bg-stone-50 border-stone-100 hover:border-stone-400'}`}>
+                   <input
+                     type="checkbox"
+                     checked={state.gamePlan.smsOptIn || state.gamePlan.appOptIn}
+                     onChange={e => {
+                       updateGamePlan('smsOptIn', e.target.checked);
+                       updateGamePlan('appOptIn', e.target.checked);
+                       if (e.target.checked) { handleOptInSubmit('sms'); handleOptInSubmit('app'); }
+                     }}
+                     className="w-5 h-5 flex-shrink-0"
+                     style={{ accentColor: BRAND.blue }}
+                   />
+                   <div className="flex flex-col text-left">
+                     <span className="text-sm font-bold text-stone-800">{(t as any).hmcConnectLabel || 'Stay Connected with HMC'}</span>
+                     <span className="text-xs text-stone-500 font-medium mt-0.5">{(t as any).hmcConnectConsent || 'Get wellness check-ins, priority support & community updates'}</span>
+                   </div>
+                 </label>
                </div>
                )}
              </div>
@@ -1227,12 +1235,12 @@ const App: React.FC = () => {
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4 print:hidden">
                  <ActionButton
-                  onClick={handleShare}
+                  onClick={isSharing ? undefined : handleShare}
                   className="flex-1"
-                  color={BRAND.blue}
-                  icon={<ShareIcon />}
+                  color={isSharing ? BRAND.blueDark : BRAND.blue}
+                  icon={isSharing ? undefined : <ShareIcon />}
                  >
-                    {t.sharePlan}
+                    {isSharing ? (state.language === Language.EN ? 'Opening…' : 'Abriendo…') : t.sharePlan}
                  </ActionButton>
                  <ActionButton
                   href={`mailto:referrals@healthmatters.clinic?subject=${encodeURIComponent('Wellness Check Referral Request')}&body=${encodeURIComponent(`Hi HMC Team,\n\nI completed a wellness screening and would like to connect with support.\n\nSupport contacts: ${state.gamePlan.contact1.name || 'Not provided'} / ${state.gamePlan.contact2.name || 'Not provided'}\nTherapist: ${state.gamePlan.therapist.name || 'Not provided'}\nTools selected: ${state.gamePlan.tools.join(', ') || 'None'}\n\nPlease reach out to help me navigate next steps.\n\nThank you.`)}`}
