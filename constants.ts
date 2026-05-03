@@ -207,7 +207,7 @@ export const STRINGS = {
     start: 'Empezar el Chequeo',
     checkYourself: 'Herramienta Check Yourself',
     backToClinic: 'Volver a healthmatters.clinic',
-    disclaimer: 'Esta herramienta es solo para detección y NO es un diagnóstico clínico. No reemplaza la atención médica o mental profesional. Si está en peligro inmediato, llame al 911 o al 988. Revisado clínicamente por un psiquiatra certificado y una enfermera practicante psiquiátrica.',
+    disclaimer: 'Esta herramienta es solo para detección y NO es un diagnóstico clínico. No reemplaza la atención médica o mental profesional. Si está en peligro inmediato, llame al 911 o al 988. Revisado por el liderazgo clínico de HMC.',
     lifeEventTitle: 'Cambios Fuertes',
     lifeEventSub: 'A veces el ánimo cambia por lo que la vida nos lanza. ¿Te ha pasado algo de esto recientemente?',
     rootCauseTitle: 'La Carga Pesada',
