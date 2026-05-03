@@ -339,11 +339,11 @@ const App: React.FC = () => {
     text += '═══════════════════════════════════════\n\n';
 
     text += `${t.moodLabel.toUpperCase()} (PHQ-9)\n`;
-    text += `${isEn ? 'Score' : 'Puntuación'}: ${phq.score}/27 — ${phq.label}\n`;
+    text += `${isEn ? 'Score' : 'Puntuación'}: ${phq.score}/27, ${phq.label}\n`;
     text += `"${phq.clinicalTranslation}"\n\n`;
 
     text += `${t.anxietyLabel.toUpperCase()} (GAD-7)\n`;
-    text += `${isEn ? 'Score' : 'Puntuación'}: ${gad.score}/21 — ${gad.label}\n`;
+    text += `${isEn ? 'Score' : 'Puntuación'}: ${gad.score}/21, ${gad.label}\n`;
     text += `"${gad.clinicalTranslation}"\n\n`;
 
     text += '───────────────────────────────────────\n';
@@ -352,7 +352,7 @@ const App: React.FC = () => {
 
     QUESTIONS.forEach((q, i) => {
       const answer = state.answers[q.id];
-      const answerLabel = answer !== undefined ? optionLabels[answer] : '—';
+      const answerLabel = answer !== undefined ? optionLabels[answer] : ', ';
       text += `${i + 1}. ${q.text[lang]}\n`;
       text += `   → ${answerLabel} (${answer ?? 0}/3)\n\n`;
     });
@@ -410,14 +410,14 @@ const App: React.FC = () => {
     localStorage.setItem(key, 'true');
     localStorage.setItem(`${key}Date`, new Date().toISOString());
 
-    // Submit opt-in signal to portal — contact info captured via RSVP separately
+    // Submit opt-in signal to portal, contact info captured via RSVP separately
     const label = type === 'sms' ? 'SMS Check-In Opt-In' : 'App Community Opt-In';
     fetch('https://hmc-volunteer-portal-172668994130.us-central1.run.app/api/public/rsvp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         eventId: 'checkyourself-optin',
-        eventTitle: 'Check Yourself — ' + label,
+        eventTitle: 'Check Yourself, ' + label,
         eventDate: new Date().toLocaleDateString(),
         name: 'Opt-In (Check Yourself)',
         email: '',
@@ -426,7 +426,7 @@ const App: React.FC = () => {
         source: 'Check Yourself Tool',
         lang: state.language,
       }),
-    }).catch(() => {}); // silent fail — localStorage is the source of truth
+    }).catch(() => {}); // silent fail, localStorage is the source of truth
   };
 
   // --- VIEWS ---
@@ -505,7 +505,7 @@ const App: React.FC = () => {
             >
               <div className="text-left">
                 <p className="font-bold text-stone-800 text-lg group-hover:text-stone-900">
-                  {(t as any).caregiverIntroSelf || 'For me — checking my own wellbeing'}
+                  {(t as any).caregiverIntroSelf || 'For me, checking my own wellbeing'}
                 </p>
               </div>
               <div className="w-8 h-8 rounded-full border-2 border-stone-200 group-hover:border-stone-400 flex items-center justify-center flex-shrink-0 ml-4 transition-all">
@@ -518,7 +518,7 @@ const App: React.FC = () => {
             >
               <div className="text-left">
                 <p className="font-bold text-stone-800 text-lg group-hover:text-stone-900">
-                  {(t as any).caregiverIntroOther || 'For someone I love — checking in on them'}
+                  {(t as any).caregiverIntroOther || 'For someone I love, checking in on them'}
                 </p>
                 <p className="text-[11px] font-medium text-stone-400 mt-1 uppercase tracking-wide">
                   {state.language === 'en' ? 'Includes caregiver support for you' : 'Incluye apoyo para ti como cuidador/a'}
@@ -537,7 +537,7 @@ const App: React.FC = () => {
     );
   }
 
-  // Safety guardrail overlay — shown when p9 answered with anything other than "Nah"
+  // Safety guardrail overlay, shown when p9 answered with anything other than "Nah"
   if (state.section === 'assessment' && showSafetyGuardrail) {
     return (
       <Layout state={state} restart={restart} toggleLanguage={toggleLanguage}>
@@ -716,8 +716,8 @@ const App: React.FC = () => {
     const rootCauseLabels = state.rootCauses.map(id => SDOH_OPTIONS.find(o => o.id === id)?.label[lang]).filter(Boolean).join(', ');
 
     const providerLetterText = isEn
-      ? `Date: ${date}\n\nTo My Healthcare Provider,\n\nI am sharing the results of a mental health screening I completed using validated tools (PHQ-9 and GAD-7).\n\nMOOD SCREENING (PHQ-9)\nScore: ${phq.score}/27\nSeverity: ${phq.severity}\nClinical note: "${phq.clinicalTranslation}"\n\nANXIETY SCREENING (GAD-7)\nScore: ${gad.score}/21\nSeverity: ${gad.severity}\nClinical note: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `RECENT LIFE EVENTS:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `CURRENT STRESSORS:\n${rootCauseLabels}\n\n` : ''}I would like to discuss these results and what they mean for my care. I want to understand my options and next steps.\n\n— Patient\n\n---\nCompleted via healthmatters.clinic\nPHQ-9 and GAD-7 are validated clinical screening tools (Kroenke et al.; Spitzer et al.).\nThis is a screening summary, not a clinical diagnosis. Please evaluate in full context.`
-      : `Fecha: ${date}\n\nPara mi Proveedor de Salud,\n\nComparto los resultados de una evaluación de salud mental que completé usando herramientas validadas (PHQ-9 y GAD-7).\n\nEVALUACIÓN DE ÁNIMO (PHQ-9)\nPuntuación: ${phq.score}/27\nGravedad: ${phq.severity}\nNota clínica: "${phq.clinicalTranslation}"\n\nEVALUACIÓN DE ANSIEDAD (GAD-7)\nPuntuación: ${gad.score}/21\nGravedad: ${gad.severity}\nNota clínica: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `EVENTOS DE VIDA RECIENTES:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `ESTRESORES ACTUALES:\n${rootCauseLabels}\n\n` : ''}Me gustaría hablar sobre estos resultados y lo que significan para mi atención médica.\n\n— Paciente\n\n---\nCompletado en healthmatters.clinic\nPHQ-9 y GAD-7 son herramientas de detección clínica validadas.\nEste es un resumen de detección, no un diagnóstico clínico.`;
+      ? `Date: ${date}\n\nTo My Healthcare Provider,\n\nI am sharing the results of a mental health screening I completed using validated tools (PHQ-9 and GAD-7).\n\nMOOD SCREENING (PHQ-9)\nScore: ${phq.score}/27\nSeverity: ${phq.severity}\nClinical note: "${phq.clinicalTranslation}"\n\nANXIETY SCREENING (GAD-7)\nScore: ${gad.score}/21\nSeverity: ${gad.severity}\nClinical note: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `RECENT LIFE EVENTS:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `CURRENT STRESSORS:\n${rootCauseLabels}\n\n` : ''}I would like to discuss these results and what they mean for my care. I want to understand my options and next steps.\n\n,  Patient\n\n---\nCompleted via healthmatters.clinic\nPHQ-9 and GAD-7 are validated clinical screening tools (Kroenke et al.; Spitzer et al.).\nThis is a screening summary, not a clinical diagnosis. Please evaluate in full context.`
+      : `Fecha: ${date}\n\nPara mi Proveedor de Salud,\n\nComparto los resultados de una evaluación de salud mental que completé usando herramientas validadas (PHQ-9 y GAD-7).\n\nEVALUACIÓN DE ÁNIMO (PHQ-9)\nPuntuación: ${phq.score}/27\nGravedad: ${phq.severity}\nNota clínica: "${phq.clinicalTranslation}"\n\nEVALUACIÓN DE ANSIEDAD (GAD-7)\nPuntuación: ${gad.score}/21\nGravedad: ${gad.severity}\nNota clínica: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `EVENTOS DE VIDA RECIENTES:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `ESTRESORES ACTUALES:\n${rootCauseLabels}\n\n` : ''}Me gustaría hablar sobre estos resultados y lo que significan para mi atención médica.\n\n,  Paciente\n\n---\nCompletado en healthmatters.clinic\nPHQ-9 y GAD-7 son herramientas de detección clínica validadas.\nEste es un resumen de detección, no un diagnóstico clínico.`;
 
     const copyProviderLetter = () => {
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -725,7 +725,7 @@ const App: React.FC = () => {
           setLetterCopied(true);
           setTimeout(() => setLetterCopied(false), 3000);
         }).catch(() => {
-          // Fallback for iOS Safari — create a textarea, select, execCommand
+          // Fallback for iOS Safari, create a textarea, select, execCommand
           fallbackCopy(providerLetterText);
         });
       } else {
@@ -810,7 +810,7 @@ const App: React.FC = () => {
             <div className="bg-stone-50 p-7 md:p-8 rounded-[1.75rem] border border-stone-100 shadow-sm">
               <p className="text-sm text-stone-500 font-medium leading-relaxed mb-6 pb-5 border-b border-stone-200">
                 {isEn
-                  ? 'Your responses were measured across two areas — how you\'ve been feeling emotionally, and how much stress or worry you\'ve been carrying. These are two different things that often affect each other.'
+                  ? 'Your responses were measured across two areas, how you\'ve been feeling emotionally, and how much stress or worry you\'ve been carrying. These are two different things that often affect each other.'
                   : 'Tus respuestas fueron medidas en dos áreas: cómo te has sentido emocionalmente, y cuánto estrés o preocupación has cargado. Son dos cosas distintas que a menudo se afectan mutuamente.'}
               </p>
 
@@ -920,7 +920,7 @@ const App: React.FC = () => {
                       </button>
                     </div>
                     <p className="text-[9px] text-white/40 mt-3 leading-relaxed">
-                      {(t as any).providerLetterDisclaimer || 'Screening summary only — not a clinical diagnosis.'}
+                      {(t as any).providerLetterDisclaimer || 'Screening summary only, not a clinical diagnosis.'}
                     </p>
                   </div>
                 </div>
@@ -945,7 +945,7 @@ const App: React.FC = () => {
                 </p>
                 <div className="space-y-3">
                   {[
-                    { label: (t as any).caregiverNami || 'NAMI Family Support Group — free, peer-led', sub: 'namioc.org' },
+                    { label: (t as any).caregiverNami || 'NAMI Family Support Group, free, peer-led', sub: 'namioc.org' },
                     { label: (t as any).caregiverHelpline || 'NAMI Helpline: 1-800-950-NAMI (6264)', sub: '' },
                     { label: (t as any).caregiverAccess || 'LA County DMH Family Resource Centers: 1-800-854-7771', sub: isEn ? '24/7' : '24/7' },
                   ].map((r, i) => (
@@ -961,7 +961,7 @@ const App: React.FC = () => {
               </div>
             )}
 
-            {/* HMC Community Connection — single unified opt-in */}
+            {/* HMC Community Connection, single unified opt-in */}
             {!isAlreadyOptedIn ? (
               <div className="p-8 rounded-[2rem] bg-stone-50 border border-stone-100 shadow-sm space-y-5 print:hidden">
                 <h3 className="text-lg font-medium text-stone-800 tracking-tight uppercase">{t.gpCommunityTitle}</h3>

@@ -5,12 +5,12 @@ export const QUESTIONS: Question[] = [
   // MOOD (Framed from PHQ-9)
   { id: 'p1', category: 'mood', text: { en: "Feeling like you just don't have the heart for the things you usually love?", es: "¿Sientes que ya no tienes las mismas ganas de hacer las cosas que antes te gustaban?" } },
   { id: 'p2', category: 'mood', text: { en: "Feeling heavy, down, or like you're just going through the motions?", es: "¿Te sientes desanimado/a, triste o como si estuvieras en piloto automático?" } },
-  { id: 'p3', category: 'mood', text: { en: "Sleep is all over the place — either staying up too late or wanting to sleep the whole day?", es: "¿Sientes que tu sueño está descontrolado — o te desvelas mucho o quieres pasar todo el día durmiendo?" } },
+  { id: 'p3', category: 'mood', text: { en: "Sleep is all over the place, either staying up too late or wanting to sleep the whole day?", es: "¿Sientes que tu sueño está descontrolado, o te desvelas mucho o quieres pasar todo el día durmiendo?" } },
   { id: 'p4', category: 'mood', text: { en: "Feeling drained, like your battery is at 1% even after a rest?", es: "¿Te sientes sin pilas, como si tu energía estuviera al mínimo aunque descanses?" } },
   { id: 'p5', category: 'mood', text: { en: "Eating way more than usual or just not having an appetite at all?", es: "¿Estás comiendo mucho más de lo normal o simplemente no tienes nada de apetito?" } },
   { id: 'p6', category: 'mood', text: { en: "Feeling like you're letting people down, or not living up to who you want to be?", es: "¿Sientes que estás decepcionando a la gente, o que no estás a la altura de quien quieres ser?" } },
   { id: 'p7', category: 'mood', text: { en: "Mind is wandering, having a hard time focusing on one thing at a time?", es: "¿Sientes que tu mente vuela y te cuesta mucho concentrarte en una sola cosa?" } },
-  { id: 'p8', category: 'mood', text: { en: "Feeling super restless or the opposite — moving way slower than your normal pace?", es: "¿Te sientes demasiado inquieto/a o, al revés, sientes que te mueves a un ritmo más lento de lo normal?" } },
+  { id: 'p8', category: 'mood', text: { en: "Feeling super restless or the opposite, moving way slower than your normal pace?", es: "¿Te sientes demasiado inquieto/a o, al revés, sientes que te mueves a un ritmo más lento de lo normal?" } },
   { id: 'p9', category: 'mood', text: { en: "Having scary thoughts about hurting yourself, or feeling like it would be easier if you weren't here?", es: "¿Has tenido pensamientos de hacerte daño o sientes que sería más fácil si ya no estuvieras?" } },
 
   // ANXIETY (Framed from GAD-7)
@@ -64,12 +64,12 @@ export const STRINGS = {
     overLast2Weeks: 'Thinking about the last 2 weeks... how much does this sound like you?',
     moodLabel: 'Mood Check',
     anxietyLabel: 'Calm Check',
-    lookoutTitle: 'Be on the lookout!',
+    lookoutTitle: 'Be on the lookout.',
     lookoutSub: 'We have your choices saved. Be on the lookout for more info from the HMC team.',
     clinicalInterpretation: 'Clinical Interpretation',
     patientAdvocacyScript: 'Patient Advocacy Script:',
     stayConnectedTitle: 'Stay Connected with HMC',
-    connectedMessage: "YOU'RE CONNECTED!",
+    connectedMessage: "YOU'RE CONNECTED",
     smsCheckInLabel: 'HMC SMS Check-ins',
     appMemberLabel: 'HMC Member App',
     optInWellness: 'OPT-IN FOR WELLNESS',
@@ -111,7 +111,7 @@ export const STRINGS = {
     gpMessageLabel: 'Note to future self:',
     gpMessagePlaceholder: "What do you need to hear when it\'s dark?",
     gpCommunityTitle: 'HMC Community Connection',
-    gpSmsConsent: 'HMC cares about your wellbeing—can we check in on you?',
+    gpSmsConsent: 'HMC cares about your wellbeing, can we check in on you?',
     gpAppConsent: 'Join for priority referral support and community insights',
     hmcConnectLabel: 'Stay Connected with HMC',
     hmcConnectConsent: 'Get wellness check-ins, priority support & community updates',
@@ -128,7 +128,7 @@ export const STRINGS = {
     gpResultsGroundingText: 'I am worth the effort.',
     gpResultsStrategiesText: 'Breathe, move, reset.',
     gpResultsMessageText: 'You are unstoppable.',
-    thanksSubscribing: "Thanks for subscribing—we'll be reaching out!",
+    thanksSubscribing: "Thanks for subscribing. We'll be reaching out.",
     sharePlan: 'Share Plan',
     calmKitPageTitle: 'Your Calm Kit',
     calmKitPageSub: 'Take a moment. You earned it.',
@@ -153,17 +153,17 @@ export const STRINGS = {
     resumeNo: 'Start Fresh',
     gpTherapistLabel: 'Therapist or Support Group:',
     gpTherapistPlaceholder: 'Name of therapist, counselor, or group...',
-    gpCrisisNote: 'Always accessible — no matter what:',
+    gpCrisisNote: 'Always accessible, no matter what:',
     gpResultsTherapist: 'Professional Support',
     gpResultsTools: 'Daily Tools',
     gpResultsLookingForward: 'Looking Forward To',
-    gpResultsIntro: 'This is your go-to guide when things get heavy. Keep it close — screenshot it, print it, or save it.',
+    gpResultsIntro: 'This is your go-to guide when things get heavy. Keep it close, screenshot it, print it, or save it.',
     gpBeginReferral: 'Begin A Referral',
     gpReferralSub: 'Connect with an HMC team member for personalized support',
-    // Safety guardrail — shown inline when p9 (self-harm/suicidal ideation) is answered with anything other than "Nah, not me"
+    // Safety guardrail, shown inline when p9 (self-harm/suicidal ideation) is answered with anything other than "Nah, not me"
     safetyGuardrailHeading: 'You don\'t have to carry this alone.',
-    safetyGuardrailBody: 'If you\'re having thoughts of hurting yourself or not wanting to be here — please reach out right now. It\'s free, confidential, and someone is ready to listen 24/7.',
-    safetyGuardrail988: 'Text or Call 988 — Suicide & Crisis Lifeline',
+    safetyGuardrailBody: 'If you\'re having thoughts of hurting yourself or not wanting to be here, please reach out right now. It\'s free, confidential, and someone is ready to listen 24/7.',
+    safetyGuardrail988: 'Text or Call 988, Suicide & Crisis Lifeline',
     safetyGuardrailCrisisText: 'Crisis Text Line: Text HOME to 741741',
     safetyGuardrailEmergency: 'If you are in immediate danger, call 911.',
     safetyGuardrailLegal: 'This screening tool is not a substitute for professional mental health care. If you indicated thoughts of self-harm or suicide, please contact a licensed provider or crisis line immediately.',
@@ -171,8 +171,8 @@ export const STRINGS = {
     gpResultsPlaylist: 'Playlist / Music',
     // Caregiver pathway
     caregiverIntroTitle: 'Who is this check-in for?',
-    caregiverIntroSelf: 'For me — checking my own wellbeing',
-    caregiverIntroOther: 'For someone I love — checking in on them',
+    caregiverIntroSelf: 'For me, checking my own wellbeing',
+    caregiverIntroOther: 'For someone I love, checking in on them',
     caregiverBannerTitle: "You're taking care of someone you love.",
     caregiverBannerSub: "That takes strength. Your wellbeing matters too \u2014 this check-in includes support for you.",
     caregiverBurdenTitle: 'Caregiver Check-in',
@@ -185,7 +185,7 @@ export const STRINGS = {
     caregiverQ6: 'I feel lonely in this caregiving role',
     caregiverResultsTitle: 'For You, the Caregiver',
     caregiverResultsSub: 'You are doing everything right by checking in. Here is support built for you.',
-    caregiverNami: 'NAMI Family Support Group — free, peer-led (namioc.org)',
+    caregiverNami: 'NAMI Family Support Group, free, peer-led (namioc.org)',
     caregiverHelpline: 'NAMI Helpline: 1-800-950-NAMI (6264)',
     caregiverAccess: 'LA County DMH Family Resource Centers: 1-800-854-7771',
     caregiverRespite: 'Caregiver burnout is real. You deserve rest too.',
@@ -198,7 +198,7 @@ export const STRINGS = {
     providerLetterClose: 'Close',
     providerLetterDisclaimer: 'This is a screening tool summary, not a clinical diagnosis. Please evaluate in full context.',
     // Bias-aware context note
-    biasNote: 'Note: These scores reflect patterns, not a diagnosis. High scores can also reflect stress from real-life challenges — housing, safety, grief, discrimination. This tool is a starting point for conversation, not a verdict.'
+    biasNote: 'Note: These scores reflect patterns, not a diagnosis. High scores can also reflect stress from real-life challenges, housing, safety, grief, discrimination. This tool is a starting point for conversation, not a verdict.'
   },
   es: {
     title: 'EL DESAHOGO',
@@ -287,7 +287,7 @@ export const STRINGS = {
     gpMessageLabel: 'Nota para tu "yo" del futuro:',
     gpMessagePlaceholder: '¿Qué necesitas escuchar cuando todo se vea oscuro?',
     gpCommunityTitle: 'Conexión Comunitaria HMC',
-    gpSmsConsent: 'HMC se preocupa por ti—¿podemos chequear cómo estás?',
+    gpSmsConsent: 'HMC se preocupa por ti, ¿podemos chequear cómo estás?',
     gpAppConsent: 'Apoyo prioritario y conexión comunitaria',
     hmcConnectLabel: 'Mantente Conectado/a con HMC',
     hmcConnectConsent: 'Recibe seguimientos de bienestar, apoyo prioritario y actualizaciones comunitarias',
@@ -304,7 +304,7 @@ export const STRINGS = {
     gpResultsGroundingText: 'Merezco el esfuerzo.',
     gpResultsStrategiesText: 'Respira, muévete, reinicia.',
     gpResultsMessageText: 'Eres imparable.',
-    thanksSubscribing: "¡Gracias por suscribirte—nos pondremos en contacto!",
+    thanksSubscribing: "¡Gracias por suscribirte, nos pondremos en contacto!",
     sharePlan: 'Compartir Plan',
     calmKitPageTitle: 'Tu Kit de Calma',
     calmKitPageSub: 'Tómate un momento. Te lo ganaste.',
@@ -329,21 +329,21 @@ export const STRINGS = {
     resumeNo: 'Empezar de Nuevo',
     gpTherapistLabel: 'Terapeuta o Grupo de Apoyo:',
     gpTherapistPlaceholder: 'Nombre de terapeuta, consejero, o grupo...',
-    gpCrisisNote: 'Siempre accesible — pase lo que pase:',
+    gpCrisisNote: 'Siempre accesible, pase lo que pase:',
     gpResultsTherapist: 'Apoyo Profesional',
     gpResultsTools: 'Herramientas Diarias',
     gpResultsLookingForward: 'Lo Que Espero',
-    gpResultsIntro: 'Esta es tu guía para cuando las cosas se pongan pesadas. Tenla cerca — tómale foto, imprímela, o guárdala.',
+    gpResultsIntro: 'Esta es tu guía para cuando las cosas se pongan pesadas. Tenla cerca, tómale foto, imprímela, o guárdala.',
     gpBeginReferral: 'Iniciar Una Referencia',
     gpReferralSub: 'Conecta con un miembro del equipo de HMC para apoyo personalizado',
     gpResultsCreative: 'Desahogo Creativo',
     gpResultsPlaylist: 'Playlist / Música',
     // Caregiver pathway
     caregiverIntroTitle: '¿Para quién es este chequeo?',
-    caregiverIntroSelf: 'Para mí — revisando mi propio bienestar',
+    caregiverIntroSelf: 'Para mí, revisando mi propio bienestar',
     caregiverIntroOther: 'Para un ser querido – revisando cómo está.',
     caregiverBannerTitle: 'Estás cuidando a alguien que amas.',
-    caregiverBannerSub: 'Eso requiere fortaleza. Tu bienestar también importa — este chequeo incluye apoyo para ti.',
+    caregiverBannerSub: 'Eso requiere fortaleza. Tu bienestar también importa, este chequeo incluye apoyo para ti.',
     caregiverBurdenTitle: 'Chequeo para el Cuidador/a',
     caregiverBurdenSub: 'Cuidar a alguien es una de las cosas más difíciles que existe. ¿Cómo estás TÚ?',
     caregiverQ1: 'Estoy perdiendo el sueño por su situación',
@@ -354,7 +354,7 @@ export const STRINGS = {
     caregiverQ6: 'Me siento solo/a en este rol de cuidador/a',
     caregiverResultsTitle: 'Para Ti, el Cuidador/a',
     caregiverResultsSub: 'Estás haciendo lo correcto al chequearte. Aquí hay apoyo creado para ti.',
-    caregiverNami: 'Grupo de Apoyo Familiar NAMI — gratis, entre pares (namioc.org)',
+    caregiverNami: 'Grupo de Apoyo Familiar NAMI, gratis, entre pares (namioc.org)',
     caregiverHelpline: 'Línea de Ayuda NAMI: 1-800-950-NAMI (6264)',
     caregiverAccess: 'Centros de Recursos Familiares del Condado de LA: 1-800-854-7771',
     caregiverRespite: 'El agotamiento del cuidador es real. Tú también mereces descanso.',
@@ -366,15 +366,15 @@ export const STRINGS = {
     providerLetterCopied: 'Copiado',
     providerLetterClose: 'Cerrar',
     providerLetterDisclaimer: 'Este es un resumen de una herramienta de detección, no un diagnóstico clínico. Por favor evalúe en contexto completo.',
-    // Safety guardrail — shown inline when p9 is answered with anything other than "Nah, not me"
+    // Safety guardrail, shown inline when p9 is answered with anything other than "Nah, not me"
     safetyGuardrailHeading: 'No tienes que cargar esto solo/a.',
-    safetyGuardrailBody: 'Si estás teniendo pensamientos de hacerte daño o de ya no querer estar aquí — por favor comunícate ahora mismo. Es gratis, confidencial, y hay alguien listo/a para escucharte las 24 horas.',
-    safetyGuardrail988: 'Llama o escribe al 988 — Línea de Crisis de Suicidio',
+    safetyGuardrailBody: 'Si estás teniendo pensamientos de hacerte daño o de ya no querer estar aquí, por favor comunícate ahora mismo. Es gratis, confidencial, y hay alguien listo/a para escucharte las 24 horas.',
+    safetyGuardrail988: 'Llama o escribe al 988, Línea de Crisis de Suicidio',
     safetyGuardrailCrisisText: 'Línea de Texto de Crisis: Escribe HOLA al 741741',
     safetyGuardrailEmergency: 'Si estás en peligro inmediato, llama al 911.',
     safetyGuardrailLegal: 'Esta herramienta de evaluación no reemplaza la atención profesional de salud mental. Si indicaste pensamientos de autolesión o suicidio, por favor contacta a un proveedor certificado o a una línea de crisis de inmediato.',
     // Bias-aware context note
-    biasNote: 'Nota: Estas puntuaciones reflejan patrones, no un diagnóstico. Las puntuaciones altas también pueden reflejar el estrés de desafíos de la vida real — vivienda, seguridad, duelo, discriminación. Esta herramienta es un punto de partida para la conversación, no un veredicto.'
+    biasNote: 'Nota: Estas puntuaciones reflejan patrones, no un diagnóstico. Las puntuaciones altas también pueden reflejar el estrés de desafíos de la vida real, vivienda, seguridad, duelo, discriminación. Esta herramienta es un punto de partida para la conversación, no un veredicto.'
   }
 };
 
@@ -403,7 +403,7 @@ export const INTERPRETATIONS = {
     severe: {
         en: "You're carrying something heavy right now. That is real, and it makes sense. You deserve support \u2014 not because something is wrong with you, but because you are worth caring for. High scores can also reflect what life is putting you through. Please reach out today.",
         es: "Estas cargando algo muy pesado ahora mismo. Eso es real y tiene sentido. Mereces apoyo \u2014 no porque algo este mal en ti, sino porque vales la pena. Busca ayuda hoy.",
-        clinical: { en: "Severe depressive symptoms (PHQ-9 score consistent with severe range). Immediate clinical follow-up advised. Note: scores may reflect responses to systemic stressors — evaluate in full context.", es: "Síntomas depresivos graves. Se aconseja seguimiento clínico inmediato." }
+        clinical: { en: "Severe depressive symptoms (PHQ-9 score consistent with severe range). Immediate clinical follow-up advised. Note: scores may reflect responses to systemic stressors, evaluate in full context.", es: "Síntomas depresivos graves. Se aconseja seguimiento clínico inmediato." }
     }
   },
   anxiety: {
@@ -423,12 +423,12 @@ export const INTERPRETATIONS = {
         clinical: { en: "Moderate anxiety symptoms. Counseling may be beneficial.", es: "Síntomas de ansiedad moderados. La consejería puede ser beneficiosa." }
     },
     'moderately-severe': {
-        en: "The anxiety is running your days right now. That's exhausting. Real support — a counselor, a peer, a group — can help you get it back under control.",
-        es: "La ansiedad está dirigiendo tus días en este momento. Eso es agotador. Apoyo real — un consejero, un par, un grupo — puede ayudarte a recuperar el control.",
+        en: "The anxiety is running your days right now. That's exhausting. Real support, a counselor, a peer, a group, can help you get it back under control.",
+        es: "La ansiedad está dirigiendo tus días en este momento. Eso es agotador. Apoyo real, un consejero, un par, un grupo, puede ayudarte a recuperar el control.",
         clinical: { en: "Moderately severe anxiety symptoms. Professional evaluation and therapeutic intervention recommended.", es: "Síntomas de ansiedad moderadamente graves. Se recomienda evaluación profesional e intervención terapéutica." }
     },
     severe: {
-        en: "The anxiety is loud right now. Support is a tool for survival. You deserve to feel safe in your own mind — and help exists that can get you there.",
+        en: "The anxiety is loud right now. Support is a tool for survival. You deserve to feel safe in your own mind, and help exists that can get you there.",
         es: "La ansiedad está gritando fuerte. Buscar ayuda es una herramienta para recuperar tu paz. Mereces sentirte seguro/a en tu propia mente.",
         clinical: { en: "Severe anxiety symptoms. Diagnostic interview and immediate support strongly recommended.", es: "Síntomas de ansiedad graves. Se recomienda entrevista diagnóstica y apoyo inmediato." }
     }
