@@ -31,7 +31,7 @@ export const STRINGS = {
     start: 'Check Yourself',
     checkYourself: 'Check Yourself Tool',
     backToClinic: 'Back to healthmatters.clinic',
-    disclaimer: 'This tool is for screening purposes only and is NOT a clinical diagnosis. It does not replace professional medical or mental health care. If you are in immediate danger, call 911 or 988. Clinically reviewed by a board-certified Psychiatric Mental Health Nurse Practitioner with expertise in community mental health care.',
+    disclaimer: 'This tool is for screening purposes only and is NOT a clinical diagnosis. It does not replace professional medical or mental health care. If you are in immediate danger, call 911 or 988. Reviewed by HMC clinical leadership.',
     lifeEventTitle: 'Big Transitions',
     lifeEventSub: 'Sometimes the vibe shifts because of what life is throwing at you. Have any of these happened recently?',
     rootCauseTitle: 'The Heavy Load',
