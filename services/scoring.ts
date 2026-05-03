@@ -26,7 +26,7 @@ export function calculateGAD7(answers: Record<string, number>, lang: Language): 
   const score = gadKeys.reduce((acc, k) => acc + answers[k], 0);
 
   let severity: Severity = 'minimal';
-  if (score >= 15) severity = 'moderately-severe';
+  if (score >= 15) severity = 'severe';
   else if (score >= 10) severity = 'moderate';
   else if (score >= 5) severity = 'mild';
 
