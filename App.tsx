@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Language, AssessmentState, SCORING_OPTIONS, SDOH_OPTIONS, LIFE_EVENT_OPTIONS, TOOL_OPTIONS } from './types';
 import { QUESTIONS, STRINGS, INTERPRETATIONS } from './constants';
 import { calculatePHQ9, calculateGAD7 } from './services/scoring';
@@ -163,6 +163,12 @@ const App: React.FC = () => {
   const [letterCopied, setLetterCopied] = useState(false);
   const [showSafetyGuardrail, setShowSafetyGuardrail] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [connectFormVisible, setConnectFormVisible] = useState(false);
+  const [connectName, setConnectName] = useState('');
+  const [connectContact, setConnectContact] = useState('');
+  const [connectSubmitted, setConnectSubmitted] = useState(false);
+  const [connectSubmitting, setConnectSubmitting] = useState(false);
+  const aggregatePinged = useRef(false);
 
   // Restore session on mount
   useEffect(() => {
@@ -185,6 +191,47 @@ const App: React.FC = () => {
   }, [state]);
 
   const t = STRINGS[state.language];
+
+  // Anonymous aggregate ping — fires once when results section loads, no PII sent
+  useEffect(() => {
+    if (state.section !== 'results' || aggregatePinged.current) return;
+    aggregatePinged.current = true;
+    const phq = calculatePHQ9(state.answers, state.language);
+    const gad = calculateGAD7(state.answers, state.language);
+    fetch('https://hmc-volunteer-portal-172668994130.us-central1.run.app/api/public/check-yourself-aggregate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phq9_severity: phq.severity,
+        gad7_severity: gad.severity,
+        suicidal_ideation: (state.answers['p9'] ?? 0) > 0,
+        lang: state.language,
+      }),
+    }).catch(() => {}); // silent — never block or alert the user
+  }, [state.section, state.answers, state.language]);
+
+  const handleConnectSubmit = async () => {
+    if (!connectContact.trim() || connectSubmitting) return;
+    setConnectSubmitting(true);
+    const phq = calculatePHQ9(state.answers, state.language);
+    const gad = calculateGAD7(state.answers, state.language);
+    try {
+      await fetch('https://hmc-volunteer-portal-172668994130.us-central1.run.app/api/public/check-yourself-connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: connectName.trim(),
+          contact: connectContact.trim(),
+          phq9_severity: phq.severity,
+          gad7_severity: gad.severity,
+          suicidal_ideation: (state.answers['p9'] ?? 0) > 0,
+          lang: state.language,
+        }),
+      });
+    } catch {} // silent fail — show confirmation regardless
+    setConnectSubmitting(false);
+    setConnectSubmitted(true);
+  };
 
   // --- HANDLERS ---
   const handleStart = () => {
@@ -787,6 +834,52 @@ const App: React.FC = () => {
                   <span className="text-white text-sm">Text HOME to 741741</span>
                 </ActionButton>
               </div>
+              {/* Opt-in outreach form — only shown on severe/suicidal results */}
+              {!connectSubmitted ? (
+                !connectFormVisible ? (
+                  <button
+                    onClick={() => setConnectFormVisible(true)}
+                    className="mt-6 w-full max-w-xs mx-auto block text-white/90 text-sm font-medium underline underline-offset-4 hover:text-white transition-colors print:hidden"
+                  >
+                    {state.language === 'es' ? 'Quiero que alguien de HMC me contacte' : 'I want someone from HMC to reach out to me'}
+                  </button>
+                ) : (
+                  <div className="mt-6 mx-auto w-full max-w-sm bg-white/15 rounded-2xl p-5 print:hidden">
+                    <p className="text-white font-semibold text-sm mb-3">
+                      {state.language === 'es' ? 'Como podemos contactarte?' : 'How can we reach you?'}
+                    </p>
+                    <input
+                      type="text"
+                      value={connectName}
+                      onChange={e => setConnectName(e.target.value)}
+                      placeholder={state.language === 'es' ? 'Tu nombre (opcional)' : 'Your name (optional)'}
+                      className="w-full mb-2 px-4 py-2.5 rounded-xl text-stone-800 text-sm font-medium outline-none focus:ring-2 focus:ring-white/50"
+                    />
+                    <input
+                      type="text"
+                      value={connectContact}
+                      onChange={e => setConnectContact(e.target.value)}
+                      placeholder={state.language === 'es' ? 'Correo o telefono (requerido)' : 'Email or phone (required)'}
+                      className="w-full mb-3 px-4 py-2.5 rounded-xl text-stone-800 text-sm font-medium outline-none focus:ring-2 focus:ring-white/50"
+                    />
+                    <button
+                      onClick={handleConnectSubmit}
+                      disabled={!connectContact.trim() || connectSubmitting}
+                      className="w-full py-2.5 rounded-xl bg-white text-stone-800 font-bold text-sm disabled:opacity-50 hover:bg-white/90 transition-colors"
+                    >
+                      {connectSubmitting
+                        ? (state.language === 'es' ? 'Enviando...' : 'Sending...')
+                        : (state.language === 'es' ? 'Si, contactenme' : 'Yes, reach out to me')}
+                    </button>
+                  </div>
+                )
+              ) : (
+                <p className="mt-6 text-white/90 text-sm font-medium text-center print:hidden">
+                  {state.language === 'es'
+                    ? 'Listo. Alguien del equipo de HMC se pondra en contacto contigo pronto.'
+                    : 'Done. Someone from the HMC team will follow up with you soon.'}
+                </p>
+              )}
             </div>
           )}
 
