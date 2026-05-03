@@ -5,22 +5,22 @@ export const QUESTIONS: Question[] = [
   // MOOD (Framed from PHQ-9)
   { id: 'p1', category: 'mood', text: { en: "Feeling like you just don't have the heart for the things you usually love?", es: "¿Sientes que ya no tienes las mismas ganas de hacer las cosas que antes te gustaban?" } },
   { id: 'p2', category: 'mood', text: { en: "Feeling heavy, down, or like you're just going through the motions?", es: "¿Te sientes desanimado/a, triste o como si estuvieras en piloto automático?" } },
-  { id: 'p3', category: 'mood', text: { en: "Sleep is all over the place — either staying up too late or wanting to sleep the whole day?", es: "¿Tu sueño está fatal — o te desvelas mucho o quieres pasar todo el día durmiendo?" } },
+  { id: 'p3', category: 'mood', text: { en: "Sleep is all over the place — either staying up too late or wanting to sleep the whole day?", es: "¿Sientes que tu sueño está descontrolado — o te desvelas mucho o quieres pasar todo el día durmiendo?" } },
   { id: 'p4', category: 'mood', text: { en: "Feeling drained, like your battery is at 1% even after a rest?", es: "¿Te sientes sin pilas, como si tu energía estuviera al mínimo aunque descanses?" } },
-  { id: 'p5', category: 'mood', text: { en: "Eating way more than usual or just not having an appetite at all?", es: "¿Estás comiendo por ansiedad o se te ha ido el hambre por completo?" } },
-  { id: 'p6', category: 'mood', text: { en: "Feeling like you're letting people down, or not living up to who you want to be?", es: "¿Sientes que les estás fallando a los tuyos o que no estás dando la talla?" } },
+  { id: 'p5', category: 'mood', text: { en: "Eating way more than usual or just not having an appetite at all?", es: "¿Estás comiendo mucho más de lo normal o simplemente no tienes nada de apetito?" } },
+  { id: 'p6', category: 'mood', text: { en: "Feeling like you're letting people down, or not living up to who you want to be?", es: "¿Sientes que estás decepcionando a la gente, o que no estás a la altura de quien quieres ser?" } },
   { id: 'p7', category: 'mood', text: { en: "Mind is wandering, having a hard time focusing on one thing at a time?", es: "¿Sientes que tu mente vuela y te cuesta mucho concentrarte en una sola cosa?" } },
-  { id: 'p8', category: 'mood', text: { en: "Feeling super restless or the opposite — moving way slower than your normal pace?", es: "¿Te sientes demasiado inquieto/a o, al revés, sientes que te mueves en cámara lenta?" } },
+  { id: 'p8', category: 'mood', text: { en: "Feeling super restless or the opposite — moving way slower than your normal pace?", es: "¿Te sientes demasiado inquieto/a o, al revés, sientes que te mueves a un ritmo más lento de lo normal?" } },
   { id: 'p9', category: 'mood', text: { en: "Having scary thoughts about hurting yourself, or feeling like it would be easier if you weren't here?", es: "¿Has tenido pensamientos de hacerte daño o sientes que sería más fácil si ya no estuvieras?" } },
 
   // ANXIETY (Framed from GAD-7)
-  { id: 'g1', category: 'anxiety', text: { en: "Feeling restless, on edge, or like your nerves are shot?", es: "¿Sientes los nervios de punta, inquietud o una sensación de intranquilidad?" } },
-  { id: 'g2', category: 'anxiety', text: { en: "Can't seem to turn off the what-ifs or control the worrying?", es: "¿Sientes que no puedes apagar la cabeza o dejar de darle vueltas a las cosas?" } },
+  { id: 'g1', category: 'anxiety', text: { en: "Feeling restless, on edge, or like your nerves are shot?", es: "¿Te sientes inquieto, al límite, o como si tus nervios estuvieran destrozados?" } },
+  { id: 'g2', category: 'anxiety', text: { en: "Can't seem to turn off the what-ifs or control the worrying?", es: "¿Sientes que no puedes controlar la preocupación o dejar de darle vueltas a las cosas?" } },
   { id: 'g3', category: 'anxiety', text: { en: "Worrying about so many different things all at once?", es: "¿Te preocupas por demasiadas cosas al mismo tiempo?" } },
   { id: 'g4', category: 'anxiety', text: { en: "Finding it impossible to just sit still and relax your mind?", es: "¿Sientes que es imposible desconectarte y relajar la mente un rato?" } },
   { id: 'g5', category: 'anxiety', text: { en: "Being so restless that you're constantly moving around or fidgeting?", es: "¿Estás tan inquieto/a que no puedes ni quedarte sentado/a?" } },
   { id: 'g6', category: 'anxiety', text: { en: "Getting annoyed or losing your cool way faster than usual?", es: "¿Sientes que te irritas o pierdes la paciencia mucho más rápido que antes?" } },
-  { id: 'g7', category: 'anxiety', text: { en: "Feeling a sense of dread, like something bad is about to go down?", es: "¿Sientes un miedo feo, como si algo terrible estuviera a punto de suceder?" } }
+  { id: 'g7', category: 'anxiety', text: { en: "Feeling a sense of dread, like something bad is about to go down?", es: "¿Sientes una sensación de miedo, como si algo terrible estuviera a punto de suceder?" } }
 ];
 
 export const STRINGS = {
@@ -31,7 +31,7 @@ export const STRINGS = {
     start: 'Check Yourself',
     checkYourself: 'Check Yourself Tool',
     backToClinic: 'Back to healthmatters.clinic',
-    disclaimer: 'This tool is for screening purposes only and is NOT a clinical diagnosis. It does not replace professional medical or mental health care. If you are in immediate danger, call 911 or 988. Clinically reviewed by a board-certified psychiatrist and psychiatric nurse practitioner.',
+    disclaimer: 'This tool is for screening purposes only and is NOT a clinical diagnosis. It does not replace professional medical or mental health care. If you are in immediate danger, call 911 or 988. Clinically reviewed by a board-certified Psychiatric Mental Health Nurse Practitioner.',
     lifeEventTitle: 'Big Transitions',
     lifeEventSub: 'Sometimes the vibe shifts because of what life is throwing at you. Have any of these happened recently?',
     rootCauseTitle: 'The Heavy Load',
@@ -203,7 +203,7 @@ export const STRINGS = {
   es: {
     title: 'EL DESAHOGO',
     subtitle: 'Tu paz mental es lo primero.',
-    intro: 'Sin términos médicos raros, solo preguntas reales. Toma unos 3 minutos ver cómo anda tu energía.',
+    intro: 'Sin términos médicos raros, solo preguntas reales. Toma 3 minutos para revisar tu energía.',
     start: 'Empezar el Chequeo',
     checkYourself: 'Herramienta Check Yourself',
     backToClinic: 'Volver a healthmatters.clinic',
@@ -341,7 +341,7 @@ export const STRINGS = {
     // Caregiver pathway
     caregiverIntroTitle: '¿Para quién es este chequeo?',
     caregiverIntroSelf: 'Para mí — revisando mi propio bienestar',
-    caregiverIntroOther: 'Para alguien que quiero — revisando cómo está',
+    caregiverIntroOther: 'Para un ser querido – revisando cómo está.',
     caregiverBannerTitle: 'Estás cuidando a alguien que amas.',
     caregiverBannerSub: 'Eso requiere fortaleza. Tu bienestar también importa — este chequeo incluye apoyo para ti.',
     caregiverBurdenTitle: 'Chequeo para el Cuidador/a',
