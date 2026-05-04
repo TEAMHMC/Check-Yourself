@@ -1037,12 +1037,27 @@ const App: React.FC = () => {
                   {(t as any).caregiverResultsSub || 'You are doing everything right by checking in.'}
                 </p>
                 <div className="space-y-3">
+                  {/* HMC programs first */}
+                  {[
+                    { label: (t as any).caregiverHmcUnstoppable || 'HMC Unstoppable — Free wellness workshops & community meetups', sub: isEn ? 'HMC Program' : 'Programa HMC', href: 'https://www.healthmatters.clinic/unstoppable' },
+                    { label: (t as any).caregiverHmcPodcast || 'Unboxed on Mental Health — Podcast for caregivers & families', sub: isEn ? 'HMC Program' : 'Programa HMC', href: 'https://www.healthmatters.clinic/podcast' },
+                    { label: (t as any).caregiverHmcReferral || 'HMC Referral Support — (323) 990-4325', sub: isEn ? 'Free · Confidential' : 'Gratis · Confidencial', href: 'tel:3239904325' },
+                  ].map((r, i) => (
+                    <a key={`hmc-${i}`} href={r.href} target={r.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
+                      className="flex items-center justify-between p-4 bg-white rounded-xl border-2 text-sm font-medium text-stone-700 hover:shadow-sm transition-all"
+                      style={{ borderColor: `${BRAND.blue}30` }}>
+                      <span>{r.label}</span>
+                      {r.sub && <span className="text-[10px] font-bold ml-2 uppercase tracking-wide flex-shrink-0" style={{ color: BRAND.blue }}>{r.sub}</span>}
+                    </a>
+                  ))}
+                  <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest pt-1 pb-1">{isEn ? 'Additional Community Resources' : 'Recursos Comunitarios Adicionales'}</p>
+                  {/* Community resources */}
                   {[
                     { label: (t as any).caregiverNami || 'NAMI Family Support Group, free, peer-led', sub: 'namioc.org' },
                     { label: (t as any).caregiverHelpline || 'NAMI Helpline: 1-800-950-NAMI (6264)', sub: '' },
                     { label: (t as any).caregiverAccess || 'LA County DMH Family Resource Centers: 1-800-854-7771', sub: isEn ? '24/7' : '24/7' },
                   ].map((r, i) => (
-                    <div key={i} className="p-4 bg-white rounded-xl border border-stone-100 text-sm font-medium text-stone-700">
+                    <div key={`ext-${i}`} className="p-4 bg-white rounded-xl border border-stone-100 text-sm font-medium text-stone-700">
                       {r.label}
                       {r.sub && <span className="text-[10px] text-stone-400 ml-2 uppercase tracking-wide">{r.sub}</span>}
                     </div>
@@ -1075,6 +1090,11 @@ const App: React.FC = () => {
                     <span className="text-xs text-stone-500 font-medium mt-0.5">{(t as any).hmcConnectConsent || 'Get wellness check-ins, priority support & community updates'}</span>
                   </div>
                 </label>
+                <p className="text-[10px] text-stone-400 leading-relaxed">
+                  {isEn
+                    ? 'By checking this box, you agree to receive recurring wellness text messages from Health Matters Clinic. Msg frequency varies. Msg & data rates may apply. Reply STOP to cancel, HELP for help. View our Privacy Policy at healthmatters.clinic/privacy.'
+                    : 'Al marcar esta casilla, acepta recibir mensajes de texto de bienestar recurrentes de Health Matters Clinic. La frecuencia varía. Se pueden aplicar tarifas de msg y datos. Responda STOP para cancelar, HELP para ayuda.'}
+                </p>
               </div>
             ) : (
               <div className="p-10 rounded-[2rem] bg-stone-50 border border-stone-200 shadow-inner text-center print:hidden flex flex-col items-center gap-2">
@@ -1229,6 +1249,11 @@ const App: React.FC = () => {
                      <span className="text-xs text-stone-500 font-medium mt-0.5">{(t as any).hmcConnectConsent || 'Get wellness check-ins, priority support & community updates'}</span>
                    </div>
                  </label>
+                 <p className="text-[10px] text-stone-400 leading-relaxed">
+                   {isEn
+                     ? 'By checking this box, you agree to receive recurring wellness text messages from Health Matters Clinic. Msg frequency varies. Msg & data rates may apply. Reply STOP to cancel, HELP for help. View our Privacy Policy at healthmatters.clinic/privacy.'
+                     : 'Al marcar esta casilla, acepta recibir mensajes de texto de bienestar recurrentes de Health Matters Clinic. La frecuencia varía. Se pueden aplicar tarifas de msg y datos. Responda STOP para cancelar, HELP para ayuda.'}
+                 </p>
                </div>
                )}
              </div>
