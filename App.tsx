@@ -163,6 +163,7 @@ const App: React.FC = () => {
   const [letterCopied, setLetterCopied] = useState(false);
   const [showSafetyGuardrail, setShowSafetyGuardrail] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
   const [connectFormVisible, setConnectFormVisible] = useState(false);
   const [connectName, setConnectName] = useState('');
   const [connectContact, setConnectContact] = useState('');
@@ -353,19 +354,32 @@ const App: React.FC = () => {
   const handleShare = async () => {
     if (isSharing) return;
     setIsSharing(true);
-    const shareText = `I just built my recovery plan on The Vibe Check! Check it out at healthmatters.clinic. Message to self: "${state.gamePlan.message || 'You are unstoppable.'}"`;
+    const shareText = `I just completed a wellness check at Health Matters Clinic. Check it out at healthmatters.clinic`;
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'My Recovery Play',
+          title: 'Health Matters Clinic — Wellness Check',
           text: shareText,
           url: 'https://www.healthmatters.clinic',
         });
       } catch (err) {
-        console.log('Error sharing', err);
+        // User cancelled or error — fall through to clipboard
       }
-    } else {
-      window.print();
+    }
+    // Fallback: copy URL to clipboard
+    if (!navigator.share || true) {
+      try {
+        await navigator.clipboard.writeText('https://www.healthmatters.clinic');
+      } catch {
+        const el = document.createElement('textarea');
+        el.value = 'https://www.healthmatters.clinic';
+        el.style.position = 'fixed'; el.style.opacity = '0';
+        document.body.appendChild(el); el.focus(); el.select();
+        try { document.execCommand('copy'); } catch {}
+        document.body.removeChild(el);
+      }
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 3000);
     }
     setIsSharing(false);
   };
@@ -763,8 +777,8 @@ const App: React.FC = () => {
     const rootCauseLabels = state.rootCauses.map(id => SDOH_OPTIONS.find(o => o.id === id)?.label[lang]).filter(Boolean).join(', ');
 
     const providerLetterText = isEn
-      ? `Date: ${date}\n\nTo My Healthcare Provider,\n\nI am sharing the results of a mental health screening I completed using validated tools (PHQ-9 and GAD-7).\n\nMOOD SCREENING (PHQ-9)\nScore: ${phq.score}/27\nSeverity: ${phq.severity}\nClinical note: "${phq.clinicalTranslation}"\n\nANXIETY SCREENING (GAD-7)\nScore: ${gad.score}/21\nSeverity: ${gad.severity}\nClinical note: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `RECENT LIFE EVENTS:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `CURRENT STRESSORS:\n${rootCauseLabels}\n\n` : ''}I would like to discuss these results and what they mean for my care. I want to understand my options and next steps.\n\n,  Patient\n\n---\nCompleted via healthmatters.clinic\nPHQ-9 and GAD-7 are validated clinical screening tools (Kroenke et al.; Spitzer et al.).\nThis is a screening summary, not a clinical diagnosis. Please evaluate in full context.`
-      : `Fecha: ${date}\n\nPara mi Proveedor de Salud,\n\nComparto los resultados de una evaluación de salud mental que completé usando herramientas validadas (PHQ-9 y GAD-7).\n\nEVALUACIÓN DE ÁNIMO (PHQ-9)\nPuntuación: ${phq.score}/27\nGravedad: ${phq.severity}\nNota clínica: "${phq.clinicalTranslation}"\n\nEVALUACIÓN DE ANSIEDAD (GAD-7)\nPuntuación: ${gad.score}/21\nGravedad: ${gad.severity}\nNota clínica: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `EVENTOS DE VIDA RECIENTES:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `ESTRESORES ACTUALES:\n${rootCauseLabels}\n\n` : ''}Me gustaría hablar sobre estos resultados y lo que significan para mi atención médica.\n\n,  Paciente\n\n---\nCompletado en healthmatters.clinic\nPHQ-9 y GAD-7 son herramientas de detección clínica validadas.\nEste es un resumen de detección, no un diagnóstico clínico.`;
+      ? `Date: ${date}\n\nTo My Healthcare Provider,\n\nI am sharing the results of a mental health screening I completed using validated tools (PHQ-9 and GAD-7).\n\n${hasSuicidalIdeation ? '*** SAFETY FLAG — REQUIRES CLINICAL ATTENTION ***\nPatient indicated thoughts of self-harm or suicidal ideation (PHQ-9 Item 9, score > 0).\nImmediate clinical evaluation for safety risk is strongly recommended before reviewing scores below.\n\n' : ''}MOOD SCREENING (PHQ-9)\nScore: ${phq.score}/27\nSeverity: ${phq.severity}\nClinical note: "${phq.clinicalTranslation}"\n\nANXIETY SCREENING (GAD-7)\nScore: ${gad.score}/21\nSeverity: ${gad.severity}\nClinical note: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `RECENT LIFE EVENTS:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `CURRENT STRESSORS:\n${rootCauseLabels}\n\n` : ''}I would like to discuss these results and what they mean for my care. I want to understand my options and next steps.\n\n,  Patient\n\n---\nCompleted via healthmatters.clinic\nPHQ-9 and GAD-7 are validated clinical screening tools (Kroenke et al.; Spitzer et al.).\nThis is a screening summary, not a clinical diagnosis. Please evaluate in full context.`
+      : `Fecha: ${date}\n\nPara mi Proveedor de Salud,\n\nComparto los resultados de una evaluación de salud mental que completé usando herramientas validadas (PHQ-9 y GAD-7).\n\n${hasSuicidalIdeation ? '*** ALERTA DE SEGURIDAD — REQUIERE ATENCION CLINICA ***\nEl paciente indicó pensamientos de autolesión o ideación suicida (PHQ-9 Ítem 9, puntuación > 0).\nSe recomienda evaluación clínica inmediata del riesgo de seguridad antes de revisar las puntuaciones.\n\n' : ''}EVALUACION DE ANIMO (PHQ-9)\nPuntuación: ${phq.score}/27\nGravedad: ${phq.severity}\nNota clínica: "${phq.clinicalTranslation}"\n\nEVALUACION DE ANSIEDAD (GAD-7)\nPuntuación: ${gad.score}/21\nGravedad: ${gad.severity}\nNota clínica: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `EVENTOS DE VIDA RECIENTES:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `ESTRESORES ACTUALES:\n${rootCauseLabels}\n\n` : ''}Me gustaría hablar sobre estos resultados y lo que significan para mi atención médica.\n\n,  Paciente\n\n---\nCompletado en healthmatters.clinic\nPHQ-9 y GAD-7 son herramientas de detección clínica validadas.\nEste es un resumen de detección, no un diagnóstico clínico.`;
 
     const copyProviderLetter = () => {
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -943,7 +957,11 @@ const App: React.FC = () => {
                     </div>
                   </div>
                   <div className="font-display text-3xl text-stone-800 mb-2 tracking-wide">{gad.label}</div>
-                  <p className="font-accent text-stone-600 leading-relaxed font-medium text-sm mb-3">{gad.recommendation}</p>
+                  <p className="font-accent text-stone-600 leading-relaxed font-medium text-sm mb-3">
+                    {hasSuicidalIdeation
+                      ? (isEn ? 'Support is available right now. Please reach out — you do not have to face this alone.' : 'Hay apoyo disponible ahora mismo. Por favor comunícate — no tienes que enfrentar esto solo.')
+                      : gad.recommendation}
+                  </p>
                   {gad.score > 0 && (
                     <div className="p-3 bg-white rounded-xl border border-stone-100">
                       <span className="text-[11px] font-medium uppercase tracking-wide block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
@@ -1141,8 +1159,8 @@ const App: React.FC = () => {
                   <ActionButton onClick={handleDownload} variant="outline" className="flex-1" icon={<DownloadIcon />}>
                     {t.downloadResults}
                   </ActionButton>
-                  <ActionButton onClick={isSharing ? undefined : handleShare} className="flex-1" color={isSharing ? BRAND.blueDark : BRAND.blue} icon={isSharing ? undefined : <ShareIcon />}>
-                    {isSharing ? (isEn ? 'Opening…' : 'Abriendo…') : t.share}
+                  <ActionButton onClick={isSharing ? undefined : handleShare} className="flex-1" color={shareCopied ? '#16a34a' : isSharing ? BRAND.blueDark : BRAND.blue} icon={isSharing || shareCopied ? undefined : <ShareIcon />}>
+                    {shareCopied ? (isEn ? 'Link Copied' : 'Enlace copiado') : isSharing ? (isEn ? 'Sharing…' : 'Compartiendo…') : t.share}
                   </ActionButton>
                </div>
             </div>
