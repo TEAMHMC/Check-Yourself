@@ -641,7 +641,7 @@ const App: React.FC = () => {
               </a>
               <a
                 href="tel:911"
-                className="flex items-center gap-4 p-4 rounded-2xl font-semibold text-base transition-all hover:opacity-90 active:scale-[0.98]"
+                className="flex items-center gap-4 p-4 rounded-2xl font-bold text-base transition-all hover:opacity-90 active:scale-[0.98]"
                 style={{ backgroundColor: '#fef9c3', color: '#78350f', border: '1px solid #fde68a' }}
               >
                 <svg className="w-5 h-5 flex-shrink-0 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
