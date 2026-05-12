@@ -169,6 +169,7 @@ const App: React.FC = () => {
   const [connectContact, setConnectContact] = useState('');
   const [connectSubmitted, setConnectSubmitted] = useState(false);
   const [connectSubmitting, setConnectSubmitting] = useState(false);
+  const [connectError, setConnectError] = useState(false);
   const aggregatePinged = useRef(false);
 
   // Restore session on mount
@@ -217,7 +218,7 @@ const App: React.FC = () => {
     const phq = calculatePHQ9(state.answers, state.language);
     const gad = calculateGAD7(state.answers, state.language);
     try {
-      await fetch('https://hmc-volunteer-portal-172668994130.us-central1.run.app/api/public/check-yourself-connect', {
+      const response = await fetch('https://hmc-volunteer-portal-172668994130.us-central1.run.app/api/public/check-yourself-connect', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -229,9 +230,13 @@ const App: React.FC = () => {
           lang: state.language,
         }),
       });
-    } catch {} // silent fail — show confirmation regardless
-    setConnectSubmitting(false);
-    setConnectSubmitted(true);
+      if (!response.ok) throw new Error('server error');
+      setConnectSubmitted(true);
+    } catch {
+      setConnectError(true);
+    } finally {
+      setConnectSubmitting(false);
+    }
   };
 
   // --- HANDLERS ---
@@ -322,6 +327,14 @@ const App: React.FC = () => {
     setIsCaregiver(false);
     setShowProviderLetter(false);
     setLetterCopied(false);
+    setConnectSubmitted(false);
+    setConnectFormVisible(false);
+    setConnectName('');
+    setConnectContact('');
+    setIsSharing(false);
+    setShareCopied(false);
+    setConnectError(false);
+    aggregatePinged.current = false;
     setState(prev => ({
       ...prev,
       answers: {},
@@ -367,7 +380,7 @@ const App: React.FC = () => {
       }
     }
     // Fallback: copy URL to clipboard
-    if (!navigator.share || true) {
+    if (!navigator.share) {
       try {
         await navigator.clipboard.writeText('https://www.healthmatters.clinic');
       } catch {
@@ -887,6 +900,12 @@ const App: React.FC = () => {
                     </button>
                   </div>
                 )
+              ) : connectError ? (
+                <p className="mt-6 text-white/90 text-sm font-medium text-center print:hidden">
+                  {state.language === 'es'
+                    ? 'Algo salio mal. Por favor intenta de nuevo o llama al 988.'
+                    : 'Something went wrong. Please try again or call 988.'}
+                </p>
               ) : (
                 <p className="mt-6 text-white/90 text-sm font-medium text-center print:hidden">
                   {state.language === 'es'
