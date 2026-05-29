@@ -1,8 +1,167 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Language, AssessmentState, SCORING_OPTIONS, SDOH_OPTIONS, LIFE_EVENT_OPTIONS, TOOL_OPTIONS } from './types';
+import { Language, AssessmentState, GamePlanData, SCORING_OPTIONS, SDOH_OPTIONS, LIFE_EVENT_OPTIONS, TOOL_OPTIONS } from './types';
 import { QUESTIONS, STRINGS, INTERPRETATIONS } from './constants';
 import { calculatePHQ9, calculateGAD7 } from './services/scoring';
+
+// Canonical empty game plan, every field is required for safe rendering.
+// Stale sessionStorage from earlier versions of the app may be missing some of
+// these fields, so we always merge into this shape before using restored state.
+const EMPTY_GAME_PLAN: GamePlanData = {
+  grounding: '',
+  tools: [],
+  customTools: '',
+  checkpoint: '',
+  contact1: { name: '', phone: '' },
+  contact2: { name: '', phone: '' },
+  therapist: { name: '', phone: '' },
+  emergency: '988 Suicide & Crisis Lifeline\n1-800-854-7771 LA County ACCESS\n1-888-624-4752 CHIRLA',
+  playlist: '',
+  creative: '',
+  content: '',
+  physical: '',
+  forward: '',
+  message: '',
+  smsOptIn: false,
+  appOptIn: false,
+};
+
+// Defensive sanitizer for restored sessionStorage payloads. Any missing or
+// wrong-typed field is filled in from EMPTY_GAME_PLAN so downstream renders
+// never crash on undefined property access (e.g. gamePlan.therapist.name).
+const sanitizeRestoredState = (raw: any): AssessmentState | null => {
+  if (!raw || typeof raw !== 'object') return null;
+  const safeContact = (c: any) => ({
+    name: typeof c?.name === 'string' ? c.name : '',
+    phone: typeof c?.phone === 'string' ? c.phone : '',
+  });
+  const gp = raw.gamePlan && typeof raw.gamePlan === 'object' ? raw.gamePlan : {};
+  return {
+    answers: raw.answers && typeof raw.answers === 'object' ? raw.answers : {},
+    rootCauses: Array.isArray(raw.rootCauses) ? raw.rootCauses : [],
+    lifeEvents: Array.isArray(raw.lifeEvents) ? raw.lifeEvents : [],
+    currentStep: typeof raw.currentStep === 'number' ? raw.currentStep : -1,
+    section: typeof raw.section === 'string' ? raw.section : 'intro',
+    language: raw.language === 'es' ? Language.ES : Language.EN,
+    gamePlanStep: typeof raw.gamePlanStep === 'number' ? raw.gamePlanStep : 0,
+    gamePlan: {
+      ...EMPTY_GAME_PLAN,
+      ...gp,
+      tools: Array.isArray(gp.tools) ? gp.tools : [],
+      contact1: safeContact(gp.contact1),
+      contact2: safeContact(gp.contact2),
+      therapist: safeContact(gp.therapist),
+      grounding: typeof gp.grounding === 'string' ? gp.grounding : '',
+      customTools: typeof gp.customTools === 'string' ? gp.customTools : '',
+      checkpoint: typeof gp.checkpoint === 'string' ? gp.checkpoint : '',
+      emergency: typeof gp.emergency === 'string' ? gp.emergency : EMPTY_GAME_PLAN.emergency,
+      playlist: typeof gp.playlist === 'string' ? gp.playlist : '',
+      creative: typeof gp.creative === 'string' ? gp.creative : '',
+      content: typeof gp.content === 'string' ? gp.content : '',
+      physical: typeof gp.physical === 'string' ? gp.physical : '',
+      forward: typeof gp.forward === 'string' ? gp.forward : '',
+      message: typeof gp.message === 'string' ? gp.message : '',
+      smsOptIn: !!gp.smsOptIn,
+      appOptIn: !!gp.appOptIn,
+    },
+  } as AssessmentState;
+};
+
+// App-level error boundary. Without this, any render-time exception in the
+// game-plan flow (e.g. stale session shape missing a field) blanks the entire
+// React tree with no recovery path. The fallback always offers a Start Fresh
+// path that wipes sessionStorage so the user is never permanently stuck.
+class GamePlanErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    // Best-effort logging, never block the UI on a network failure.
+    try {
+      console.error('Check Yourself render error:', error, info);
+      fetch('https://hmc-volunteer-portal-172668994130.us-central1.run.app/api/public/check-yourself-aggregate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          error: String(error?.message || error).slice(0, 500),
+          stack: String(error?.stack || '').slice(0, 1000),
+          componentStack: String(info?.componentStack || '').slice(0, 1000),
+          type: 'render_error',
+        }),
+      }).catch(() => {});
+    } catch {}
+  }
+
+  handleRetry = () => {
+    this.setState({ hasError: false, error: null });
+  };
+
+  handleStartFresh = () => {
+    try { sessionStorage.removeItem('vibeCheckState'); } catch {}
+    try { window.location.reload(); } catch {}
+  };
+
+  render() {
+    if (!this.state.hasError) return this.props.children;
+
+    return (
+      <div className="bg-[#faf9f6] p-4 md:p-8 flex flex-col items-center justify-center font-['Inter']" style={{ minHeight: '100dvh' }}>
+        <div className="w-full max-w-xl bg-white rounded-[3rem] shadow-2xl p-10 md:p-14 text-center flex flex-col items-center border border-stone-100">
+          <div className="w-16 h-16 rounded-[1.25rem] flex items-center justify-center mb-8 shadow-lg" style={{ background: 'linear-gradient(135deg, #233dff, #1a2b99)' }}>
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"></path>
+            </svg>
+          </div>
+          <h1 className="font-display text-4xl md:text-5xl text-stone-900 mb-4 leading-tight tracking-wide">
+            We hit a snag building your plan.
+          </h1>
+          <p className="text-stone-600 font-medium text-base mb-8 max-w-sm leading-relaxed">
+            Sorry about that. Please try again, or talk to Sunny if you need support. You can also reach the HMC team at (323) 990-4325.
+          </p>
+          <div className="w-full space-y-3">
+            <button
+              onClick={this.handleRetry}
+              className="w-full py-4 rounded-full font-bold text-white text-sm uppercase tracking-wide shadow-md hover:shadow-lg transition-all"
+              style={{ backgroundColor: '#233dff' }}
+            >
+              Try Again
+            </button>
+            <a
+              href="https://www.healthmatters.clinic/sunny"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full py-4 rounded-full font-bold text-stone-800 text-sm uppercase tracking-wide bg-white border border-stone-200 hover:bg-stone-50 transition-all"
+            >
+              Talk to Sunny
+            </a>
+            <button
+              onClick={this.handleStartFresh}
+              className="w-full py-3 text-xs font-bold text-stone-500 hover:text-stone-800 uppercase tracking-wide transition-colors"
+            >
+              Start Fresh
+            </button>
+          </div>
+          <div className="mt-8 pt-6 border-t border-stone-100 w-full">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-stone-400 mb-2">
+              If you are in crisis right now
+            </p>
+            <p className="text-sm font-bold text-stone-700">
+              <a href="tel:988" className="hover:underline">Call or text 988</a>
+              {' '}&middot;{' '}
+              <a href="sms:741741&body=HOME" className="hover:underline">Text HOME to 741741</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
 
 const BRAND = {
   blue: '#233dff',
@@ -136,24 +295,7 @@ const App: React.FC = () => {
     section: 'intro',
     language: Language.EN,
     gamePlanStep: 0,
-    gamePlan: {
-      grounding: '',
-      tools: [],
-      customTools: '',
-      checkpoint: '',
-      contact1: { name: '', phone: '' },
-      contact2: { name: '', phone: '' },
-      therapist: { name: '', phone: '' },
-      emergency: '988 Suicide & Crisis Lifeline\n1-800-854-7771 LA County ACCESS\n1-888-624-4752 CHIRLA',
-      playlist: '',
-      creative: '',
-      content: '',
-      physical: '',
-      forward: '',
-      message: '',
-      smsOptIn: false,
-      appOptIn: false
-    }
+    gamePlan: { ...EMPTY_GAME_PLAN }
   };
 
   const [state, setState] = useState<AssessmentState>(defaultState);
@@ -172,17 +314,25 @@ const App: React.FC = () => {
   const [connectError, setConnectError] = useState(false);
   const aggregatePinged = useRef(false);
 
-  // Restore session on mount
+  // Restore session on mount. Always sanitize, since older stored payloads can
+  // be missing fields the current code paths assume exist (e.g. therapist,
+  // smsOptIn). A missing field on restore is the exact root cause of the
+  // blank-screen game-plan crash, so we never trust raw JSON here.
   useEffect(() => {
     try {
       const saved = sessionStorage.getItem('vibeCheckState');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.section && parsed.section !== 'intro') {
-          setSavedState(parsed);
+        const safe = sanitizeRestoredState(parsed);
+        if (safe && safe.section && safe.section !== 'intro') {
+          setSavedState(safe);
+        } else {
+          sessionStorage.removeItem('vibeCheckState');
         }
       }
-    } catch {}
+    } catch {
+      try { sessionStorage.removeItem('vibeCheckState'); } catch {}
+    }
   }, []);
 
   // Save session on every state change (except intro)
@@ -834,7 +984,7 @@ const App: React.FC = () => {
       : `"Completé un chequeo de bienestar usando las herramientas validadas PHQ-9 y GAD-7. Mis resultados indican una puntuación de ${phq.score} para el ánimo y ${gad.score} para la ansiedad. Me gustaría hablar sobre cómo mis factores de estrés ambientales y transiciones de vida actuales están afectando mi calidad de vida diaria."`;
 
     const scriptText = state.language === Language.EN ? talkingPointsEn : talkingPointsEs;
-    const isAlreadyOptedIn = state.gamePlan.smsOptIn || state.gamePlan.appOptIn;
+    const isAlreadyOptedIn = !!(state.gamePlan?.smsOptIn || state.gamePlan?.appOptIn);
 
     return (
       <Layout state={state} restart={restart} toggleLanguage={toggleLanguage}>
@@ -1113,7 +1263,7 @@ const App: React.FC = () => {
                 <label className={`flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all border ${isAlreadyOptedIn ? 'bg-white border-stone-400 shadow-md' : 'bg-white border-stone-100 hover:border-stone-400'}`}>
                   <input
                     type="checkbox"
-                    checked={state.gamePlan.smsOptIn || state.gamePlan.appOptIn}
+                    checked={isAlreadyOptedIn}
                     onChange={e => {
                       updateGamePlan('smsOptIn', e.target.checked);
                       updateGamePlan('appOptIn', e.target.checked);
@@ -1191,6 +1341,24 @@ const App: React.FC = () => {
 
   if (state.section === 'game-plan') {
     const step = state.gamePlanStep;
+    // Root-cause fix: step 4 of the game-plan flow referenced `isEn` which was
+    // only declared inside the `results` and `handleDownload` blocks, so when a
+    // user reached step 4 without already being opted in, React threw a
+    // ReferenceError ("isEn is not defined") on render and the whole tree went
+    // blank. Declare it here so the SMS consent copy renders correctly.
+    const isEn = state.language === Language.EN;
+    // Defensive: even though sanitizeRestoredState should guarantee shape, an
+    // older saved state or programmer error elsewhere could leave a nested
+    // gamePlan field undefined. Build a safe view-model here so the render
+    // tree never accesses .name / .phone / .includes on undefined.
+    const gp = {
+      ...EMPTY_GAME_PLAN,
+      ...(state.gamePlan || {}),
+      tools: Array.isArray(state.gamePlan?.tools) ? state.gamePlan.tools : [],
+      contact1: state.gamePlan?.contact1 || { name: '', phone: '' },
+      contact2: state.gamePlan?.contact2 || { name: '', phone: '' },
+      therapist: state.gamePlan?.therapist || { name: '', phone: '' },
+    };
     return (
       <Layout state={state} restart={restart} toggleLanguage={toggleLanguage}>
         <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-xl border border-stone-100 p-8 md:p-12" style={{ animation: 'fadeSlideUp 0.4s ease-out' }}>
@@ -1202,13 +1370,13 @@ const App: React.FC = () => {
                <h2 className="font-display text-4xl text-stone-800 tracking-wide">{t.gpInventoryTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpGroundingLabel}</label>
-                 <textarea value={state.gamePlan.grounding} onChange={e => updateGamePlan('grounding', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl focus:border-[#233dff] focus:ring-2 focus:ring-[#233dff]/30 h-24 outline-none transition-all font-['Inter'] font-bold text-base" placeholder={t.gpGroundingPlaceholder} />
+                 <textarea value={gp.grounding} onChange={e => updateGamePlan('grounding', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl focus:border-[#233dff] focus:ring-2 focus:ring-[#233dff]/30 h-24 outline-none transition-all font-['Inter'] font-bold text-base" placeholder={t.gpGroundingPlaceholder} />
                </div>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpToolsLabel}</label>
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                    {TOOL_OPTIONS.map(opt => (
-                     <button key={opt.id} onClick={() => toggleGamePlanTool(opt.id)} className={`p-4 text-left rounded-xl border transition-all font-bold text-xs ${state.gamePlan.tools.includes(opt.id) ? 'bg-black text-white border-black' : 'bg-white text-stone-700 border-stone-100 hover:border-stone-400'}`}>{opt.label[state.language]}</button>
+                     <button key={opt.id} onClick={() => toggleGamePlanTool(opt.id)} className={`p-4 text-left rounded-xl border transition-all font-bold text-xs ${gp.tools.includes(opt.id) ? 'bg-black text-white border-black' : 'bg-white text-stone-700 border-stone-100 hover:border-stone-400'}`}>{opt.label[state.language]}</button>
                    ))}
                  </div>
                </div>
@@ -1220,16 +1388,16 @@ const App: React.FC = () => {
                <h2 className="font-display text-4xl text-stone-800 tracking-wide">{t.gpStabilizeTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpContactsLabel}</label>
-                 <input type="text" value={state.gamePlan.contact1.name} onChange={e => updateGamePlanNested('contact1', 'name', e.target.value)} placeholder={`${t.gpNamePlaceholder} 1`} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
-                 <input type="tel" value={state.gamePlan.contact1.phone} onChange={e => updateGamePlanNested('contact1', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl mb-4 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
+                 <input type="text" value={gp.contact1.name} onChange={e => updateGamePlanNested('contact1', 'name', e.target.value)} placeholder={`${t.gpNamePlaceholder} 1`} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
+                 <input type="tel" value={gp.contact1.phone} onChange={e => updateGamePlanNested('contact1', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl mb-4 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
 
-                 <input type="text" value={state.gamePlan.contact2.name} onChange={e => updateGamePlanNested('contact2', 'name', e.target.value)} placeholder={`${t.gpNamePlaceholder} 2`} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
-                 <input type="tel" value={state.gamePlan.contact2.phone} onChange={e => updateGamePlanNested('contact2', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
+                 <input type="text" value={gp.contact2.name} onChange={e => updateGamePlanNested('contact2', 'name', e.target.value)} placeholder={`${t.gpNamePlaceholder} 2`} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
+                 <input type="tel" value={gp.contact2.phone} onChange={e => updateGamePlanNested('contact2', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
                </div>
                <div className="space-y-4 pt-4 border-t border-stone-100">
                  <label className="block text-sm font-bold text-stone-600">{t.gpTherapistLabel}</label>
-                 <input type="text" value={state.gamePlan.therapist.name} onChange={e => updateGamePlanNested('therapist', 'name', e.target.value)} placeholder={t.gpTherapistPlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
-                 <input type="tel" value={state.gamePlan.therapist.phone} onChange={e => updateGamePlanNested('therapist', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
+                 <input type="text" value={gp.therapist.name} onChange={e => updateGamePlanNested('therapist', 'name', e.target.value)} placeholder={t.gpTherapistPlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl mb-2 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
+                 <input type="tel" value={gp.therapist.phone} onChange={e => updateGamePlanNested('therapist', 'phone', e.target.value)} placeholder={t.gpPhonePlaceholder} className="w-full p-4 border border-stone-200 rounded-2xl font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" />
                </div>
                <div className="p-5 rounded-2xl border-2 border-dashed" style={{ borderColor: `${BRAND.red}40`, background: `${BRAND.red}08` }}>
                  <h4 className="text-[10px] font-medium uppercase tracking-wide mb-3" style={{ color: BRAND.red }}>{t.gpCrisisNote}</h4>
@@ -1248,9 +1416,9 @@ const App: React.FC = () => {
                <h2 className="font-display text-4xl text-stone-800 tracking-wide">{t.gpResetTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpPlaylistLabel}</label>
-                 <textarea value={state.gamePlan.playlist} onChange={e => updateGamePlan('playlist', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-20 mb-4 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" placeholder={t.gpPlaylistPlaceholder} />
+                 <textarea value={gp.playlist} onChange={e => updateGamePlan('playlist', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-20 mb-4 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" placeholder={t.gpPlaylistPlaceholder} />
                  <label className="block text-sm font-bold text-stone-600">{t.gpCreativePlaceholder}</label>
-                 <textarea value={state.gamePlan.creative} onChange={e => updateGamePlan('creative', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-20 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" placeholder={t.gpCreativePlaceholder} />
+                 <textarea value={gp.creative} onChange={e => updateGamePlan('creative', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-20 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" placeholder={t.gpCreativePlaceholder} />
                </div>
              </div>
            )}
@@ -1260,19 +1428,19 @@ const App: React.FC = () => {
                <h2 className="font-display text-4xl text-stone-800 tracking-wide">{t.gpReconnectTitle}</h2>
                <div className="space-y-4">
                  <label className="block text-sm font-bold text-stone-600">{t.gpForwardLabel}</label>
-                 <textarea value={state.gamePlan.forward} onChange={e => updateGamePlan('forward', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-24 mb-4 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" placeholder={t.gpForwardPlaceholder} />
+                 <textarea value={gp.forward} onChange={e => updateGamePlan('forward', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-24 mb-4 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" placeholder={t.gpForwardPlaceholder} />
 
                  <label className="block text-sm font-bold text-stone-600">{t.gpMessageLabel}</label>
-                 <textarea value={state.gamePlan.message} onChange={e => updateGamePlan('message', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-24 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" placeholder={t.gpMessagePlaceholder} />
+                 <textarea value={gp.message} onChange={e => updateGamePlan('message', e.target.value)} className="w-full p-4 border border-stone-200 rounded-2xl h-24 font-bold text-base outline-none focus:ring-2 focus:ring-[#233dff]/30 focus:border-[#233dff] transition-all" placeholder={t.gpMessagePlaceholder} />
                </div>
                
-               {!(state.gamePlan.smsOptIn || state.gamePlan.appOptIn) && (
+               {!(gp.smsOptIn || gp.appOptIn) && (
                <div className="pt-6 border-t border-stone-100 space-y-4">
                  <h3 className="text-sm font-medium text-stone-800 uppercase tracking-wide">{t.gpCommunityTitle}</h3>
-                 <label className={`flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all border ${(state.gamePlan.smsOptIn || state.gamePlan.appOptIn) ? 'bg-white border-stone-400 shadow-md' : 'bg-stone-50 border-stone-100 hover:border-stone-400'}`}>
+                 <label className={`flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all border ${(gp.smsOptIn || gp.appOptIn) ? 'bg-white border-stone-400 shadow-md' : 'bg-stone-50 border-stone-100 hover:border-stone-400'}`}>
                    <input
                      type="checkbox"
-                     checked={state.gamePlan.smsOptIn || state.gamePlan.appOptIn}
+                     checked={gp.smsOptIn || gp.appOptIn}
                      onChange={e => {
                        updateGamePlan('smsOptIn', e.target.checked);
                        updateGamePlan('appOptIn', e.target.checked);
@@ -1311,6 +1479,15 @@ const App: React.FC = () => {
   }
 
   if (state.section === 'game-plan-results') {
+    // Defensive view-model, same rationale as in the game-plan section above.
+    const gp = {
+      ...EMPTY_GAME_PLAN,
+      ...(state.gamePlan || {}),
+      tools: Array.isArray(state.gamePlan?.tools) ? state.gamePlan.tools : [],
+      contact1: state.gamePlan?.contact1 || { name: '', phone: '' },
+      contact2: state.gamePlan?.contact2 || { name: '', phone: '' },
+      therapist: state.gamePlan?.therapist || { name: '', phone: '' },
+    };
     return (
       <Layout state={state} restart={restart} toggleLanguage={toggleLanguage} hideProgress>
         <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl border border-stone-100 overflow-hidden print:shadow-none print:border print:border-stone-200 print:rounded-[1rem]" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
@@ -1324,14 +1501,14 @@ const App: React.FC = () => {
 
               <div className="p-6 bg-stone-50 rounded-2xl border border-stone-200 shadow-sm">
                 <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-2 tracking-wide">{t.gpResultsGrounding}</h4>
-                <p className="text-stone-800 font-bold italic">"{state.gamePlan.grounding || t.gpResultsGroundingText}"</p>
+                <p className="text-stone-800 font-bold italic">"{gp.grounding || t.gpResultsGroundingText}"</p>
               </div>
 
-              {state.gamePlan.tools.length > 0 && (
+              {gp.tools.length > 0 && (
                 <div className="p-6 bg-stone-50 rounded-2xl border border-stone-200 shadow-sm">
                   <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-3 tracking-wide">{t.gpResultsTools}</h4>
                   <div className="flex flex-wrap gap-2">
-                    {state.gamePlan.tools.map(id => {
+                    {gp.tools.map(id => {
                       const tool = TOOL_OPTIONS.find(o => o.id === id);
                       return tool ? <span key={id} className="px-3 py-1.5 bg-black text-white rounded-full text-xs font-bold">{tool.label[state.language]}</span> : null;
                     })}
@@ -1342,45 +1519,45 @@ const App: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-6 border border-stone-100 rounded-2xl shadow-sm bg-white">
                    <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-3 tracking-wide">{t.gpResultsEmergency}</h4>
-                   <p className="font-bold text-stone-800 mb-0.5">{state.gamePlan.contact1.name || t.gpResultsPrimary}</p>
-                   <p className="text-stone-500 mb-3 font-bold">{state.gamePlan.contact1.phone || '---'}</p>
-                   <p className="font-bold text-stone-800 mb-0.5">{state.gamePlan.contact2.name || t.gpResultsSecondary}</p>
-                   <p className="text-stone-500 font-bold">{state.gamePlan.contact2.phone || '---'}</p>
+                   <p className="font-bold text-stone-800 mb-0.5">{gp.contact1.name || t.gpResultsPrimary}</p>
+                   <p className="text-stone-500 mb-3 font-bold">{gp.contact1.phone || '---'}</p>
+                   <p className="font-bold text-stone-800 mb-0.5">{gp.contact2.name || t.gpResultsSecondary}</p>
+                   <p className="text-stone-500 font-bold">{gp.contact2.phone || '---'}</p>
                 </div>
-                {(state.gamePlan.therapist.name || state.gamePlan.therapist.phone) && (
+                {(gp.therapist.name || gp.therapist.phone) && (
                   <div className="p-6 border border-stone-100 rounded-2xl shadow-sm bg-white">
                      <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-3 tracking-wide">{t.gpResultsTherapist}</h4>
-                     <p className="font-bold text-stone-800 mb-0.5">{state.gamePlan.therapist.name}</p>
-                     <p className="text-stone-500 font-bold">{state.gamePlan.therapist.phone || '---'}</p>
+                     <p className="font-bold text-stone-800 mb-0.5">{gp.therapist.name}</p>
+                     <p className="text-stone-500 font-bold">{gp.therapist.phone || '---'}</p>
                   </div>
                 )}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {state.gamePlan.playlist && (
+                {gp.playlist && (
                   <div className="p-6 border border-stone-100 rounded-2xl shadow-sm bg-white">
                     <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-2 tracking-wide">{t.gpResultsPlaylist}</h4>
-                    <p className="text-stone-800 font-bold">{state.gamePlan.playlist}</p>
+                    <p className="text-stone-800 font-bold">{gp.playlist}</p>
                   </div>
                 )}
-                {state.gamePlan.creative && (
+                {gp.creative && (
                   <div className="p-6 border border-stone-100 rounded-2xl shadow-sm bg-white">
                     <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-2 tracking-wide">{t.gpResultsCreative}</h4>
-                    <p className="text-stone-800 font-bold">{state.gamePlan.creative}</p>
+                    <p className="text-stone-800 font-bold">{gp.creative}</p>
                   </div>
                 )}
               </div>
 
-              {state.gamePlan.forward && (
+              {gp.forward && (
                 <div className="p-6 bg-stone-50 rounded-2xl border border-stone-200 shadow-sm">
                   <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-2 tracking-wide">{t.gpResultsLookingForward}</h4>
-                  <p className="text-stone-800 font-bold">{state.gamePlan.forward}</p>
+                  <p className="text-stone-800 font-bold">{gp.forward}</p>
                 </div>
               )}
 
               <div className="pt-8 border-t border-stone-100">
                  <h4 className="font-medium text-stone-400 uppercase text-[10px] mb-2 tracking-wide">{t.gpResultsMessage}</h4>
-                 <p className="text-xl font-medium text-stone-800 leading-tight">"{state.gamePlan.message || t.gpResultsMessageText}"</p>
+                 <p className="text-xl font-medium text-stone-800 leading-tight">"{gp.message || t.gpResultsMessageText}"</p>
               </div>
 
               <div className="p-5 rounded-2xl border-2 border-dashed border-stone-200 text-center print:hidden">
@@ -1398,7 +1575,7 @@ const App: React.FC = () => {
                     {isSharing ? (state.language === Language.EN ? 'Opening…' : 'Abriendo…') : t.sharePlan}
                  </ActionButton>
                  <ActionButton
-                  href={`mailto:referrals@healthmatters.clinic?subject=${encodeURIComponent('Wellness Check Referral Request')}&body=${encodeURIComponent(`Hi HMC Team,\n\nI completed a wellness screening and would like to connect with support.\n\nSupport contacts: ${state.gamePlan.contact1.name || 'Not provided'} / ${state.gamePlan.contact2.name || 'Not provided'}\nTherapist: ${state.gamePlan.therapist.name || 'Not provided'}\nTools selected: ${state.gamePlan.tools.join(', ') || 'None'}\n\nPlease reach out to help me navigate next steps.\n\nThank you.`)}`}
+                  href={`mailto:referrals@healthmatters.clinic?subject=${encodeURIComponent('Wellness Check Referral Request')}&body=${encodeURIComponent(`Hi HMC Team,\n\nI completed a wellness screening and would like to connect with support.\n\nSupport contacts: ${gp.contact1.name || 'Not provided'} / ${gp.contact2.name || 'Not provided'}\nTherapist: ${gp.therapist.name || 'Not provided'}\nTools selected: ${(gp.tools || []).join(', ') || 'None'}\n\nPlease reach out to help me navigate next steps.\n\nThank you.`)}`}
                   variant="outline"
                   className="flex-1"
                  >
@@ -1421,4 +1598,13 @@ const App: React.FC = () => {
   return null;
 };
 
-export default App;
+// Wrap App in an error boundary so a render-time crash anywhere in the tree
+// (e.g. game-plan building) shows a friendly fallback with a retry path
+// instead of a permanent blank screen.
+const AppWithBoundary: React.FC = () => (
+  <GamePlanErrorBoundary>
+    <App />
+  </GamePlanErrorBoundary>
+);
+
+export default AppWithBoundary;
