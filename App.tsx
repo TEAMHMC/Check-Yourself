@@ -89,10 +89,9 @@ class GamePlanErrorBoundary extends React.Component<{ children: React.ReactNode 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          error: String(error?.message || error).slice(0, 500),
-          stack: String(error?.stack || '').slice(0, 1000),
-          componentStack: String(info?.componentStack || '').slice(0, 1000),
+          error: String(error?.message || error).slice(0, 200),
           type: 'render_error',
+          timestamp: new Date().toISOString(),
         }),
       }).catch(() => {});
     } catch {}
@@ -356,7 +355,6 @@ const App: React.FC = () => {
       body: JSON.stringify({
         phq9_severity: phq.severity,
         gad7_severity: gad.severity,
-        suicidal_ideation: (state.answers['p9'] ?? 0) > 0,
         lang: state.language,
       }),
     }).catch(() => {}); // silent — never block or alert the user
@@ -1039,6 +1037,11 @@ const App: React.FC = () => {
                       placeholder={state.language === 'es' ? 'Correo o telefono (requerido)' : 'Email or phone (required)'}
                       className="w-full mb-3 px-4 py-2.5 rounded-xl text-stone-800 text-sm font-medium outline-none focus:ring-2 focus:ring-white/50"
                     />
+                    <p className="text-white/70 text-xs mb-2 leading-snug">
+                      {state.language === 'es'
+                        ? 'Al enviar, aceptas que tu nombre e informacion de contacto sera compartida con el personal de Health Matters Clinic para hacer seguimiento con apoyo.'
+                        : 'By submitting, you agree that your name and contact information will be shared with Health Matters Clinic staff to follow up with support.'}
+                    </p>
                     <button
                       onClick={handleConnectSubmit}
                       disabled={!connectContact.trim() || connectSubmitting}
