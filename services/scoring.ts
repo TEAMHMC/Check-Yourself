@@ -27,7 +27,7 @@ export function calculateGAD7(answers: Record<string, number>, lang: Language): 
 
   let severity: Severity = 'minimal';
   if (score >= 15) severity = 'severe';
-  else if (score >= 10) severity = 'moderate';
+  else if (score >= 10) severity = 'moderately-severe';
   else if (score >= 5) severity = 'mild';
 
   return {

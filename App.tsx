@@ -491,17 +491,7 @@ const App: React.FC = () => {
       currentStep: -1,
       section: 'intro',
       gamePlanStep: 0,
-      gamePlan: {
-        ...prev.gamePlan,
-        grounding: '',
-        tools: [],
-        playlist: '',
-        creative: '',
-        forward: '',
-        message: '',
-        contact1: { name: '', phone: '' },
-        contact2: { name: '', phone: '' }
-      }
+      gamePlan: { ...EMPTY_GAME_PLAN }
     }));
   };
 
@@ -1010,61 +1000,67 @@ const App: React.FC = () => {
                 </ActionButton>
               </div>
               {/* Opt-in outreach form — only shown on severe/suicidal results */}
-              {!connectSubmitted ? (
-                !connectFormVisible ? (
-                  <button
-                    onClick={() => setConnectFormVisible(true)}
-                    className="mt-6 w-full max-w-xs mx-auto block text-white/90 text-sm font-medium underline underline-offset-4 hover:text-white transition-colors print:hidden"
-                  >
-                    {state.language === 'es' ? 'Quiero que alguien de HMC me contacte' : 'I want someone from HMC to reach out to me'}
-                  </button>
-                ) : (
-                  <div className="mt-6 mx-auto w-full max-w-sm bg-white/15 rounded-2xl p-5 print:hidden">
-                    <p className="text-white font-semibold text-sm mb-3">
-                      {state.language === 'es' ? 'Como podemos contactarte?' : 'How can we reach you?'}
-                    </p>
-                    <input
-                      type="text"
-                      value={connectName}
-                      onChange={e => setConnectName(e.target.value)}
-                      placeholder={state.language === 'es' ? 'Tu nombre (opcional)' : 'Your name (optional)'}
-                      className="w-full mb-2 px-4 py-2.5 rounded-xl text-stone-800 text-sm font-medium outline-none focus:ring-2 focus:ring-white/50"
-                    />
-                    <input
-                      type="text"
-                      value={connectContact}
-                      onChange={e => setConnectContact(e.target.value)}
-                      placeholder={state.language === 'es' ? 'Correo o telefono (requerido)' : 'Email or phone (required)'}
-                      className="w-full mb-3 px-4 py-2.5 rounded-xl text-stone-800 text-sm font-medium outline-none focus:ring-2 focus:ring-white/50"
-                    />
-                    <p className="text-white/70 text-xs mb-2 leading-snug">
-                      {state.language === 'es'
-                        ? 'Al enviar, aceptas que tu nombre e informacion de contacto sera compartida con el personal de Health Matters Clinic para hacer seguimiento con apoyo.'
-                        : 'By submitting, you agree that your name and contact information will be shared with Health Matters Clinic staff to follow up with support.'}
-                    </p>
-                    <button
-                      onClick={handleConnectSubmit}
-                      disabled={!connectContact.trim() || connectSubmitting}
-                      className="w-full py-2.5 rounded-xl bg-white text-stone-800 font-bold text-sm disabled:opacity-50 hover:bg-white/90 transition-colors"
-                    >
-                      {connectSubmitting
-                        ? (state.language === 'es' ? 'Enviando...' : 'Sending...')
-                        : (state.language === 'es' ? 'Si, contactenme' : 'Yes, reach out to me')}
-                    </button>
-                  </div>
-                )
+              {connectSubmitted ? (
+                <p className="mt-6 text-white/90 text-sm font-medium text-center print:hidden">
+                  {state.language === 'es'
+                    ? 'Listo. Alguien del equipo de HMC se pondra en contacto contigo pronto.'
+                    : 'Done. Someone from the HMC team will follow up with you soon.'}
+                </p>
               ) : connectError ? (
                 <p className="mt-6 text-white/90 text-sm font-medium text-center print:hidden">
                   {state.language === 'es'
                     ? 'Algo salio mal. Por favor intenta de nuevo o llama al 988.'
                     : 'Something went wrong. Please try again or call 988.'}
                 </p>
+              ) : !connectFormVisible ? (
+                <button
+                  onClick={() => setConnectFormVisible(true)}
+                  className="mt-6 w-full max-w-xs mx-auto block text-white/90 text-sm font-medium underline underline-offset-4 hover:text-white transition-colors print:hidden"
+                >
+                  {state.language === 'es' ? 'Quiero que alguien de HMC me contacte' : 'I want someone from HMC to reach out to me'}
+                </button>
               ) : (
-                <p className="mt-6 text-white/90 text-sm font-medium text-center print:hidden">
-                  {state.language === 'es'
-                    ? 'Listo. Alguien del equipo de HMC se pondra en contacto contigo pronto.'
-                    : 'Done. Someone from the HMC team will follow up with you soon.'}
-                </p>
+                <div className="mt-6 mx-auto w-full max-w-sm bg-white/15 rounded-2xl p-5 print:hidden">
+                  <p className="text-white font-semibold text-sm mb-3">
+                    {state.language === 'es' ? 'Como podemos contactarte?' : 'How can we reach you?'}
+                  </p>
+                  <label className="sr-only" htmlFor="connect-name">
+                    {state.language === 'es' ? 'Tu nombre (opcional)' : 'Your name (optional)'}
+                  </label>
+                  <input
+                    id="connect-name"
+                    type="text"
+                    value={connectName}
+                    onChange={e => setConnectName(e.target.value)}
+                    placeholder={state.language === 'es' ? 'Tu nombre (opcional)' : 'Your name (optional)'}
+                    className="w-full mb-2 px-4 py-2.5 rounded-xl text-stone-800 text-sm font-medium outline-none focus:ring-2 focus:ring-white/50"
+                  />
+                  <label className="sr-only" htmlFor="connect-contact">
+                    {state.language === 'es' ? 'Correo o telefono (requerido)' : 'Email or phone (required)'}
+                  </label>
+                  <input
+                    id="connect-contact"
+                    type="text"
+                    value={connectContact}
+                    onChange={e => setConnectContact(e.target.value)}
+                    placeholder={state.language === 'es' ? 'Correo o telefono (requerido)' : 'Email or phone (required)'}
+                    className="w-full mb-3 px-4 py-2.5 rounded-xl text-stone-800 text-sm font-medium outline-none focus:ring-2 focus:ring-white/50"
+                  />
+                  <p className="text-white/70 text-xs mb-2 leading-snug">
+                    {state.language === 'es'
+                      ? 'Al enviar, aceptas que tu nombre e informacion de contacto sera compartida con el personal de Health Matters Clinic para hacer seguimiento con apoyo.'
+                      : 'By submitting, you agree that your name and contact information will be shared with Health Matters Clinic staff to follow up with support.'}
+                  </p>
+                  <button
+                    onClick={handleConnectSubmit}
+                    disabled={!connectContact.trim() || connectSubmitting}
+                    className="w-full py-2.5 rounded-xl bg-white text-stone-800 font-bold text-sm disabled:opacity-50 hover:bg-white/90 transition-colors"
+                  >
+                    {connectSubmitting
+                      ? (state.language === 'es' ? 'Enviando...' : 'Sending...')
+                      : (state.language === 'es' ? 'Si, contactenme' : 'Yes, reach out to me')}
+                  </button>
+                </div>
               )}
             </div>
           )}
