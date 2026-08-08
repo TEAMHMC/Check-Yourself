@@ -206,27 +206,32 @@ const ActionButton: React.FC<{
   href?: string
 }> = ({ onClick, children, variant = 'primary', color = BRAND.blue, className, icon, noDot, href }) => {
   const isPrimary = variant === 'primary';
-  const dotColorClass = isPrimary ? 'bg-white' : 'bg-black';
-  const baseClasses = `inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-full font-semibold text-sm transition-all duration-200 active:scale-95 tracking-wide ${className} ${isPrimary ? 'text-white border border-transparent hover:shadow-[0_4px_16px_rgba(35,61,255,0.35)]' : 'text-[#1a1a1a] bg-white border border-[#e8e6e3] hover:bg-gray-50 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]'}`;
+  // Shared HMC button system (loaded in index.html) supplies the shape, colour,
+  // dot and roll-up hover, so this matches the buttons on healthmatters.clinic
+  // instead of defining its own. `className` still allows per-use overrides,
+  // and callers passing a custom `color` keep it via the inline style below.
+  const baseClasses = `hmc-btn ${isPrimary ? 'hmc-btn-primary' : 'hmc-btn-secondary'} justify-center ${className || ''}`;
 
   const inner = (
     <>
-      {!noDot && !icon && <span className={`w-2 h-2 rounded-full flex-shrink-0 ${dotColorClass}`}></span>}
+      {/* The shared script injects the dot, so only opt out here. An icon takes
+          the dot's place, matching the previous behaviour. */}
       {icon && <span className="flex items-center justify-center flex-shrink-0">{icon}</span>}
       {children}
     </>
   );
+  const dotAttr = (noDot || icon) ? { 'data-hmc-dot': 'off' } : {};
 
   if (href) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={baseClasses} style={isPrimary ? { backgroundColor: color } : {}}>
+      <a href={href} target="_blank" rel="noopener noreferrer" className={baseClasses} {...dotAttr} style={isPrimary && color !== BRAND.blue ? { backgroundColor: color } : {}}>
         {inner}
       </a>
     );
   }
 
   return (
-    <button onClick={onClick} className={baseClasses} style={isPrimary ? { backgroundColor: color } : {}}>
+    <button onClick={onClick} className={baseClasses} {...dotAttr} style={isPrimary && color !== BRAND.blue ? { backgroundColor: color } : {}}>
       {inner}
     </button>
   );
