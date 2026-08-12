@@ -176,59 +176,6 @@ const BRAND = {
 
 const HMC_SITE_URL = 'https://www.healthmatters.clinic';
 
-/**
- * Site bar shared by every standalone HMC tool.
- *
- * Each tool lives on its own subdomain, so someone who lands here has no route
- * back to healthmatters.clinic. This bar is that route. Both the logo and the
- * labelled link go home, and the bar sits at the very top of every screen so it
- * is reachable on mobile without scrolling to the footer. target="_top" keeps it
- * correct when the tool is embedded in the Webflow page inside an iframe.
- */
-const SiteBar: React.FC<{ toolName?: string; lang?: string }> = ({ toolName, lang = 'en' }) => (
-  <nav
-    aria-label="Site"
-    className="w-full bg-white border-b border-stone-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] print:hidden"
-  >
-    <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-2 sm:px-6">
-      <div className="flex min-w-0 items-center gap-3">
-        <a
-          href={HMC_SITE_URL}
-          target="_top"
-          className="group flex items-center gap-2.5 rounded-xl px-1 py-1 outline-none focus-visible:ring-2 focus-visible:ring-[#233dff] focus-visible:ring-offset-2"
-        >
-          <img
-            src="/hmc-logo.png"
-            alt="Health Matters Clinic"
-            width={32}
-            height={32}
-            className="h-8 w-8 flex-shrink-0 rounded-lg object-contain transition-transform duration-200 group-hover:scale-105"
-          />
-          <span aria-hidden="true" className="hidden text-sm font-medium leading-none text-stone-900 sm:inline">
-            Health Matters Clinic
-          </span>
-        </a>
-        {toolName && (
-          <span className="hidden border-l border-stone-200 pl-3 text-xs font-semibold uppercase tracking-widest text-stone-400 md:inline">
-            {toolName}
-          </span>
-        )}
-      </div>
-      <a
-        href={HMC_SITE_URL}
-        target="_top"
-        className="inline-flex min-h-[40px] flex-shrink-0 items-center gap-1.5 rounded-full border border-[#233dff] px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-[#233dff] outline-none transition-colors hover:bg-[#233dff] hover:text-white focus-visible:ring-2 focus-visible:ring-[#233dff] focus-visible:ring-offset-2"
-      >
-        <svg aria-hidden="true" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M19 12H5" />
-          <path d="m12 19-7-7 7-7" />
-        </svg>
-        {lang === 'es' ? 'Volver al sitio' : 'Back to Main Site'}
-      </a>
-    </div>
-  </nav>
-);
-
 // --- ICONS ---
 const RestartIcon = () => (
   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -314,7 +261,6 @@ const Layout: React.FC<{ children: React.ReactNode, state: AssessmentState, rest
           }
         `}
       </style>
-      <SiteBar toolName="Check Yourself" lang={state.language} />
       <div className="sticky top-0 z-10 bg-[#faf9f6]/90 backdrop-blur-lg border-b border-stone-100/80 print:hidden">
         <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
           <button onClick={restart} aria-label="Close and restart" className="w-10 h-10 flex items-center justify-center bg-white border border-stone-200 rounded-full shadow-sm hover:bg-stone-50 hover:border-stone-300 transition-all">
@@ -707,7 +653,6 @@ const App: React.FC = () => {
   if (state.section === 'intro') {
     return (
       <div className="bg-[#faf9f6] flex flex-col font-['Inter']" style={{ minHeight: '100dvh' }}>
-        <SiteBar toolName="Check Yourself" lang={state.language} />
         <div className="flex flex-1 flex-col items-center justify-center p-4 py-8 md:p-8">
         {savedState && (
           <div className="w-full max-w-xl mb-6 bg-white rounded-2xl shadow-lg p-6 border border-stone-200 flex flex-col sm:flex-row items-center gap-4" style={{ animation: 'fadeSlideUp 0.4s ease-out' }}>
@@ -762,7 +707,6 @@ const App: React.FC = () => {
   if (state.section === 'caregiver-intro') {
     return (
       <div className="bg-[#faf9f6] flex flex-col font-['Inter']" style={{ minHeight: '100dvh' }}>
-        <SiteBar toolName="Check Yourself" lang={state.language} />
         <div className="flex flex-1 flex-col items-center justify-center p-4 md:p-8">
         <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }`}</style>
         <div className="w-full max-w-xl bg-white rounded-[3rem] shadow-2xl p-10 md:p-14 text-center flex flex-col items-center border border-stone-100" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
@@ -996,8 +940,8 @@ const App: React.FC = () => {
     const rootCauseLabels = state.rootCauses.map(id => SDOH_OPTIONS.find(o => o.id === id)?.label[lang]).filter(Boolean).join(', ');
 
     const providerLetterText = isEn
-      ? `Date: ${date}\n\nTo My Healthcare Provider,\n\nI am sharing the results of a mental health screening I completed using validated tools (PHQ-9 and GAD-7).\n\n${hasSuicidalIdeation ? '*** SAFETY FLAG — REQUIRES CLINICAL ATTENTION ***\nPatient indicated thoughts of self-harm or suicidal ideation (PHQ-9 Item 9, score > 0).\nImmediate clinical evaluation for safety risk is strongly recommended before reviewing scores below.\n\n' : ''}MOOD SCREENING (PHQ-9)\nScore: ${phq.score}/27\nSeverity: ${phq.severity}\nClinical note: "${phq.clinicalTranslation}"\n\nANXIETY SCREENING (GAD-7)\nScore: ${gad.score}/21\nSeverity: ${gad.severity}\nClinical note: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `RECENT LIFE EVENTS:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `CURRENT STRESSORS:\n${rootCauseLabels}\n\n` : ''}I would like to discuss these results and what they mean for my care. I want to understand my options and next steps.\n\n,  Patient\n\n---\nCompleted via healthmatters.clinic\nPHQ-9 and GAD-7 are validated clinical screening tools (Kroenke et al.; Spitzer et al.).\nThis is a screening summary, not a clinical diagnosis. Please evaluate in full context.`
-      : `Fecha: ${date}\n\nPara mi Proveedor de Salud,\n\nComparto los resultados de una evaluación de salud mental que completé usando herramientas validadas (PHQ-9 y GAD-7).\n\n${hasSuicidalIdeation ? '*** ALERTA DE SEGURIDAD — REQUIERE ATENCION CLINICA ***\nEl paciente indicó pensamientos de autolesión o ideación suicida (PHQ-9 Ítem 9, puntuación > 0).\nSe recomienda evaluación clínica inmediata del riesgo de seguridad antes de revisar las puntuaciones.\n\n' : ''}EVALUACION DE ANIMO (PHQ-9)\nPuntuación: ${phq.score}/27\nGravedad: ${phq.severity}\nNota clínica: "${phq.clinicalTranslation}"\n\nEVALUACION DE ANSIEDAD (GAD-7)\nPuntuación: ${gad.score}/21\nGravedad: ${gad.severity}\nNota clínica: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `EVENTOS DE VIDA RECIENTES:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `ESTRESORES ACTUALES:\n${rootCauseLabels}\n\n` : ''}Me gustaría hablar sobre estos resultados y lo que significan para mi atención médica.\n\n,  Paciente\n\n---\nCompletado en healthmatters.clinic\nPHQ-9 y GAD-7 son herramientas de detección clínica validadas.\nEste es un resumen de detección, no un diagnóstico clínico.`;
+      ? `Date: ${date}\n\nTo My Healthcare Provider,\n\nI am sharing the results of a mental health screening I completed using validated tools (PHQ-9 and GAD-7).\n\n${hasSuicidalIdeation ? '*** SAFETY FLAG — REQUIRES CLINICAL ATTENTION ***\nPatient indicated thoughts of self-harm or suicidal ideation (PHQ-9 Item 9, score > 0).\nImmediate clinical evaluation for safety risk is strongly recommended before reviewing scores below.\n\n' : ''}MOOD SCREENING (PHQ-9)\nScore: ${phq.score}/27\nSeverity: ${phq.severity}\nClinical note: "${phq.clinicalTranslation}"\n\nANXIETY SCREENING (GAD-7)\nScore: ${gad.score}/21\nSeverity: ${gad.severity}\nClinical note: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `RECENT LIFE EVENTS:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `CURRENT STRESSORS:\n${rootCauseLabels}\n\n` : ''}I would like to discuss these results and what they mean for my care. I want to understand my options and next steps.\n\nThank you,\nYour patient\n\n---\nCompleted via healthmatters.clinic\nPHQ-9 and GAD-7 are validated clinical screening tools (Kroenke et al.; Spitzer et al.).\nThis is a screening summary, not a clinical diagnosis. Please evaluate in full context.`
+      : `Fecha: ${date}\n\nPara mi Proveedor de Salud,\n\nComparto los resultados de una evaluación de salud mental que completé usando herramientas validadas (PHQ-9 y GAD-7).\n\n${hasSuicidalIdeation ? '*** ALERTA DE SEGURIDAD — REQUIERE ATENCION CLINICA ***\nEl paciente indicó pensamientos de autolesión o ideación suicida (PHQ-9 Ítem 9, puntuación > 0).\nSe recomienda evaluación clínica inmediata del riesgo de seguridad antes de revisar las puntuaciones.\n\n' : ''}EVALUACION DE ANIMO (PHQ-9)\nPuntuación: ${phq.score}/27\nGravedad: ${phq.severity}\nNota clínica: "${phq.clinicalTranslation}"\n\nEVALUACION DE ANSIEDAD (GAD-7)\nPuntuación: ${gad.score}/21\nGravedad: ${gad.severity}\nNota clínica: "${gad.clinicalTranslation}"\n\n${state.lifeEvents.length > 0 ? `EVENTOS DE VIDA RECIENTES:\n${lifeEventLabels}\n\n` : ''}${state.rootCauses.length > 0 ? `ESTRESORES ACTUALES:\n${rootCauseLabels}\n\n` : ''}Me gustaría hablar sobre estos resultados y lo que significan para mi atención médica.\n\nGracias,\nSu paciente\n\n---\nCompletado en healthmatters.clinic\nPHQ-9 y GAD-7 son herramientas de detección clínica validadas.\nEste es un resumen de detección, no un diagnóstico clínico.`;
 
     const copyProviderLetter = () => {
       if (navigator.clipboard && navigator.clipboard.writeText) {
