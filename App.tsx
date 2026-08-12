@@ -174,6 +174,61 @@ const BRAND = {
   bg: '#faf9f6'
 };
 
+const HMC_SITE_URL = 'https://www.healthmatters.clinic';
+
+/**
+ * Site bar shared by every standalone HMC tool.
+ *
+ * Each tool lives on its own subdomain, so someone who lands here has no route
+ * back to healthmatters.clinic. This bar is that route. Both the logo and the
+ * labelled link go home, and the bar sits at the very top of every screen so it
+ * is reachable on mobile without scrolling to the footer. target="_top" keeps it
+ * correct when the tool is embedded in the Webflow page inside an iframe.
+ */
+const SiteBar: React.FC<{ toolName?: string; lang?: string }> = ({ toolName, lang = 'en' }) => (
+  <nav
+    aria-label="Site"
+    className="w-full bg-white border-b border-stone-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] print:hidden"
+  >
+    <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-2 sm:px-6">
+      <div className="flex min-w-0 items-center gap-3">
+        <a
+          href={HMC_SITE_URL}
+          target="_top"
+          className="group flex items-center gap-2.5 rounded-xl px-1 py-1 outline-none focus-visible:ring-2 focus-visible:ring-[#233dff] focus-visible:ring-offset-2"
+        >
+          <img
+            src="/hmc-logo.png"
+            alt="Health Matters Clinic"
+            width={32}
+            height={32}
+            className="h-8 w-8 flex-shrink-0 rounded-lg object-contain transition-transform duration-200 group-hover:scale-105"
+          />
+          <span aria-hidden="true" className="hidden text-sm font-medium leading-none text-stone-900 sm:inline">
+            Health Matters Clinic
+          </span>
+        </a>
+        {toolName && (
+          <span className="hidden border-l border-stone-200 pl-3 text-xs font-semibold uppercase tracking-widest text-stone-400 md:inline">
+            {toolName}
+          </span>
+        )}
+      </div>
+      <a
+        href={HMC_SITE_URL}
+        target="_top"
+        className="inline-flex min-h-[40px] flex-shrink-0 items-center gap-1.5 rounded-full border border-[#233dff] px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-[#233dff] outline-none transition-colors hover:bg-[#233dff] hover:text-white focus-visible:ring-2 focus-visible:ring-[#233dff] focus-visible:ring-offset-2"
+      >
+        <svg aria-hidden="true" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M19 12H5" />
+          <path d="m12 19-7-7 7-7" />
+        </svg>
+        {lang === 'es' ? 'Volver al sitio' : 'Back to Main Site'}
+      </a>
+    </div>
+  </nav>
+);
+
 // --- ICONS ---
 const RestartIcon = () => (
   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -259,6 +314,7 @@ const Layout: React.FC<{ children: React.ReactNode, state: AssessmentState, rest
           }
         `}
       </style>
+      <SiteBar toolName="Check Yourself" lang={state.language} />
       <div className="sticky top-0 z-10 bg-[#faf9f6]/90 backdrop-blur-lg border-b border-stone-100/80 print:hidden">
         <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
           <button onClick={restart} aria-label="Close and restart" className="w-10 h-10 flex items-center justify-center bg-white border border-stone-200 rounded-full shadow-sm hover:bg-stone-50 hover:border-stone-300 transition-all">
@@ -348,7 +404,7 @@ const App: React.FC = () => {
 
   const t = STRINGS[state.language];
 
-  // Anonymous aggregate ping — fires once when results section loads, no PII sent
+  // Anonymous aggregate ping, fires once when the results section loads, no PII sent
   useEffect(() => {
     if (state.section !== 'results' || aggregatePinged.current) return;
     aggregatePinged.current = true;
@@ -362,7 +418,7 @@ const App: React.FC = () => {
         gad7_severity: gad.severity,
         lang: state.language,
       }),
-    }).catch(() => {}); // silent — never block or alert the user
+    }).catch(() => {}); // silent, never block or alert the user
   }, [state.section, state.answers, state.language]);
 
   const handleConnectSubmit = async () => {
@@ -514,12 +570,12 @@ const App: React.FC = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Health Matters Clinic — Wellness Check',
+          title: 'Health Matters Clinic Wellness Check',
           text: shareText,
           url: 'https://www.healthmatters.clinic',
         });
       } catch (err) {
-        // User cancelled or error — fall through to clipboard
+        // User cancelled or error, fall through to clipboard
       }
     }
     // Fallback: copy URL to clipboard
@@ -650,7 +706,9 @@ const App: React.FC = () => {
 
   if (state.section === 'intro') {
     return (
-      <div className="bg-[#faf9f6] p-4 md:p-8 flex flex-col items-center justify-center py-8 font-['Inter']" style={{ minHeight: '100dvh' }}>
+      <div className="bg-[#faf9f6] flex flex-col font-['Inter']" style={{ minHeight: '100dvh' }}>
+        <SiteBar toolName="Check Yourself" lang={state.language} />
+        <div className="flex flex-1 flex-col items-center justify-center p-4 py-8 md:p-8">
         {savedState && (
           <div className="w-full max-w-xl mb-6 bg-white rounded-2xl shadow-lg p-6 border border-stone-200 flex flex-col sm:flex-row items-center gap-4" style={{ animation: 'fadeSlideUp 0.4s ease-out' }}>
             <div className="flex-1 text-center sm:text-left">
@@ -691,9 +749,11 @@ const App: React.FC = () => {
 
         <div className="text-center space-y-3">
            <h4 className="text-stone-400 font-medium text-[10px] uppercase tracking-wide">{t.checkYourself}</h4>
-           <a href="https://www.healthmatters.clinic" className="inline-flex items-center gap-2 text-stone-400 hover:text-stone-800 transition-colors text-[10px] font-medium group tracking-wide uppercase">
-              <span className="group-hover:-translate-x-1 transition-transform">←</span> {t.backToClinic}
+           <a href={HMC_SITE_URL} target="_top" className="inline-flex min-h-[40px] items-center gap-2 rounded-full px-3 text-[10px] font-medium uppercase tracking-wide text-stone-400 outline-none transition-colors hover:text-stone-800 focus-visible:ring-2 focus-visible:ring-[#233dff] focus-visible:ring-offset-2">
+              <svg aria-hidden="true" className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5" /><path d="m12 19-7-7 7-7" /></svg>
+              {t.backToClinic}
            </a>
+        </div>
         </div>
       </div>
     );
@@ -701,7 +761,9 @@ const App: React.FC = () => {
 
   if (state.section === 'caregiver-intro') {
     return (
-      <div className="bg-[#faf9f6] p-4 md:p-8 flex flex-col items-center justify-center font-['Inter']" style={{ minHeight: '100dvh' }}>
+      <div className="bg-[#faf9f6] flex flex-col font-['Inter']" style={{ minHeight: '100dvh' }}>
+        <SiteBar toolName="Check Yourself" lang={state.language} />
+        <div className="flex flex-1 flex-col items-center justify-center p-4 md:p-8">
         <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }`}</style>
         <div className="w-full max-w-xl bg-white rounded-[3rem] shadow-2xl p-10 md:p-14 text-center flex flex-col items-center border border-stone-100" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
           <div className="w-16 h-16 rounded-[1.25rem] flex items-center justify-center mb-8 shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND.blue}, ${BRAND.blueDark})` }}>
@@ -749,6 +811,7 @@ const App: React.FC = () => {
           <button onClick={restart} className="mt-8 text-xs font-bold text-stone-400 hover:text-stone-700 uppercase tracking-wide transition-colors">
             {t.back}
           </button>
+        </div>
         </div>
       </div>
     );
@@ -1004,7 +1067,7 @@ const App: React.FC = () => {
                   <span className="text-white text-sm">Text HOME to 741741</span>
                 </ActionButton>
               </div>
-              {/* Opt-in outreach form — only shown on severe/suicidal results */}
+              {/* Opt-in outreach form, only shown on severe/suicidal results */}
               {connectSubmitted ? (
                 <p className="mt-6 text-white/90 text-sm font-medium text-center print:hidden">
                   {state.language === 'es'
@@ -1132,7 +1195,7 @@ const App: React.FC = () => {
                   <div className="font-display text-3xl text-stone-800 mb-2 tracking-wide">{gad.label}</div>
                   <p className="font-accent text-stone-600 leading-relaxed font-medium text-sm mb-3">
                     {hasSuicidalIdeation
-                      ? (isEn ? 'Support is available right now. Please reach out — you do not have to face this alone.' : 'Hay apoyo disponible ahora mismo. Por favor comunícate — no tienes que enfrentar esto solo.')
+                      ? (isEn ? 'Support is available right now. Please reach out. You do not have to face this alone.' : 'Hay apoyo disponible ahora mismo. Por favor comunícate. No tienes que enfrentar esto solo.')
                       : gad.recommendation}
                   </p>
                   {gad.score > 0 && (
@@ -1230,9 +1293,9 @@ const App: React.FC = () => {
                 <div className="space-y-3">
                   {/* HMC programs first */}
                   {[
-                    { label: (t as any).caregiverHmcUnstoppable || 'HMC Unstoppable — Free wellness workshops & community meetups', sub: isEn ? 'HMC Program' : 'Programa HMC', href: 'https://www.healthmatters.clinic/unstoppable' },
-                    { label: (t as any).caregiverHmcPodcast || 'Unboxed on Mental Health — Podcast for caregivers & families', sub: isEn ? 'HMC Program' : 'Programa HMC', href: 'https://www.healthmatters.clinic/podcast' },
-                    { label: (t as any).caregiverHmcReferral || 'HMC Referral Support — (323) 990-4325', sub: isEn ? 'Free · Confidential' : 'Gratis · Confidencial', href: 'tel:3239904325' },
+                    { label: (t as any).caregiverHmcUnstoppable || 'HMC Unstoppable. Free wellness workshops and community meetups', sub: isEn ? 'HMC Program' : 'Programa HMC', href: 'https://www.healthmatters.clinic/unstoppable' },
+                    { label: (t as any).caregiverHmcPodcast || 'Unboxed on Mental Health. A podcast for caregivers and families', sub: isEn ? 'HMC Program' : 'Programa HMC', href: 'https://www.healthmatters.clinic/podcast' },
+                    { label: (t as any).caregiverHmcReferral || 'HMC Referral Support. Call (323) 990-4325', sub: isEn ? 'Free · Confidential' : 'Gratis · Confidencial', href: 'tel:3239904325' },
                   ].map((r, i) => (
                     <a key={`hmc-${i}`} href={r.href} target={r.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
                       className="flex items-center justify-between p-4 bg-white rounded-xl border-2 text-sm font-medium text-stone-700 hover:shadow-sm transition-all"
