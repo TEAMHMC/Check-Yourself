@@ -208,16 +208,16 @@ const ActionButton: React.FC<{
   href?: string
 }> = ({ onClick, children, variant = 'primary', color = BRAND.blue, className, icon, noDot, href }) => {
   const isPrimary = variant === 'primary';
-  // Shared HMC button system (loaded in index.html) supplies the shape, colour,
-  // dot and roll-up hover, so this matches the buttons on healthmatters.clinic
-  // instead of defining its own. `className` still allows per-use overrides,
-  // and callers passing a custom `color` keep it via the inline style below.
+  // Shared HMC button system (loaded in index.html) supplies the shape, colour
+  // and dot, so this matches the buttons on healthmatters.clinic instead of
+  // defining its own. `className` still allows per-use overrides, and callers
+  // passing a custom `color` keep it via the inline style below.
   const baseClasses = `hmc-btn ${isPrimary ? 'hmc-btn-primary' : 'hmc-btn-secondary'} justify-center ${className || ''}`;
 
   const inner = (
     <>
-      {/* The shared script injects the dot, so only opt out here. An icon takes
-          the dot's place, matching the previous behaviour. */}
+      {/* The shared stylesheet draws the dot, so only opt out here. An icon
+          takes the dot's place, matching the previous behaviour. */}
       {icon && <span className="flex items-center justify-center flex-shrink-0">{icon}</span>}
       {children}
     </>
