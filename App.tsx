@@ -384,7 +384,6 @@ const App: React.FC = () => {
         // Anonymous per-install id, generated locally and HMAC'd server side, so
         // completed screenings can be counted per device without identifying anyone.
         anonId: getScreeningAnonId(),
-        suicidal_ideation: (state.answers['p9'] ?? 0) > 0,
         lang: state.language,
       }),
     }).catch(() => {}); // silent, never block or alert the user
