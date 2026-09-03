@@ -4,6 +4,25 @@ import { Language, AssessmentState, GamePlanData, SCORING_OPTIONS, SDOH_OPTIONS,
 import { QUESTIONS, STRINGS, INTERPRETATIONS } from './constants';
 import { calculatePHQ9, calculateGAD7 } from './services/scoring';
 
+/**
+ * Anonymous, per-install identifier for counting completed screenings once per
+ * device. Generated locally, never leaves in raw form: the server HMACs it.
+ * Nothing here derives from the device or the person.
+ */
+const SCREENING_ANON_KEY = 'checkyourself_anon_id';
+const getScreeningAnonId = (): string => {
+  try {
+    let id = localStorage.getItem(SCREENING_ANON_KEY);
+    if (!id) {
+      id = (crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`).replace(/-/g, '');
+      localStorage.setItem(SCREENING_ANON_KEY, id);
+    }
+    return id;
+  } catch {
+    return `eph${Date.now()}${Math.random().toString(36).slice(2, 8)}`;
+  }
+};
+
 // Canonical empty game plan, every field is required for safe rendering.
 // Stale sessionStorage from earlier versions of the app may be missing some of
 // these fields, so we always merge into this shape before using restored state.
@@ -362,6 +381,10 @@ const App: React.FC = () => {
       body: JSON.stringify({
         phq9_severity: phq.severity,
         gad7_severity: gad.severity,
+        // Anonymous per-install id, generated locally and HMAC'd server side, so
+        // completed screenings can be counted per device without identifying anyone.
+        anonId: getScreeningAnonId(),
+        suicidal_ideation: (state.answers['p9'] ?? 0) > 0,
         lang: state.language,
       }),
     }).catch(() => {}); // silent, never block or alert the user
