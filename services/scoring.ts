@@ -33,7 +33,7 @@ export function calculateGAD7(answers: Record<string, number>, lang: Language): 
   return {
     score,
     severity,
-    label: STRINGS[lang].severityMap[severity],
+    label: STRINGS[lang].severityMapAnxiety[severity],
     recommendation: INTERPRETATIONS.anxiety[severity][lang],
     clinicalTranslation: INTERPRETATIONS.anxiety[severity].clinical[lang]
   };

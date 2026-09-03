@@ -89,6 +89,15 @@ export const STRINGS = {
       'moderately-severe': 'Tough Season',
       'severe': 'Time for Community Care'
     },
+    // GAD-7 measures a different construct than PHQ-9. Sharing one severity map
+    // made the mood and anxiety panels display the identical headline.
+    severityMapAnxiety: {
+      'minimal': 'Steady for Now',
+      'mild': 'A Little On Edge',
+      'moderate': "Your Mind Won't Settle",
+      'moderately-severe': 'Tension That Sticks',
+      'severe': 'Running on High Alert'
+    },
     gpPart: 'Part',
     gpStrategy: 'Your Strategy',
     gpInventoryTitle: 'Inventory',
@@ -267,6 +276,13 @@ export const STRINGS = {
       'moderate': 'La Carga está Pesando',
       'moderately-severe': 'Temporada Difícil',
       'severe': 'Hora de Buscar Apoyo'
+    },
+    severityMapAnxiety: {
+      'minimal': 'Tranquilo por Ahora',
+      'mild': 'Algo Inquieto',
+      'moderate': 'La Mente No Descansa',
+      'moderately-severe': 'Tensión Que No Suelta',
+      'severe': 'Siempre en Alerta'
     },
     gpPart: 'Parte',
     gpStrategy: 'Tu Estrategia',
