@@ -579,6 +579,14 @@ const App: React.FC = () => {
     text += `  ${date}\n`;
     text += '═══════════════════════════════════════\n\n';
 
+    // Safety flag rides above the scores so a downloaded copy cannot be read as
+    // "moderate" with no mention that thoughts of self-harm were reported.
+    if ((state.answers['p9'] ?? 0) > 0) {
+      text += isEn
+        ? 'SAFETY NOTICE\nThis screening included thoughts of self-harm. Please review it with a\nclinician or a trusted person before going by the scores alone.\nSupport is available 24/7: call or text 988.\n\n'
+        : 'AVISO DE SEGURIDAD\nEsta evaluación incluyó pensamientos de hacerse daño. Por favor revísela con\nun profesional o una persona de confianza antes de guiarse solo por las\npuntuaciones. Hay apoyo 24/7: llama o escribe al 988.\n\n';
+    }
+
     text += `${t.moodLabel.toUpperCase()} (PHQ-9)\n`;
     text += `${isEn ? 'Score' : 'Puntuación'}: ${phq.score}/27, ${phq.label}\n`;
     text += `"${phq.clinicalTranslation}"\n\n`;
@@ -956,6 +964,9 @@ const App: React.FC = () => {
     const hasSevereSymptoms = phq.severity === 'severe' || gad.severity === 'severe' || phq.severity === 'moderately-severe';
     const lang = state.language;
     const isEn = lang === Language.EN;
+    const ideationSupportLine = isEn
+      ? 'Support is available right now. Please reach out. You do not have to face this alone.'
+      : 'Hay apoyo disponible ahora mismo. Por favor comunícate. No tienes que enfrentar esto solo.';
     const date = new Date().toLocaleDateString();
 
     const lifeEventLabels = state.lifeEvents.map(id => LIFE_EVENT_OPTIONS.find(o => o.id === id)?.label[lang]).filter(Boolean).join(', ');
@@ -1012,6 +1023,32 @@ const App: React.FC = () => {
       <Layout state={state} restart={restart} toggleLanguage={toggleLanguage}>
         <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl border border-stone-100 overflow-hidden pb-12 print:shadow-none print:border print:border-stone-200 print:rounded-[1rem]" style={{ animation: 'fadeSlideUp 0.5s ease-out' }}>
           <style>{`@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+          {/* Print-only safety notice. The on-screen crisis banner below is print:hidden
+              because its gradient and tel: buttons do not survive printing, which left a
+              printed or saved copy of an at-risk result with no safety context at all. */}
+          { (hasSuicidalIdeation || hasSevereSymptoms) && (
+            <div className="hidden print:block border-2 border-stone-800 rounded-lg p-5 m-6">
+              <p className="font-bold text-stone-900 text-sm uppercase tracking-wide mb-2">
+                {isEn ? 'Safety Notice' : 'Aviso de Seguridad'}
+              </p>
+              <p className="text-stone-800 text-sm leading-relaxed mb-3">
+                {hasSuicidalIdeation
+                  ? (isEn
+                      ? 'This screening included thoughts of self-harm. Please review this with a clinician or a trusted person before acting on the scores alone.'
+                      : 'Esta evaluación incluyó pensamientos de hacerse daño. Por favor revísela con un profesional o una persona de confianza antes de guiarse solo por las puntuaciones.')
+                  : (isEn
+                      ? 'This screening showed symptoms in the higher range. Please review it with a clinician or a trusted person.'
+                      : 'Esta evaluación mostró síntomas en el rango más alto. Por favor revísela con un profesional o una persona de confianza.')}
+              </p>
+              <p className="text-stone-800 text-sm leading-relaxed">
+                988 {isEn ? 'Suicide & Crisis Lifeline (call or text)' : 'Línea de Suicidio y Crisis (llama o escribe)'}<br />
+                741741 {isEn ? 'Crisis Text Line (text HOME)' : 'Línea de Crisis por Texto (escribe HOME)'}<br />
+                1-800-854-7771 LA County ACCESS<br />
+                {isEn ? 'If there is immediate danger, call 911.' : 'Si hay peligro inmediato, llame al 911.'}
+              </p>
+            </div>
+          )}
+
           { (hasSuicidalIdeation || hasSevereSymptoms) && (
             <div className="p-8 md:p-10 text-white text-center print:hidden" style={{ background: hasSuicidalIdeation ? `linear-gradient(135deg, ${BRAND.red}, #b91c1c)` : `linear-gradient(135deg, ${BRAND.orange}, #e65100)` }}>
               <h3 className="font-display text-4xl mb-3 tracking-wide">{t.crisisTitle}</h3>
@@ -1137,7 +1174,12 @@ const App: React.FC = () => {
                     </div>
                   </div>
                   <div className="font-display text-3xl text-stone-800 mb-2 tracking-wide">{phq.label}</div>
-                  <p className="font-accent text-stone-600 leading-relaxed font-medium text-sm mb-3">{phq.recommendation}</p>
+                  <p className="font-accent text-stone-600 leading-relaxed font-medium text-sm mb-3">
+                    {/* Item 9 lives in the PHQ-9, so the safety line belongs on this card. It also
+                        suppresses the reassuring minimal/mild copy, which otherwise tells someone
+                        who reported thoughts of self-harm that they are "holding it down". */}
+                    {hasSuicidalIdeation ? ideationSupportLine : phq.recommendation}
+                  </p>
                   {phq.score > 0 && (
                     <div className="p-3 bg-white rounded-xl border border-stone-100">
                       <span className="text-[11px] font-medium uppercase tracking-wide block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
@@ -1159,11 +1201,7 @@ const App: React.FC = () => {
                     </div>
                   </div>
                   <div className="font-display text-3xl text-stone-800 mb-2 tracking-wide">{gad.label}</div>
-                  <p className="font-accent text-stone-600 leading-relaxed font-medium text-sm mb-3">
-                    {hasSuicidalIdeation
-                      ? (isEn ? 'Support is available right now. Please reach out. You do not have to face this alone.' : 'Hay apoyo disponible ahora mismo. Por favor comunícate. No tienes que enfrentar esto solo.')
-                      : gad.recommendation}
-                  </p>
+                  <p className="font-accent text-stone-600 leading-relaxed font-medium text-sm mb-3">{gad.recommendation}</p>
                   {gad.score > 0 && (
                     <div className="p-3 bg-white rounded-xl border border-stone-100">
                       <span className="text-[11px] font-medium uppercase tracking-wide block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
