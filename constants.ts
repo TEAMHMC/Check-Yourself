@@ -176,6 +176,14 @@ export const STRINGS = {
     safetyGuardrailCrisisText: 'Crisis Text Line: Text HOME to 741741',
     safetyGuardrailEmergency: 'If you are in immediate danger, call 911 or go to your nearest emergency room.',
     safetyGuardrailLegal: 'This screening tool is not a substitute for professional mental health care. If you indicated thoughts of self-harm or suicide, please contact a licensed provider or crisis line immediately.',
+    // Shown in place of the PHQ-9 band label when item 9 (self-harm) is positive.
+    // The band label is still correct arithmetic, but "Doing Alright" over a
+    // reported thought of self-harm reads as permission to ignore it.
+    safetyResultHeadline: 'Get Support Now',
+    safetyResultBody: 'Call or text 988.',
+    // Appended to the PHQ-9 clinical translation when item 9 is positive, so the
+    // provider-facing line cannot read "minimal" with no mention of the flag.
+    safetyClinicalSuffix: ' PHQ-9 item 9 positive: safety evaluation indicated regardless of total score.',
     gpResultsCreative: 'Creative Outlet',
     gpResultsPlaylist: 'Playlist / Music',
     // Caregiver pathway
@@ -395,6 +403,10 @@ export const STRINGS = {
     safetyGuardrailCrisisText: 'Línea de Texto de Crisis: Escribe HOLA al 741741',
     safetyGuardrailEmergency: 'Si estás en peligro inmediato, llama al 911 o ve a la sala de emergencias más cercana.',
     safetyGuardrailLegal: 'Esta herramienta de evaluación no reemplaza la atención profesional de salud mental. Si indicaste pensamientos de autolesión o suicidio, por favor contacta a un proveedor certificado o a una línea de crisis de inmediato.',
+    // Se muestra en lugar de la etiqueta del PHQ-9 cuando el ítem 9 es positivo.
+    safetyResultHeadline: 'Busca Apoyo Ahora',
+    safetyResultBody: 'Llama o escribe al 988.',
+    safetyClinicalSuffix: ' PHQ-9 ítem 9 positivo: se indica evaluación de seguridad sin importar la puntuación total.',
     // Bias-aware context note
     biasNote: 'Nota: Estas puntuaciones reflejan patrones, no un diagnóstico. Las puntuaciones altas también pueden reflejar el estrés de desafíos de la vida real, vivienda, seguridad, duelo, discriminación. Esta herramienta es un punto de partida para la conversación, no un veredicto.'
   }

@@ -582,14 +582,12 @@ const App: React.FC = () => {
     // Safety flag rides above the scores so a downloaded copy cannot be read as
     // "moderate" with no mention that thoughts of self-harm were reported.
     if ((state.answers['p9'] ?? 0) > 0) {
-      text += isEn
-        ? 'SAFETY NOTICE\nThis screening included thoughts of self-harm. Please review it with a\nclinician or a trusted person before going by the scores alone.\nSupport is available 24/7: call or text 988.\n\n'
-        : 'AVISO DE SEGURIDAD\nEsta evaluación incluyó pensamientos de hacerse daño. Por favor revísela con\nun profesional o una persona de confianza antes de guiarse solo por las\npuntuaciones. Hay apoyo 24/7: llama o escribe al 988.\n\n';
+      text += (isEn ? 'SAFETY NOTICE\n' : 'AVISO DE SEGURIDAD\n') + t.safetyResultBody + '\n\n';
     }
 
     text += `${t.moodLabel.toUpperCase()} (PHQ-9)\n`;
     text += `${isEn ? 'Score' : 'Puntuación'}: ${phq.score}/27, ${phq.label}\n`;
-    text += `"${phq.clinicalTranslation}"\n\n`;
+    text += `"${phq.clinicalTranslation}${(state.answers['p9'] ?? 0) > 0 ? t.safetyClinicalSuffix : ''}"\n\n`;
 
     text += `${t.anxietyLabel.toUpperCase()} (GAD-7)\n`;
     text += `${isEn ? 'Score' : 'Puntuación'}: ${gad.score}/21, ${gad.label}\n`;
@@ -964,9 +962,6 @@ const App: React.FC = () => {
     const hasSevereSymptoms = phq.severity === 'severe' || gad.severity === 'severe' || phq.severity === 'moderately-severe';
     const lang = state.language;
     const isEn = lang === Language.EN;
-    const ideationSupportLine = isEn
-      ? 'Support is available right now. Please reach out. You do not have to face this alone.'
-      : 'Hay apoyo disponible ahora mismo. Por favor comunícate. No tienes que enfrentar esto solo.';
     const date = new Date().toLocaleDateString();
 
     const lifeEventLabels = state.lifeEvents.map(id => LIFE_EVENT_OPTIONS.find(o => o.id === id)?.label[lang]).filter(Boolean).join(', ');
@@ -1033,9 +1028,7 @@ const App: React.FC = () => {
               </p>
               <p className="text-stone-800 text-sm leading-relaxed mb-3">
                 {hasSuicidalIdeation
-                  ? (isEn
-                      ? 'This screening included thoughts of self-harm. Please review this with a clinician or a trusted person before acting on the scores alone.'
-                      : 'Esta evaluación incluyó pensamientos de hacerse daño. Por favor revísela con un profesional o una persona de confianza antes de guiarse solo por las puntuaciones.')
+                  ? t.safetyResultBody
                   : (isEn
                       ? 'This screening showed symptoms in the higher range. Please review it with a clinician or a trusted person.'
                       : 'Esta evaluación mostró síntomas en el rango más alto. Por favor revísela con un profesional o una persona de confianza.')}
@@ -1173,17 +1166,25 @@ const App: React.FC = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="font-display text-3xl text-stone-800 mb-2 tracking-wide">{phq.label}</div>
-                  <p className="font-accent text-stone-600 leading-relaxed font-medium text-sm mb-3">
-                    {/* Item 9 lives in the PHQ-9, so the safety line belongs on this card. It also
-                        suppresses the reassuring minimal/mild copy, which otherwise tells someone
-                        who reported thoughts of self-harm that they are "holding it down". */}
-                    {hasSuicidalIdeation ? ideationSupportLine : phq.recommendation}
+                  {/* Item 9 lives in the PHQ-9, so the safety copy belongs on this card.
+                      The band label is correct arithmetic, but a person who reports thoughts
+                      of self-harm and nothing else scores 1/27, and "Doing Alright" over that
+                      reads as permission to ignore it. Headline and body both give way. */}
+                  <div
+                    className="font-display text-3xl mb-2 tracking-wide"
+                    style={{ color: hasSuicidalIdeation ? BRAND.red : undefined }}
+                  >
+                    {hasSuicidalIdeation ? t.safetyResultHeadline : phq.label}
+                  </div>
+                  <p
+                    className={`font-accent leading-relaxed text-sm mb-3 ${hasSuicidalIdeation ? 'font-bold text-stone-800' : 'font-medium text-stone-600'}`}
+                  >
+                    {hasSuicidalIdeation ? t.safetyResultBody : phq.recommendation}
                   </p>
                   {phq.score > 0 && (
                     <div className="p-3 bg-white rounded-xl border border-stone-100">
                       <span className="text-[11px] font-medium uppercase tracking-wide block mb-1" style={{ color: BRAND.blue }}>{t.clinicalInterpretation}</span>
-                      <p className="text-xs text-stone-500 italic font-medium leading-relaxed">"{phq.clinicalTranslation}"</p>
+                      <p className="text-xs text-stone-500 italic font-medium leading-relaxed">"{phq.clinicalTranslation}{hasSuicidalIdeation ? t.safetyClinicalSuffix : ''}"</p>
                     </div>
                   )}
                 </div>
