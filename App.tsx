@@ -151,7 +151,7 @@ class GamePlanErrorBoundary extends React.Component<{ children: React.ReactNode 
               Try Again
             </button>
             <a
-              href="https://www.healthmatters.clinic/sunny"
+              href="https://www.healthmatters.clinic"
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full py-4 rounded-full font-bold text-stone-800 text-sm uppercase tracking-wide bg-white border border-stone-200 hover:bg-stone-50 transition-all"
@@ -1298,7 +1298,7 @@ const App: React.FC = () => {
                 <div className="space-y-3">
                   {/* HMC programs first */}
                   {[
-                    { label: (t as any).caregiverHmcUnstoppable || 'HMC Unstoppable. Free wellness workshops and community meetups', sub: isEn ? 'HMC Program' : 'Programa HMC', href: 'https://www.healthmatters.clinic/unstoppable' },
+                    { label: (t as any).caregiverHmcUnstoppable || 'HMC Unstoppable. Free wellness workshops and community meetups', sub: isEn ? 'HMC Program' : 'Programa HMC', href: 'https://unstoppable.healthmatters.clinic' },
                     { label: (t as any).caregiverHmcPodcast || 'Unboxed on Mental Health. A podcast for caregivers and families', sub: isEn ? 'HMC Program' : 'Programa HMC', href: 'https://www.healthmatters.clinic/podcast' },
                     { label: (t as any).caregiverHmcReferral || 'HMC Referral Support. Call (323) 990-4325', sub: isEn ? 'Free · Confidential' : 'Gratis · Confidencial', href: 'tel:3239904325' },
                   ].map((r, i) => (
@@ -1367,7 +1367,7 @@ const App: React.FC = () => {
                <h2 className="font-display text-3xl text-stone-800 text-center mb-6 tracking-wide">{t.communityHeader}</h2>
 
                <div className="grid gap-4">
-                  <a href="https://www.healthmatters.clinic/resources/eventfinder" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-3 p-8 md:p-10 rounded-2xl hover:shadow-lg transition-all group text-center border-2 border-transparent" style={{ background: `linear-gradient(135deg, ${BRAND.blue}08, ${BRAND.blue}15)`, borderColor: `${BRAND.blue}20` }}>
+                  <a href="https://eventfinder.healthmatters.clinic" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-3 p-8 md:p-10 rounded-2xl hover:shadow-lg transition-all group text-center border-2 border-transparent" style={{ background: `linear-gradient(135deg, ${BRAND.blue}08, ${BRAND.blue}15)`, borderColor: `${BRAND.blue}20` }}>
                     <h4 className="font-display text-3xl text-stone-800 leading-none tracking-wide">{t.eventLink}</h4>
                     <p className="text-stone-500 text-[10px] font-medium uppercase tracking-wide">{t.communitySub}</p>
                   </a>
@@ -1378,7 +1378,7 @@ const App: React.FC = () => {
                        <p className="text-[10px] text-stone-400 font-medium uppercase tracking-wide">{t.gamePlanSub}</p>
                     </button>
 
-                    <a href="https://www.healthmatters.clinic/resources/resource-directory" target="_blank" rel="noopener noreferrer" className="p-5 bg-white border border-stone-100 rounded-2xl hover:border-stone-300 hover:shadow-md shadow-sm transition-all">
+                    <a href="https://directory.healthmatters.clinic" target="_blank" rel="noopener noreferrer" className="p-5 bg-white border border-stone-100 rounded-2xl hover:border-stone-300 hover:shadow-md shadow-sm transition-all">
                        <h4 className="font-medium text-stone-800 mb-1 uppercase tracking-tight text-sm">{t.resourceBtn}</h4>
                        <p className="text-[10px] text-stone-400 font-medium uppercase tracking-wide">{t.resourceSub}</p>
                     </a>
